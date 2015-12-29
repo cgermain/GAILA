@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+	<head>
+	  <title>Python Flask Bucket List App</title>
+	  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap.min.css') }}">
+	  <script src="{{ url_for('static', filename='jquery.js') }}"> </script>
+	  <script src="{{ url_for('static', filename='async.js') }}"> </script>
+	  <script src="{{ url_for('static', filename='underscore.min.js') }}"> </script>
+	</head>
+	<body>
+		<nav class="navbar navbar-default height:10vh">
+	    <div class="container-fluid">
+	      <ul class="nav navbar-nav">
+	        <!-- <li class="active" name="tab_link" id="tab_1"><a href="#">First Link</a></li> -->
+	        <li name="tab_link" id="tab_2" class="active"><a href="#">SELECT MGF</a></li>
+	        <!-- <li name="tab_link" id="tab_3"><a href="#">PARSE XML</a></li>
+	        <li name="tab_link" id="tab_4" class="active" ><a href="#">COMBINE MGF AND XML</a></li> -->
+	        <li name="tab_link" id="tab_2">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</li>
+	        <li name="tab_link" class="active" id="tab_5"><a href="#">PARSE XML</a></li>
+	      </ul>
+	    </div>
+	  </nav>
+	  <!-- <div id="tab_1" name="tab_body"></div> -->
+	  <div id="tab_2" name="tab_body"></div>
+	  <!-- <div id="tab_3" name="tab_body" style="display: none"></div>
+	  <div id="tab_4" name="tab_body" style="display: none"></div> -->
+	  <div id="tab_5" name="tab_body" style="display: none"></div>
+	  <script type="text/javascript">
+	  $('[name=tab_body]').each(function(index){
+	  	console.log(index)
+	  	var id = $(this).attr('id');
+	  	$(this).load('/tab', 'name=' + id)
+	  })
+	  </script>
+	  <script type="text/javascript">
+	  $('[name=tab_link]').click(function(e){
+	  	console.log('clicked');
+	  	var id = $(this).attr('id')
+	  	$('[name=tab_body]').each(function(index){
+	  		if ($(this).attr('id') == id) {
+					$(this).show();	  			
+	  		} else {
+	  			$(this).hide();
+	  		}
+	  	});
+	  })
+	  </script>
+	  <script type="text/javascript">
+	  function serializeForm(elem){
+	  	// return;
+	  	var toReturn = {};
+	  	$.each(elem, function(i, e){
+	  		// need to get the id of e;
+	  		var jqe = $(e);
+	  		var id = jqe.attr('id');
+	  		if (toReturn[id]){
+	  			// throw "Already seend id " + id
+	  			console.log("Already seend id " + id);
+	  		}
+	  		toReturn[id] = jqe.val();
+	  	})
+	  	return toReturn;
+	  	//$.each($('input, select'), function(e,f){console.log($(f).val())}) is a good start. That prints all the values.
+	  };
+	  </script>
+	  <script type="text/javascript">
+	  function givenRightsideAndDataObjSelectMGF(rightSide, serializedForm, callbackOuter){
+	  	// return callback(null);
+
+			var startTime = new Date();
+	    async.waterfall([
+	      function(callback){
+	        // console.log("inside of first waterfaller");
+	        $.ajax({
+	          type : "POST",
+	          url : "getMGFFiles",
+	          data: {mgfReadDirPath : serializedForm.mgfReadDirPath},
+	          success : function(result){
+	            console.log('success');
+	            console.log(result);
+	            // $(this).attr('disabled', false);
+	            return callback(null, result)
+	          },
+	          error: function(response, textStatus, HTTPError){
+	            rightSide.append('<div style="color:red">' + response.responseText + '</div>')
+	            return callback("ERROR IN PASSING BACK FILE NAMES");
+	          }
+	        })
+	      },
+	      function(fileArray, callback){
+	        if (!fileArray){
+	          return callback("No fileArray");
+	        }
+	        if (typeof fileArray == 'string'){
+	          console.log("FileArray needs to be parsed");
+	          fileArray = JSON.parse(fileArray);
+	        }
+	        if (!fileArray.length){
+	          rightSide.append("<div>NO FILES TO WRITE!</div>")
+	          return callback("NO FILES TO WRITE")
+	        }
+	        async.each(fileArray, function(elem, next){
+	          var data = JSON.parse(JSON.stringify(serializedForm));
+	          console.log(data);
+	          data['mgfFileName'] = elem;
+	          // console.log("data from stringify")
+	          // console.log(data);
+
+	          console.log("Parsing file");
+	          rightSide.append("<div>Began selecting from file " + elem + "</div>");
+
+	          $.ajax({
+	            type:"POST",
+	            url:"tab_2_helper_function",
+	            data : data,
+	            // dataType : 'json',
+	            // contentType: "application/json",
+	            success : function(result){
+	              console.log(result);
+	              rightSide.append("<div>Finished Selecting from file " + elem + "</div>");
+	              return next(null)
+	            },
+	            error: function(response, textStatus, HTTPError){
+	              var responseText = (response && response.responseText) ?
+	                response.responseText : "ERROR IN EACHSERIES";
+	                rightSide.append('<div style="color:red">' + responseText + '</div>')
+	              return next(responseText);
+	            }
+	          });
+	        }, function(err){
+	          callback(err);
+	        })
+	      }
+	    ],
+	    function(err, result){
+	      // if (err){console.log(err)}
+	      // if(result){console.log(result)}
+	      // console.log("in final waterfall catcher");
+	      // if (err && err.err && err.err == "NO FILES TO WRITE"){return;}
+	      // console.log(err);
+	      // if (err){
+	      //   alert(err)
+	      // }
+	      if (err){
+	      	console.log(err);
+	      	rightSide.append("<div style='color:red'>Error in selecting mgf!<div>");
+	      }
+	      var difference = new Date() - startTime;
+	      rightSide.append("<div>MILLISECONDS TAKEN: " + difference + " <div>")
+	      // that.attr('disabled', false);
+	      // that.text('Click to submit Tab 1');
+	      // Figure out how to do this part.
+	      return callbackOuter(err); //could be null
+	    })
+	  }
+	  </script>
+
+	</body>
+</html>

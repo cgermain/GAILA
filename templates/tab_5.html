@@ -1,0 +1,313 @@
+<div>
+  <div style="float:left;width:60%" id="leftSide">
+    <h2 style="margin:1%">PARSE XML FILE AND COMBINE WITH MGF</h2>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">Operation to perform</span>
+      <select class='form-control' id="mgfOperationToPerform">
+        <option value="1">Select reporter ions from mgf files</option>
+        <option value="0">Use pre-extracted reporter ion (.reporter) files</option>
+      </select>
+      <span class="input-group-btn">
+        <button class="btn btn-info" onclick="alert('If you don\'t have the mgf.txt files you used for the GPM search, you can re-select them here.')">?</button>
+      </span>
+    </div>
+    <div id="options_if_selecting">
+      <div class="input-group" style="margin: 1%">
+        <span class="input-group-addon" id="basic-addon1">FULL PATH to MGF DIRECTORY</span>
+        <input type="text" class="form-control" id="mgfReadDirPath">
+        <span class="input-group-btn">
+          <button class="btn btn-info" onclick="alert('On windows, open windows explorer and navigate to your mgf directory. Clicking on your url bar will highlight the directory path, copy paste that into this text box')">?</button>
+        </span>
+      </div>
+      <div class="input-group" style="margin: 1%">
+        <span class="input-group-addon" id="basic-addon1">Minimum Intensity per reporter</span>
+        <input type="text" class="form-control" id="minIntensity" value="1000">
+        <span class="input-group-btn">
+          <button class="btn btn-info" onclick="alert('Part of the filtering process. For a reporter ion to be considered present in a given run, it must appear in total this many times')">?</button>
+        </span>
+      </div>
+      <div class="input-group" style="margin: 1%">
+        <span class="input-group-addon" id="basic-addon1">Minimum Reporters with said intensity</span>
+        <input type="text" class="form-control" id="minReporters" value="2">
+        <span class="input-group-btn">
+          <button class="btn btn-info" onclick="alert('Part of the filtering process. For a run to be selected as valid, this many runs must appear with at least the prescribed intensity')">?</button>
+        </span>
+      </div>
+
+      <br>
+
+      <div class="input-group" style="margin: 1%">
+        <span class="input-group-addon" id="basic-addon1">Perform largest-reporter recalibration</span>
+        <select class='form-control' id="performRecalibration">
+          <option value="1">Perform recalibration</option>
+          <option value="0">Do Not Perform recalibration</option>
+        </select>
+      </div>
+
+      <div id="options_if_recalibrating">
+        <div class="input-group" style="margin: 1%">
+          <span class="input-group-addon" id="basic-addon1">&nbspm/z error for initial runthrough (ppm, integer) &nbsp</span>
+          <input type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' class="form-control" id="mzErrorInitialRun" value="20">
+          <span class="input-group-btn">
+            <button class="btn btn-info" onclick="alert('Error used to categorize spectral peaks in order to scale reporter ion target-masses to more accurate values. \n\nThe units of this number are millionths of a percent away from target mass. So, inputting 20 would mean that, for a reporter ion with m/z=100, anything with m/z between 99.998 and 100.002 would be classified as that ion')">?</button>
+          </span>
+
+        </div>
+        <div class="input-group" style="margin: 1%">
+          <span class="input-group-addon" id="basic-addon1">&nbsp m/z error for recalibration  (ppm, integer, must be smaller than initial m/z error) &nbsp</span>
+          <input type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' class="form-control" id="mzErrorRecalibration" value="5">
+          <span class="input-group-btn">
+            <button class="btn btn-info" onclick="alert('Error used to categorize spectral peaks AFTER reporter ion masses have been recalibrated. \n\nThe units of this number are millionths of a percent away from target mass. So, inputting 5 would mean that, for a reporter ion with recalibrated m/z=100, anything with m/z between 99.9995 and 100.0005 would be classified as that ion')">?</button>
+          </span>
+        </div>
+      </div>
+      <div id="options_if_not_recalibrating" style="display: none">
+        <div class="input-group" style="margin: 1%">
+          <span class="input-group-addon" id="basic-addon1">&nbspmz_error (ppm, integer) &nbsp</span>
+          <input type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' class="form-control" id="mzError" value="20">
+          <span class="input-group-btn">
+            <button class="btn btn-info" onclick="alert('Error used to categorize spectral peaks, based on hard-coded reporter ion masses. \n\nThe units of this number are millionths of a percent away from target mass. So, inputting 20 would mean that, for a reporter ion with recalibrated m/z=100, anything with m/z between 99.998 and 100.002 would be classified as that ion')">?</button>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div id="options_if_not_selecting" style="display:none">
+      <div class="input-group" style="margin: 1%">
+        <span class="input-group-addon" id="basic-addon1">FULL PATH to directory with pre-extracted reporter ions</span>
+        <input type="text" class="form-control" id="mgfTxtReadDirPath" value="/Users/samlobel/Code/DAD/Lobel_GUI/DATA_TMT10test_SMALLER/TESTmgffiles10/ReportersSelected_Min2TMT10ions_MinIntensity1000_InitialMassError20ppm_RecalMassError5ppm">
+        <span class="input-group-btn">
+          <button class="btn btn-info" onclick="alert('On windows, open windows explorer and navigate to the folder that contains your mgf.txt files. Clicking on your url bar will highlight the directory path, copy paste that into this text box')">?</button>
+        </span>
+      </div>
+    </div>
+	  <!-- <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">FULL PATH to MGF DIRECTORY</span>
+      <input type="text" class="form-control" id="mgfReadDirPath">
+    </div> -->
+    <br>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">FULL PATH to XML FILE YOU WANT TO PARSE</span>
+      <input type="text" class="form-control" id="xmlReadPath" value="/Users/samlobel/Code/DAD/Lobel_GUI/DATA_TMT10test_SMALLER/GPM22200021391.xml">
+      <span class="input-group-btn">
+        <button class="btn btn-info" onclick="alert('On windows, open windows explorer and navigate to the directory where your xml file is located. \n\nHold shift as you right click on the file, and then select from the menu that pops up \'copy as path\'. That copies the path to your clipboard. Paste that value into this text box, and remove the quotation marks.')">?</button>
+      </span>
+    </div>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">GENE FILE</span>
+      <select class='form-control' id="geneFile">
+        {% if gene_files %}
+          {% for f in gene_files %}
+            <option value={{f}}>{{f.rpartition('.')[0]}}</option>
+          {% endfor %}
+        {% endif %}
+      </select>
+      <span class="input-group-btn">
+        <button class="btn btn-info" onclick="alert('This file is used to match spectra to specific runs.')">?</button>
+      </span>
+
+    </div>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">REPORTER ION TYPE</span>
+      <select class='form-control' id="reporterIonType">
+        {% if inverse_files %}
+          {% for f in inverse_files %}
+            <option value={{f.rpartition('-inv.txt')[0]}}>{{f.rpartition('-inv.txt')[0]}}</option>
+          {% endfor %}
+        {% endif %}
+      </select>
+    </div>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">Include spectra peptide expectation <= </span>
+      <input type="text" class="form-control" id="logErrorThreshold" value="0.1">
+      <span class="input-group-btn">
+        <button class="btn btn-info" onclick="alert('GPM outputs an match probability for each spectra. This filters out spectra with higher error than the value given. Must be a number between 0 and 1, written in either decimal form or scientific notation (1.3e-5)')">?</button>
+      </span>
+    </div>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">Operation to perform</span>
+      <select class='form-control' id="assignUnacceptableModifications">
+        <option value="0">Assign unacceptable modifications</option>
+        <option value="1">DO NOT assign unacceptable modifications</option>
+      </select>
+      <span class="input-group-btn">
+        <button class="btn btn-info" onclick="alert('Dunno what to say, that\'s for you dad')">?</button>
+      </span>
+    </div>
+    <div id="options_if_choosing_unacceptable_mods">
+      <div class="input-group" style="margin: 1%">
+        <span class="input-group-addon" id="basic-addon1">Unacceptable Modifications</span>
+        <select class='form-control' id="unacceptableMods" multiple="multiple">
+          <option value="ISOBARIC_LABEL@Y" selected>Reporter Ion modifies with Y-hydroxyl</option>
+          <option value="15.994915@M">Oxidation (M)</option>
+          <option value="31.98983@M" selected>Dioxidation (M)</option>
+          <option value="15.994915@W" selected>Oxidation (W)</option>
+          <option value="31.98983@W" selected>Dioxidation (W)</option>
+          <option value="0.984016@N" selected>Deamidation (N)</option>
+          <option value="0.984016@Q" selected>Deamidation (Q)</option>
+          <option value="21.982@D,21.982@E">Cation:Na (E,D)</option>
+          <option value="37.955885@D,37.955885@E">Cation:K (E,D)</option>
+          <option value="15.994915@P">Hydroxy (P)</option>
+          <option value="79.966331@S">Phospho (S)</option>
+          <option value="79.966331@T">Phospho (T)</option>
+          <option value="79.966331@Y">Phospho (Y)</option>
+          <option value="79.956815@Y">Sulfo (Y)</option>
+          <option value="42.010565@K">Acetyl (K)</option>
+          <option value="43.989829@E">gamma-carboxyl (E)</option>
+          <option value="43.005814@[">Carbamyl (nt)</option>
+          <option value="43.005814@K">Carbamyl (K)</option>
+          <option value="57.021464@[">Carbamidomethyl (nt)</option>
+          <option value="57.021464@K">Carbamidomethyl (K)</option>
+          <option value="27.994915@K">formyl (K)</option>
+          <option value="27.994915@[">formyl (nt)</option>
+          
+        </select>
+        <span class="input-group-btn">
+          <button class="btn btn-info" onclick="alert('On windows, select multiple by holding down ctrl. On mac, hold down command')">?</button>
+        </span>
+      </div>
+    </div>
+    <br>
+
+    <button id="tab_5_button" class="btn btn-primary">Click to submit</button>
+  </div>
+  <div style="float:right;width:30%;height:88vh;border-style:solid;border-width:5px;overflow:scroll;padding:10px" id="rightSide">
+  	<h1>Progress</h1>
+  	<ul>
+  	</ul>
+  </div>
+  <script type="text/javascript">
+  $('div[id="tab_5"]').find("#performRecalibration").change(function(e){
+    // console.log($(this))
+    console.log("Yippie");
+    console.log(e.target.value);
+    var value = e.target.value;
+    if (value == '1'){
+      console.log("value is perform_recalibration");
+      $('div[id="tab_5"]').find("#options_if_recalibrating").show();
+      $('div[id="tab_5"]').find("#options_if_not_recalibrating").hide();
+    }
+    else if (value == '0'){
+      console.log("value is do_not_perform_recalibration");
+      $('div[id="tab_5"]').find("#options_if_recalibrating").hide();
+      $('div[id="tab_5"]').find("#options_if_not_recalibrating").show();
+    }
+    else{
+      alert("Something is funky, ask sam whats going on");
+    }
+  });
+  </script>
+  <script type="text/javascript">
+  $('div[id="tab_5"]').find("#assignUnacceptableModifications").change(function(e){
+    var val = e.target.value;
+    console.log("unnacceptablemodsvalue is " + val);
+    if (val == "0"){
+      $('div[id="tab_5"]').find("#options_if_choosing_unacceptable_mods").show();
+    }
+    else{
+      $('div[id="tab_5"]').find("#options_if_choosing_unacceptable_mods").hide(); 
+    }
+  });
+  </script>
+  <script type="text/javascript">
+  $('div[id="tab_5"]').find("#mgfOperationToPerform").change(function(e){
+    var val = e.target.value;
+    console.log("mgfOperationToPerform value is " + val);
+    if(val=='1'){
+      console.log('val is 1')
+      $('div[id="tab_5"]').find('#options_if_selecting').show();
+      $('div[id="tab_5"]').find('#options_if_not_selecting').hide();
+    }
+    else if (val=='0'){
+      console.log('val is 0')
+      $('div[id="tab_5"]').find('#options_if_selecting').hide();
+      $('div[id="tab_5"]').find('#options_if_not_selecting').show();
+    }
+    else{
+      alert('Somethings fishy with mgfOperationToPerform, tell Sam');
+    }
+  });
+  // $("#mgfOperationToPerform").change(function(e){
+  //   var val = e.target.value;
+  //   console.log("mgfOperationToPerform value is " + val);
+  //   if(val=='1'){
+  //     console.log('val is 1')
+  //     $('#options_if_selecting_5').show();
+  //     $('#options_if_not_selecting_5').hide();
+  //   }
+  //   else if (val=='0'){
+  //     console.log('val is 0')
+  //     $('#options_if_selecting_5').hide();
+  //     $('#options_if_not_selecting_5').show();
+  //   }
+  //   else{
+  //     alert('Somethings fishy with mgfOperationToPerform, tell Sam');
+  //   }
+  // })
+  </script>
+  <script>$('#tab_5_button').click(function(e){
+
+  	console.log("clicked");
+  	$(this).attr('disabled', true);
+    // $(this).prop('value', "stevenson");
+    $(this).text("Processing...")
+  	
+    var that = $(this);
+    var leftSide = that.parent();
+
+    var inputs = leftSide.find('input, select');
+    
+    var serializedForm = serializeForm(inputs);
+    console.log(serializedForm);
+
+    var rightSide = $(this).parent().siblings("#rightSide").first()
+    rightSide.append("<div>Executing Function Now</div>")
+    var startTime = new Date();
+    // async.waterfall([
+
+    // ])
+    // if (serializedForm.mgfOperationToPerform == '1'){
+
+    // }
+    async.waterfall([
+      function maybeSelectMGF(callback){
+        if (serializedForm.mgfOperationToPerform == '1'){
+          rightSide.append("<div>Need to select from MGF files, doing that now</div>");
+          return givenRightsideAndDataObjSelectMGF(rightSide, serializedForm, callback);
+        }
+        else{
+          rightSide.append("<div>No need to select from MGF files, moving on</div>");
+          return callback(null)
+        }
+      },
+      function parseXML(callback){
+        rightSide.append("<div>Parsing XML file with MGF files</div>");
+        $.ajax({
+          type:"POST",
+          url:"tab_5_helper_function",
+          data : serializedForm,
+          // dataType : 'json',
+          // contentType: "application/json",
+          success : function(result){
+            console.log(result);
+            rightSide.append('<div>xml parsed successfully</div>');
+            return callback(null);
+          },
+          error: function(response, textStatus, HTTPError){
+            console.log(response.responseText);
+            rightSide.append('<div style="color:red">' + response.responseText + '</div>')
+            return callback("error: " + response.responseText)
+          }
+        })
+      }
+    ],function(err, result){
+      console.log("in final waterfall catcher");
+      if (err){
+        alert(err)
+      }
+      var difference = new Date() - startTime;
+      rightSide.append("<div>MILLISECONDS TAKEN: " + difference + " <div>")
+      that.attr('disabled', false);
+      that.text('Click to submit');
+    })
+  })</script>
+</div>

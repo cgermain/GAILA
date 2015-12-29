@@ -1,0 +1,101 @@
+<div>
+  <div style="float:left;width:60%" id="leftSide">
+    <h2 style="margin:1%">SELECT FROM SINGLE MGF FILE</h2>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">&nbsp&nbsp&nbsp&nbsp&nbspFULL PATH to single MGF file&nbsp&nbsp&nbsp&nbsp&nbsp</span>
+      <input type="text" class="form-control" id="mgfReadPath">
+    </div>
+      <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">FULL PATH (including filename) where you want to write selected</span>
+      <input type="text" class="form-control" id="mgfWritePath">
+    </div>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">&nbspmz_error (enter an integer) &nbsp</span>
+      <input type="number" onkeypress='return event.charCode >= 48 && event.charCode <= 57' class="form-control" id="mz_error">
+    </div>
+    <div class="input-group" style="margin: 1%">
+      <!-- <input type="text" class="form-control" placeholder="yo"> -->
+      <span class="input-group-addon" id="basic-addon1">REPORTER ION TYPE</span>
+      <select class='form-control' id="reporter_ion_type">
+        <option value="iTRAQ4">iTRAQ4</option>
+        <option value="iTRAQ8">iTRAQ8</option>
+        <option value="TMT10">TMT10</option>  
+      </select>
+    </div>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">Minimum Intensity per reporter</span>
+      <input type="text" class="form-control" id="min_intensity">
+    </div>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">Minimum Reporters with said intensity</span>
+      <input type="text" class="form-control" id="min_reporters">
+    </div>
+    <br>
+	  <button id="tab_1_button" class="btn btn-primary">Click to submit Tab 1</button>
+  </div>
+  <div style="float:right;width:30%;height:88vh;border-style:solid;border-width:5px;overflow:scroll;padding:10px" id="rightSide">
+  	<h1>Progress</h1>
+  	<ul>
+  	</ul>
+  </div>
+
+  <script>
+  $('#tab_1_button').click(function(e){
+  	console.log("clicked");
+  	$(this).attr('disabled', true);
+    var that = $(this);
+    var leftSide = that.parent();
+    var mgfReadPath = leftSide.find("#mgfReadPath").first().val().trim();
+    var mgfWritePath = leftSide.find("#mgfWritePath").first().val().trim();
+    var mzError = leftSide.find("#mz_error").first().val().trim();
+    var reporterType = leftSide.find("#reporter_ion_type").first().val().trim();
+    var minReporters = leftSide.find("#min_reporters").first().val().trim();
+    var minIntensity = leftSide.find("#min_intensity").first().val().trim();
+    console.log(mgfReadPath);
+    console.log(mgfWritePath);
+    // leftSide.siblings("#rightSide")
+    var data = {
+      mgfReadPath : mgfReadPath,
+      mgfWritePath : mgfWritePath,
+      mzError : mzError,
+      reporterType : reporterType,
+      minReporters : minReporters,
+      minIntensity : minIntensity
+    }
+    var rightSide = $(this).parent().siblings("#rightSide").first()
+    rightSide.append("<div>Executing Function Now</div>")
+    $.ajax({
+      type:"POST",
+      url:"tab_1_function",
+      data : data,
+      // dataType : 'json',
+      // contentType: "application/json",
+      success : function(result){
+        console.log(result);
+        rightSide.append("<div>Executed Successfully</div>")
+        that.attr('disabled',false);
+        alert("Completed Successfully");
+      },
+      error: function(something, textStatus, HTTPError){
+        if (textStatus){
+          alert("textStatus: " + textStatus);
+        }
+        if (HTTPError){
+          alert("HTTPError: " + HTTPError);
+        }
+      }
+    })
+
+    return;
+
+  	$(this).parent().siblings("#rightSide").each(function(index){
+  		$(this).append("<div>Tab 1</div>");
+  		setTimeout(function(){
+  			console.log('better');
+  			that.attr('disabled',false);
+  		}, 5000);
+  	})
+  });
+  </script>
+
+</div>

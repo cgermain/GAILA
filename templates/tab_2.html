@@ -1,0 +1,305 @@
+<div>
+  <div style="float:left;width:60%" id="leftSide">
+    <h2 style="margin:1%">SELECT FROM ALL MGF FILES IN FOLDER</h2>
+
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">Operation to perform</span>
+      <select class='form-control' id="mgfOperationToPerform">
+        <option value="0">Only Extract reporter ion intensities (creates .reporter files)</option>
+        <option value="1">Extract reporter ion intensities AND select viable spectra (creates .reporter AND new .mgf files)</option>
+      </select>
+      <span class="input-group-btn">
+        <button class="btn btn-info" onclick="alert('Selecting viable spectra creates a series of mgf files filtered by whether a given run meet your minimum intensity and reporter count criteria')">?</button>
+      </span>
+    </div>
+
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">FULL PATH to MGF DIRECTORY</span>
+      <input type="text" class="form-control" id="mgfReadDirPath">
+      <span class="input-group-btn">
+        <button class="btn btn-info" onclick="alert('On windows, open windows explorer and navigate to your mgf directory. Clicking on your url bar will highlight the directory path, copy paste that into this text box')">?</button>
+      </span>
+
+    </div>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">REPORTER ION TYPE</span>
+      <select class='form-control' id="reporterIonType">
+        {% if inverse_files %}
+          {% for f in inverse_files %}
+            <option value={{f.rpartition('-inv.txt')[0]}}>{{f.rpartition('-inv.txt')[0]}}</option>
+          {% endfor %}
+        {% endif %}
+      </select>
+    </div>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">Minimum Intensity per reporter</span>
+      <input type="text" class="form-control" id="minIntensity" value="1000">
+      <span class="input-group-btn">
+        <button class="btn btn-info" onclick="alert('Part of the filtering process. For a reporter ion to be considered present in a given run, it must appear in total this many times')">?</button>
+      </span>
+    </div>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">Minimum Reporters with said intensity</span>
+      <input type="text" class="form-control" id="minReporters" value="2">
+      <span class="input-group-btn">
+        <button class="btn btn-info" onclick="alert('Part of the filtering process. For a run to be selected as valid, this many runs must appear with at least the prescribed intensity')">?</button>
+      </span>
+
+    </div>
+    <br>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">Perform largest-reporter recalibration</span>
+      <select class='form-control' id="performRecalibration">
+        <option value="1">Perform recalibration</option>
+        <option value="0">Do Not Perform recalibration</option>
+      </select>
+      <!-- <span class="input-group-btn">
+        <button class="btn btn-info" onclick="alert('Option to perform reporter-ion mass-recalibration before selecting runs. Provides more accuracy as a slight tradeoff for speed')">?</button>
+      </span> -->
+    </div>
+
+    <div id="options_if_recalibrating">
+      <div class="input-group" style="margin: 1%">
+        <span class="input-group-addon" id="basic-addon1">&nbspm/z error for initial runthrough (ppm, integer) &nbsp</span>
+        <input type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' class="form-control" id="mzErrorInitialRun" value="20">
+        <span class="input-group-btn">
+          <button class="btn btn-info" onclick="alert('Error used to categorize spectral peaks in order to scale reporter ion target-masses to more accurate values. \n\nThe units of this number are millionths of a percent away from target mass. So, inputting 20 would mean that, for a reporter ion with m/z=100, anything with m/z between 99.998 and 100.002 would be classified as that ion')">?</button>
+        </span>
+      </div>
+
+      <div class="input-group" style="margin: 1%">
+        <span class="input-group-addon" id="basic-addon1">&nbsp m/z error for recalibration  (ppm, integer, must be smaller than initial m/z error) &nbsp</span>
+        <input type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' class="form-control" id="mzErrorRecalibration" value="5">
+        <span class="input-group-btn">
+          <button class="btn btn-info" onclick="alert('Error used to categorize spectral peaks AFTER reporter ion masses have been recalibrated. \n\nThe units of this number are millionths of a percent away from target mass. So, inputting 5 would mean that, for a reporter ion with recalibrated m/z=100, anything with m/z between 99.9995 and 100.0005 would be classified as that ion')">?</button>
+        </span>
+      </div>
+    </div>
+    <div id="options_if_not_recalibrating" style="display: none">
+      <div class="input-group" style="margin: 1%">
+        <span class="input-group-addon" id="basic-addon1">&nbspmz_error (ppm, integer) &nbsp</span>
+        <input type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' class="form-control" id="mzError" value="20">
+        <span class="input-group-btn">
+          <button class="btn btn-info" onclick="alert('Error used to categorize spectral peaks, based on hard-coded reporter ion masses. \n\nThe units of this number are millionths of a percent away from target mass. So, inputting 20 would mean that, for a reporter ion with recalibrated m/z=100, anything with m/z between 99.998 and 100.002 would be classified as that ion')">?</button>
+        </span>
+      </div>
+    </div>
+    <!-- <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">lubadubadubdub</span>
+      <input type="text" onkeypress='javascript: console.log(/^-?\d*\.?\d*$/.test(event.target.value));return true;' class="form-control" id="mzErrorInitialRun" value="20">
+    </div> -->
+
+
+    <br>
+    <button id="tab_2_button" class="btn btn-primary">Click to submit</button>
+<!--     <button id='testing_button' class="btn btn-primary">Test form serialization</button>
+ -->  </div>
+  <div style="float:right;width:30%;height:88vh;border-style:solid;border-width:5px;overflow:scroll;padding:10px" id="rightSide">
+    <h1>Progress</h1>
+    <ul>
+    </ul>
+  </div>
+  <script>
+  $('div[id="tab_2"]').find("#mgfOperationToPerform").change(function(e){
+    console.log("Yo");
+    console.log(e.target.value);
+    var value = e.target.value;
+    // if (value == 'only_extract'){
+    //   console.log("value is only_extract");
+    //   $("#form_elements_if_only_extract").show();
+    //   $("#form_elements_if_extract_and_select").hide();
+    // }
+    // else if (value == 'extract_and_select'){
+    //   console.log("value is extract_and_select");
+    //   $("#form_elements_if_only_extract").hide();
+    //   $("#form_elements_if_extract_and_select").show();
+    // }
+    // else{
+    //   alert("Something is funky, ask sam whats up");
+    // }
+    // Not necessary any more, but might be later, so I'll keep it.
+  });
+  </script>
+  <script>
+  $('div[id="tab_2"]').find("#performRecalibration").change(function(e){
+    console.log("Yippie");
+    console.log(e.target.value);
+    var value = e.target.value;
+    if (value == '1'){
+      console.log("value is perform_recalibration");
+      $('div[id="tab_2"]').find("#options_if_recalibrating").show();
+      $('div[id="tab_2"]').find("#options_if_not_recalibrating").hide();
+    }
+    else if (value == '0'){
+      console.log("value is do_not_perform_recalibration");
+      $('div[id="tab_2"]').find("#options_if_recalibrating").hide();
+      $('div[id="tab_2"]').find("#options_if_not_recalibrating").show();
+    }
+    else{
+      alert("Something is funky, ask sam whats up");
+    }
+  });
+  </script>
+
+  <script>
+  $('#tab_2_button').click(function(e){
+    console.log("clicked");
+    $(this).attr('disabled', true);
+    $(this).text("Processing ... ")
+    var that = $(this);
+    var leftSide = that.parent();
+    var inputs = leftSide.find('input, select');
+    
+    var serializedForm = serializeForm(inputs);
+    
+    // var mgfReadDirPath = leftSide.find("#mgfReadDirPath").first().val().trim();
+
+    // var mzError = leftSide.find("#mz_error").first().val().trim();
+    // var reporterType = leftSide.find("#reporter_ion_type").first().val().trim();
+    // var minReporters = leftSide.find("#min_reporters").first().val().trim();
+    // var minIntensity = leftSide.find("#min_intensity").first().val().trim();
+    // var mgfOperationToPerform = leftSide.find("#mgfOperationToPerform").first().val().trim();
+    // var performRecalibration = leftSide.find("#perform_recalibration").first().val().trim();
+    // var recalibrationMzError = leftSide.find('#mz_error_recalibration').first().val().trim();
+
+    // var shouldPerformMGFSelection = (mgfOperationToPerform == 'extract_and_select') ? 1 : 0;
+    // The reason I do 1 and 0 is because perl uses the string zero as a falsy value, which is weird but helpful
+    // console.log("should perform selection: " + shouldPerformMGFSelection);
+    // var shouldRecalibrate = (performRecalibration == 'perform_recalibration') ? 1 : 0;
+    // console.log("should recalibrate: " + shouldRecalibrate);
+
+    // console.log(mgfReadDirPath);
+    // console.log(mgfWriteDirPath);
+    var rightSide = $(this).parent().siblings("#rightSide").first()
+    rightSide.append("<div>Executing Function Now</div>")
+    var startTime = new Date();
+    givenRightsideAndDataObjSelectMGF(rightSide, serializedForm, function(err){
+      if (err){
+        console.log("error in tab 2");
+        console.log(err);
+      }
+      that.attr('disabled', false);
+      that.text('Click to submit');
+      return;
+    });
+    // async.waterfall([
+    //   function(callback){
+    //     console.log("inside of first waterfaller");
+    //     $.ajax({
+    //       type : "POST",
+    //       url : "getMGFFiles",
+    //       data: {mgfReadDirPath : serializedForm.mgfReadDirPath},
+    //       success : function(result){
+    //         console.log('success');
+    //         console.log(result);
+    //         // $(this).attr('disabled', false);
+    //         return callback(null, result)
+    //       },
+    //       error: function(response, textStatus, HTTPError){
+    //         callback({err : "ERROR IN PASSING BACK FILE NAMES"});
+    //         if (textStatus){
+    //           console.log(response);
+    //           return alert("textStatus: " + textStatus);
+    //         }
+    //         if (HTTPError){
+    //           console.log(response);
+    //           return alert("HTTPError: " + HTTPError);
+    //         }
+    //       }
+    //     })
+    //   },
+    //   function(fileArray, callback){
+    //     if (!fileArray){
+    //       return callback("No fileArray");
+    //     }
+    //     if (typeof fileArray == 'string'){
+    //       console.log("FileArray needs to be parsed");
+    //       fileArray = JSON.parse(fileArray);
+    //     }
+    //     if (!fileArray.length){
+    //       rightSide.append("<div>NO FILES TO WRITE!</div>")
+    //       return callback({err : "NO FILES TO WRITE"})
+    //     }
+    //     async.each(fileArray, function(elem, next){
+    //       var data = JSON.parse(JSON.stringify(serializedForm));
+    //       console.log(data);
+    //       data['mgfFileName'] = elem;
+    //       console.log("data from stringify")
+    //       console.log(data);
+
+    //       console.log("Parsing file");
+    //       rightSide.append("<div>Began selecting from file " + elem + "</div>");
+
+    //       $.ajax({
+    //         type:"POST",
+    //         url:"tab_2_helper_function",
+    //         data : data,
+    //         // dataType : 'json',
+    //         // contentType: "application/json",
+    //         success : function(result){
+    //           console.log(result);
+    //           rightSide.append("<div>Finished Selecting from file " + elem + "</div>");
+    //           return next(null)
+    //         },
+    //         error: function(response, textStatus, HTTPError){
+    //           var responseText = (response && response.responseText) ?
+    //             response.responseText : "ERROR IN EACHSERIES";
+    //             rightSide.append('<div style="color:red">' + responseText + '</div>')
+    //           return next(responseText);
+    //         }
+    //       });
+    //     }, function(err){
+    //       callback(err);
+    //     })
+    //   }/*,
+    //   function(callback){
+    //     $.ajax({
+    //       type:"POST",
+    //       url:"combine_mgf_files",
+    //       data : {mgfWriteDirPath : mgfWriteDirPath},
+    //       success : function(result){
+    //         console.log(result);
+    //         rightSide.append("<div>MERGED MGF FILES</div>");
+    //         var difference = new Date() - startTime;
+    //         rightSide.append("<div>MILLISECONDS TAKEN: " + difference + " <div>")
+    //         return callback(null);
+    //       },
+    //       error: function(something, textStatus, HTTPError){
+    //         return callback("ERROR IN combine_mgf_files");
+    //       }
+    //     });
+    //   },
+    //   function(callback){
+    //     $.ajax({
+    //       type:"POST",
+    //       url:"combine_mgf_txt_files",
+    //       data : {mgfWriteDirPath : mgfWriteDirPath},
+    //       success : function(result){
+    //         console.log(result);
+    //         rightSide.append("<div>MERGED MGF.TXT FILES</div>");
+    //         return callback(null);
+    //       },
+    //       error: function(something, textStatus, HTTPError){
+    //         return callback("ERROR IN combine_mgf_files");
+    //       }
+    //     });
+    //   }*/
+    // ],
+    // function(err, result){
+    //   // if (err){console.log(err)}
+    //   // if(result){console.log(result)}
+    //   console.log("in final waterfall catcher");
+    //   if (err && err.err && err.err == "NO FILES TO WRITE"){return;}
+    //   console.log(err);
+    //   if (err){
+    //     alert(err)
+    //   }
+    //   var difference = new Date() - startTime;
+    //   rightSide.append("<div>MILLISECONDS TAKEN: " + difference + " <div>")
+    //   that.attr('disabled', false);
+    //   that.text('Click to submit Tab 1');
+    //   // Figure out how to do this part.
+    // })
+  });
+  </script>
+</div>
