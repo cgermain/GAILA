@@ -2,7 +2,7 @@ from flask import Flask, render_template, request
 app = Flask(__name__)
 from time import time
 from SCRIPTS_FOR_GUI import mgf_select_one
-from SCRIPTS_FOR_GUI import helper
+# from SCRIPTS_FOR_GUI import helper
 import json
 from os.path import join
 from SCRIPTS_FOR_GUI import combine_selected_mgf_files
@@ -28,8 +28,8 @@ def tab():
 	# print file_name
 	file_name = str(request.args.get('name')) + '.html'
 	# print "fetching gene_files"
-	gene_files = helper.get_gene_files_array()
-	inverse_files = helper.get_inverse_files_array()
+	gene_files = utility.get_gene_files_array()
+	inverse_files = utility.get_inverse_files_array()
 	# print gene_files
 	return render_template(file_name, gene_files=gene_files,\
 	 inverse_files=inverse_files)
@@ -456,7 +456,7 @@ def combine_parsed_xml_with_parsed_mgf():
 def getMGFFiles():
 	try:
 		mgf_read_dir_path = str(request.form['mgfReadDirPath'])
-		files = helper.get_mgf_files_given_directory(mgf_read_dir_path)
+		files = utility.get_mgf_files_given_directory(mgf_read_dir_path)
 		text = json.dumps(files)
 		return text
 	except:
