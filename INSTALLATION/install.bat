@@ -19,8 +19,6 @@ rem
 
 echo beginning setup ...
 
-GOTO DEACTIVATEVENV
-
 WHERE python
 IF %ERRORLEVEL% NEQ 0 (
 	echo "python is not installed, install python 2.7 for windows and then "
