@@ -2,8 +2,8 @@ import os
 from os.path import join
 import subprocess
 
-# debug = False
-debug = True
+debug = False
+# debug = True
 
 def select_only_one(mgf_read_path, mgf_write_path, mgf_txt_write_path, mz_error, reporter_type, min_intensity, min_reporters, should_select):
 	print "Selecting only one, not precompiled"

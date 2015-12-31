@@ -142,6 +142,9 @@ def validate_tab_5(form):
 		log_error_threshold = form['logErrorThreshold']
 		reporter_type = form['reporterIonType']
 		geneFile = form['geneFile']
+		mgf_operation_to_perform = form['mgfOperationToPerform']
+		should_use_unacceptable = form['assignUnacceptableModifications']
+		unacceptable_mods = request.form.getlist('unacceptableMods[]')
 
 		if (not xml_read_path) or (not str(log_error_threshold)) or (not reporter_type) or (not geneFile):
 			print "Missing form input (one is blank)"
@@ -167,6 +170,27 @@ def validate_tab_5(form):
 		if not validate_gene_file(geneFile):
 			print "invalid gene file"
 			return False, "Invalid gene file"
+
+		if not mgf_operation_to_perform or (mgf_operation_to_perform != "0" and mgf_operation_to_perform != "1"):
+			print "mgf_operation_to_perform is bad"
+			return False, "Invalid mgfOperationToPerform"
+
+		if mgf_operation_to_perform == "1":
+			mgf_txt_foldername = makeFolderNames.construct_reporter_folder_path(form)
+		if mgf_operation_to_perform == "0":
+			mgf_txt_foldername = form['mgfTxtReadDirPath']
+		if not os.path.isdir(mgf_txt_foldername):
+			print "mgf_txt foldername doesn't exist for some reason"
+			return False, "mgf_txt foldername doesn't exist for some reason"
+
+
+
+		if not should_use_unacceptable or (should_use_unacceptable != "0" and should_use_unacceptable != "1"):
+			print "should_use_unacceptable is bad"
+			return False, "should_use_unacceptable is bad"
+
+
+		# Now, I think it's pretty good.
 
 		print "looks good you"
 		return True, None

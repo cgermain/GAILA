@@ -12,7 +12,7 @@ from SCRIPTS_FOR_GUI import combine_xml_mgf
 import math
 from SCRIPTS_FOR_GUI import utility
 from SCRIPTS_FOR_GUI import validation
-from copy import copy
+# from copy import copy
 # from science_code import science
 from SCRIPTS_FOR_GUI import makeFolderNames
 
@@ -86,6 +86,8 @@ def tab_5_helper_function():
 	log_error_threshold = request.form['logErrorThreshold']
 	reporter_type = request.form['reporterIonType']
 	geneFile = request.form['geneFile']
+	should_use_unacceptable = request.form['assignUnacceptableModifications']
+	unacceptable_mods = request.form.getlist('unacceptableMods[]')
 
 	print "parsed form"
 
@@ -98,10 +100,9 @@ def tab_5_helper_function():
 
 	print "parsed form more"
 
-
-	should_use_unacceptable = request.form['assignUnacceptableModifications']
+	# should_use_unacceptable = request.form['assignUnacceptableModifications']
 	print "should_use_unacceptable: " + str(should_use_unacceptable)
-	unacceptable_mods = request.form.getlist('unacceptableMods[]')
+	# unacceptable_mods = request.form.getlist('unacceptableMods[]')
 	print "unacceptable_mods: " + str(unacceptable_mods)
 	if should_use_unacceptable == "1":
 		unacceptable_mods = []
