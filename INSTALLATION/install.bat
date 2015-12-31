@@ -86,7 +86,6 @@ GOTO ACTIVATEVENV
 
 :ACTIVATEVENV
 echo "activating venv"
-pause
 echo activating venv
 CALL ..\VENV\Scripts\activate
 echo "activated venv"
