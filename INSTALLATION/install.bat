@@ -91,8 +91,11 @@ echo "activating venv"
 echo activating venv
 CALL ..\VENV\Scripts\activate
 echo "activated venv"
-GOTO INSTALLMODULES
+GOTO UPGRADEPIP
 
+:UPGRADEPIP
+pip install --upgrade pip
+GOTO INSTALLMODULES
 
 :INSTALLMODULES
 echo "installing all modules (flask, pandas, numpy)"
