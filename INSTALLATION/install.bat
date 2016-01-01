@@ -19,7 +19,7 @@ rem
 
 echo beginning setup ...
 
-WHERE python
+WHERE /r "c:\Python27" "python"
 IF %ERRORLEVEL% NEQ 0 (
 	echo "python is not installed, install python 2.7 for windows and then "
 )
