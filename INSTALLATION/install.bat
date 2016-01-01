@@ -21,7 +21,9 @@ echo beginning setup ...
 
 WHERE /r "c:\Python27" "python"
 IF %ERRORLEVEL% NEQ 0 (
-	echo "python is not installed, install python 2.7 for windows and then "
+	echo "python is not installed, install python 2.7 for windows and then try again"
+	GOTO END
+
 )
 
 GOTO CHECKFORPIP
