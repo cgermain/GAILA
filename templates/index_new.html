@@ -124,12 +124,12 @@
 	            error: function(response, textStatus, HTTPError){
 	              var responseText = (response && response.responseText) ?
 	                response.responseText : "ERROR IN EACHSERIES";
-	                rightSide.append('<div style="color:red">' + responseText + '</div>')
+	                // rightSide.append('<div style="color:red">' + responseText + '</div>')
 	              return next(responseText);
 	            }
 	          });
 	        }, function(err){
-	          callback(err);
+	          return callback(err);
 	        })
 	      }
 	    ],
@@ -144,7 +144,10 @@
 	      // }
 	      if (err){
 	      	console.log(err);
-	      	rightSide.append("<div style='color:red'>Error in selecting mgf!<div>");
+      		if (err){
+        		rightSide.append('<div style="color:red">' + err + '</div>')	
+        	}
+	      	// rightSide.append("<div style='color:red'>Error in selecting mgf!<div>");
 	      }
 	      var difference = new Date() - startTime;
 	      rightSide.append("<div>MILLISECONDS TAKEN: " + difference + " <div>")

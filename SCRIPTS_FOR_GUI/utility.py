@@ -1,6 +1,16 @@
 import re
 import os
 
+# def form_contains_array_of_fields(arr_of_fields):
+
+def all_fields_nonblank(form, fields):
+	try:
+		for f in fields:
+			if not str(form[f]):
+				return False
+		return True
+	except:
+		return False
 
 
 def validate_float(num):
@@ -17,7 +27,7 @@ def validate_int(num):
 	return matched
 
 def validate_ion_type(ion_type):
-	possibilities = ['iTRAQ4','iTRAQ8','TMT10','TMT2','TMT6','TMT0']
+	possibilities = ['iTRAQ4','iTRAQ8','TMT10','TMT2','TMT6','TMT6OLD','TMT0']
 	return (ion_type in possibilities)
 
 

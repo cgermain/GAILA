@@ -20,6 +20,7 @@ def construct_selected_mgf_path(form):
 	if form['performRecalibration'] == "0":
 		a = "MGFSpectraSelected_Min" + str(form['minReporters']) + str(form['reporterIonType']) + "ions" + \
 			"_MinIntensity" + str(form['minIntensity']) + "_MassError" + str(form['mzError']) + "ppm"
+		a = a.replace('.','-')
 
 		full_path = join(form['mgfReadDirPath'], a, '')
 		return full_path
@@ -28,6 +29,7 @@ def construct_selected_mgf_path(form):
 		a = "MGFSpectraSelected_Min" + str(form['minReporters']) + str(form['reporterIonType']) + "ions" + \
 			"_MinIntensity" + str(form['minIntensity']) + "_InitialMassError" + str(form['mzErrorInitialRun']) + \
 			"ppm_RecalMassError" + str(form['mzErrorRecalibration']) + "ppm"
+		a = a.replace('.','-')
 
 		full_path = join(form['mgfReadDirPath'], a, '')
 		return full_path
@@ -40,6 +42,7 @@ def construct_reporter_folder_path(form):
 	if form['performRecalibration'] == "0":
 		a = "ReportersSelected_Min" + str(form['minReporters']) + str(form['reporterIonType']) + "ions" + \
 			"_MinIntensity" + str(form['minIntensity']) + "_MassError" + str(form['mzError']) + "ppm"
+		a = a.replace('.','-')
 
 		full_path = join(form['mgfReadDirPath'], a, '')
 		return full_path
@@ -48,7 +51,8 @@ def construct_reporter_folder_path(form):
 		a = "ReportersSelected_Min" + str(form['minReporters']) + str(form['reporterIonType']) + "ions" + \
 			"_MinIntensity" + str(form['minIntensity']) + "_InitialMassError" + str(form['mzErrorInitialRun']) + \
 			"ppm_RecalMassError" + str(form['mzErrorRecalibration']) + "ppm"
-
+		a = a.replace('.','-')
+		
 		full_path = join(form['mgfReadDirPath'], a, '')
 		return full_path
 

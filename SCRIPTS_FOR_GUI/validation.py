@@ -2,37 +2,40 @@ from utility import *
 import os
 from os.path import join
 import makeFolderNames
-
+	
 def validate_tab_2(form):
-	# print "bizarrely printing request"
-	# print request
 	print "validating tab_2"
-	print form
 	try:
-		print "going through options"
 		mgf_read_dir_path = form['mgfReadDirPath']
 		mgf_file_name = form['mgfFileName']
 		reporter_type = form['reporterIonType']
 		min_intensity = form['minIntensity']
 		min_reporters = form['minReporters']
-
-		print "got through first 5"
-
 		perform_recalibration = form['performRecalibration']
 		should_select = form['mgfOperationToPerform']
-
-		print "got through options"
-
 		mz_error = form['mzError']
+		mz_error_initial_run = form['mzErrorInitialRun']
+		mz_error_recalibration = form['mzErrorRecalibration']
+	except Exception as e:
+		print "Field probably missing in tab 2"
+		print form
+		return False, "Missing form input in Tab 2 Helper Function"
+	
+	try:
+		if (not mgf_read_dir_path) or (not mgf_file_name) or \
+			 (not reporter_type) or (not min_intensity) or \
+			 (not min_reporters) or (not perform_recalibration) or \
+			 (not should_select):
+			print "Field is missing"
+			print form
+			return False, "Field is missing"
+	except Exception as e:
+		print "Error here, field is most likely missing"
+		print e
+		return False, "Field is missing"
 
-		mz_error_initial_run = form['mzErrorInitialRun'];
-		mz_error_recalibration = form['mzErrorRecalibration'];
-
-		print "got through errors"
-
-		print "got through all"
-
-
+	try:
+		print "Fields read in correctly"
 		print str(mgf_read_dir_path)
 
 		if not os.path.isdir(str(mgf_read_dir_path)):
@@ -47,9 +50,6 @@ def validate_tab_2(form):
 
 		print "endswithmgf"
 
-
-
-
 		if not validate_ion_type(reporter_type):
 			print "not a valid ion type"
 			return False, "not a valid ion type"
@@ -62,9 +62,9 @@ def validate_tab_2(form):
 
 		print "validatedminreporters"
 
-		if not validate_int(min_intensity):
-			print "min intensity is not a valid int"
-			return False, "min intensity is not a valid int"
+		if not validate_float(min_intensity):
+			print "min intensity is not a valid decimal"
+			return False, "min intensity is not a valid decimal"
 
 		print "through most validations"
 
@@ -74,19 +74,19 @@ def validate_tab_2(form):
 			return False, "could not determine whether to perform recalibration"
 
 		print "validatedpoerfomrrecalibration"
-		if perform_recalibration == "0" and not validate_int(mz_error):
-			print "mz_error not valid int"
-			return False, "mz_error not valid int"
+		if perform_recalibration == "0" and not validate_float(mz_error):
+			print "mz_error not valid decimal"
+			return False, "mz_error not valid decimal"
 
 		print "performrecal_0 checked"
 
 		if perform_recalibration == "1":
-		 	if not validate_int(mz_error_initial_run):
-				print "mz_error initial not valid int"
-				return False, "mz_error initial not valid int"
-			if not validate_int(mz_error_recalibration):
-				print "mz_error recalibration not valid int"
-				return False, "mz_error recalibration not valid int"
+		 	if not validate_float(mz_error_initial_run):
+				print "mz_error initial not valid decimal"
+				return False, "mz_error initial not valid decimal"
+			if not validate_float(mz_error_recalibration):
+				print "mz_error recalibration not valid decimal"
+				return False, "mz_error recalibration not valid decimal"
 
 		print "performrecal_1 checked"
 
@@ -128,10 +128,10 @@ def validate_tab_2(form):
 		return True, None
 
 	except Exception as e:
-		print "Missing form input"
+		print "Error in validation"
 		print "Exception: "
 		print e
-		return False, "Missing form input"
+		return False, "Error in Tab 2 validation"
 
 
 def validate_tab_5(form):
@@ -146,7 +146,8 @@ def validate_tab_5(form):
 		should_use_unacceptable = form['assignUnacceptableModifications']
 		unacceptable_mods = request.form.getlist('unacceptableMods[]')
 
-		if (not xml_read_path) or (not str(log_error_threshold)) or (not reporter_type) or (not geneFile):
+		if (not xml_read_path) or (not str(log_error_threshold)) or \
+			 (not reporter_type) or (not geneFile) or (not mgf_operation_to_perform):
 			print "Missing form input (one is blank)"
 			return False, "Missing form input (one is blank)"
 
