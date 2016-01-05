@@ -142,7 +142,6 @@ GOTO CREATESTARTUPSCRIPT
 
 :CREATESTARTUPSCRIPT
 
-ECHO echo off > ..\startup.bat 
 ECHO call VENV\Scripts\activate >> ..\startup.bat
 ECHO python flasktest.py >> ..\startup.bat
 GOTO FINISHEDSUCCESSFULLY
