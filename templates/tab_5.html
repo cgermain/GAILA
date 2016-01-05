@@ -288,7 +288,7 @@
           // contentType: "application/json",
           success : function(result){
             console.log(result);
-            rightSide.append('<div>xml parsed successfully</div>');
+            rightSide.append('<div style="color:green">XML parsed successfully. You can find the parsed xml in the same folder which stores the selected reporter ion files</div>');
             return callback(null);
           },
           error: function(response, textStatus, HTTPError){

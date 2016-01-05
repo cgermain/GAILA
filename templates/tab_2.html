@@ -173,6 +173,9 @@
         console.log("error in tab 2");
         console.log(err);
       }
+      else{
+        rightSide.append('<div style="color:green">Sucessfully parsed MGF files</div>')
+      }
       that.attr('disabled', false);
       that.text('Click to submit');
       return;
