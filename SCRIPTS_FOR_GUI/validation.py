@@ -144,7 +144,7 @@ def validate_tab_5(form):
 		geneFile = form['geneFile']
 		mgf_operation_to_perform = form['mgfOperationToPerform']
 		should_use_unacceptable = form['assignUnacceptableModifications']
-		unacceptable_mods = request.form.getlist('unacceptableMods[]')
+		unacceptable_mods = form.getlist('unacceptableMods[]')
 
 		if (not xml_read_path) or (not str(log_error_threshold)) or \
 			 (not reporter_type) or (not geneFile) or (not mgf_operation_to_perform):

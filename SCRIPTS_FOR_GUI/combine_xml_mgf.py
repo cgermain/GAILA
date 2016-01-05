@@ -296,6 +296,7 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type):
 		# xmldir,sep,ext = xmlfile.rpartition('.')
 		print "something dropped"
 		xmldir = join(xmldir,"")
+		parent_xml_filename = os.path.basename(os.path.normpath(xmldir))
 		print "about to loop files"
 		# Problem is that it's an empty folder!
 		for filename in os.listdir(xmldir):
@@ -339,7 +340,7 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type):
 				data.to_csv(this_filename,sep='\t',index=False)
 
 		first=1
-		outfile_name = join(selected_mgfdir, 'GPM-pep-reporter-merged.txt')
+		outfile_name = join(selected_mgfdir, parent_xml_filename + '-pep-reporter-merged.txt')
 		with open(outfile_name, 'w') as outfile:
 			for filename in os.listdir(xmldir):
 				if filename.endswith('_nocal_table_corrected.txt'):

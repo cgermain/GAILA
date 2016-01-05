@@ -78,7 +78,7 @@ def combine_mgf_txt_files():
 def tab_5_helper_function():
 	# print request.form
 	print "tab 5 helper function"
-	valid, validation_error = validation.validate_tab_5(return_form_copy())
+	valid, validation_error = validation.validate_tab_5(request.form)
 	if not valid:
 		return validation_error, 500
 
@@ -123,7 +123,7 @@ def tab_5_helper_function():
 @app.route("/tab_2_helper_function", methods=['POST'])
 def tab_2_helper_function():
 	print request.form
-	valid, validation_error = validation.validate_tab_2(request.form.copy())
+	valid, validation_error = validation.validate_tab_2(request.form)
 	print valid
 	print validation_error
 	if not valid:
