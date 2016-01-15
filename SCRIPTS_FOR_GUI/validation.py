@@ -184,6 +184,11 @@ def validate_tab_5(form):
 			print "mgf_txt foldername doesn't exist for some reason"
 			return False, "mgf_txt foldername doesn't exist for some reason"
 
+		reporter_files = get_reporter_files_given_directory(mgf_txt_foldername)
+		if not len(reporter_files):
+			print "The directory you returned doesn't have any .reporter files."
+			return False, "The directory you returned doesn't have any .reporter files."
+
 
 
 		if not should_use_unacceptable or (should_use_unacceptable != "0" and should_use_unacceptable != "1"):

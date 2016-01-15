@@ -92,8 +92,11 @@ def parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, reporter_t
 	if resp:
 		print "from parse_xtandem_combine_with_mgf, error detected in parse_xtandem_new: " + str(resp)
 		return resp
-	print "stop here for now"
+	# print "stop here for now"
 	# return 0
+
+	print "selected mgfdir:"
+	print selected_mgfdir
 
 	xml_dir_name = xml_dirname_from_filename(full_path_to_xml)
 	resp_2 = combine_parsed_xml_mgf(selected_mgfdir, xml_dir_name, reporter_type)

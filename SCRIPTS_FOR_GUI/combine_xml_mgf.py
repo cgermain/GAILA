@@ -251,7 +251,17 @@ def remove_log_e_duplicates(filename):
 
 
 
-
+def check_for_selected_xmldir_lineup(selected_mgfdir, xmldir):
+	if not os.path.isdir(selected_mgfdir):
+		return False, "Selected mgf directory doesn't exist"
+	if not os.path.isdir(xmldir):
+		return False, "xmldir doesn't exist"
+	for filename in os.listdir(xmldir):
+			if filename.endswith('.reporter'):
+				reporter_filename = join(selected_mgfdir, filename)
+				if not os.path.isfile(reporter_filename):
+					return False, str(filename) + " does not exist in the selected mgfdir"
+	return True, None
 
 def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type):
 	try:
@@ -277,6 +287,10 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type):
 			start_col=type+'-126'
 			end_col=type+'-131'
 			label_mass_int=229
+		elif reporter_ion_type=='TMT6OLD':
+			start_col=type+'-126'
+			end_col=type+'-131'
+			label_mass_int=229
 		elif reporter_ion_type=='TMT10':
 			start_col=reporter_ion_type+'-126'
 			end_col=reporter_ion_type+'-131'
@@ -285,6 +299,12 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type):
 			print "bad reporter ion type"
 			return "BAD REPORTER ION TYPE"
 		print "good reporter ion type"
+
+		# I should check here to make sure the files line up.
+		linesup, message = check_for_selected_xmldir_lineup(selected_mgfdir, xmldir)
+		if not linesup:
+			print "doesn't line up"
+			return message
 
 		corr_path = join(this_dir, "inverse_files", reporter_ion_type + "-inv.txt")
 		if not os.path.isfile(corr_path):
@@ -305,7 +325,9 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type):
 				xml_filename = join(xmldir, filename)
 				mgf_txt_filename = join(selected_mgfdir, filename)
 				xml = pd.read_table(xml_filename, index_col=['filename','scan','charge'])
+				print "read xml filename"
 				mgf = pd.read_table(mgf_txt_filename, index_col=['filename','scan','charge'])
+				print "read mgf_txt filename"
 				mgf.sort_index()
 				print "did initial work on them"
 				testing_filename = mgf_txt_filename.split('.reporter')[0] + '_duplicate_sorted' + '.reporter'

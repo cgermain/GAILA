@@ -46,6 +46,7 @@ python get-pip.py
 WHERE /r "c:\Python27\Scripts" "pip"
 IF %ERRORLEVEL% NEQ 0 (
 	ECHO "INSTALLATION FAILED"
+	pause
 	GOTO FINISHED
 )
 echo "pip installed successfully into C:\Python27\Scripts\pip.exe"
@@ -69,6 +70,7 @@ ECHO virtualenv has been installed (hopefully)
 WHERE /r "c:\Python27\Scripts" "virtualenv"
 IF %ERRORLEVEL% NEQ 0 (
 	echo error installing virtualenv
+	pause
 	GOTO FINISHED
 )
 echo "virtualenv installed correctly"
@@ -78,7 +80,8 @@ GOTO CREATEVENV
 echo "creating a virtualenv for this project, creatively naming it venv."
 C:\Python27\Scripts\virtualenv ..\VENV
 IF %ERRORLEVEL% NEQ 0 (
-	echo error creating venv
+	echo error creating 
+	pause
 	GOTO FINISHED
 )
 
@@ -94,7 +97,11 @@ echo "activated venv"
 GOTO UPGRADEPIP
 
 :UPGRADEPIP
+echo upgrading pip
 pip install --upgrade pip
+echo pip upgraded, upgrading setuptools
+pip install --upgrade setuptools
+echo setuptools upgraded
 GOTO INSTALLMODULES
 
 :INSTALLMODULES
@@ -103,35 +110,47 @@ echo installing flask
 pip install flask
 IF %ERRORLEVEL% NEQ 0 (
 	echo error installing flask
-	deactivate
+	rem deactivate
+	pause
 	GOTO FINISHED
 )
+
+echo FLASK INSTALLED SUCESSFULLY
+
 
 echo .
 echo .
 echo .
 echo .
+
+echo installing numpy. IT TAKES A VERY LONG TIME TO INSTALL, BE PREPARED!
+TIMEOUT 5
+pip install numpy -v
+IF %ERRORLEVEL% NEQ 0 (
+	echo error installing flask
+	rem deactivate
+	pause
+	GOTO FINISHED
+)
+
+echo numpy installed
+
+
+echo .
+echo .
+echo .
+echo .
+
 
 echo installing pandas
 pip install pandas
 IF %ERRORLEVEL% NEQ 0 (
 	echo error installing flask
-	deactivate
+	rem deactivate
+	pause
 	GOTO FINISHED
 )
 
-echo .
-echo .
-echo .
-echo .
-
-echo installing numpy
-pip install numpy
-IF %ERRORLEVEL% NEQ 0 (
-	echo error installing flask
-	deactivate
-	GOTO FINISHED
-)
 echo everything should be installed
 
 
@@ -161,8 +180,4 @@ goto END
 :END
 echo exiting script
 pause
-
-
-
-
-
+pause

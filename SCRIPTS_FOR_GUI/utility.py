@@ -102,6 +102,14 @@ def get_mgf_files_given_directory(directory):
 	return mgf_array
 
 
+def get_reporter_files_given_directory(directory):
+	reporter_array = []
+	for f in os.listdir(directory):
+		if f.endswith(".reporter"):
+			reporter_array.append(f)
+	return reporter_array
+
+
 def get_gene_files_array():
 	gene_file_array = []
 	this_dir = os.path.dirname(os.path.realpath(__file__))
