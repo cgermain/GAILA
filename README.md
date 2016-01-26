@@ -5,7 +5,7 @@
 ### Download python:
 https://www.python.org/downloads/release/python-2710/
 (Click "Windows x86-64 MSI installer" if you have 64 bit windows, and "Windows x86 MSI installer" if you have 32 bit windows (all newer computers run 64 bit windows))
-Then follow installation instructions
+Then follow instructionsallation instructions
 
 ###Make sure Perl is installed:
 http://www.activestate.com/activeperl/downloads
@@ -25,4 +25,7 @@ Open your web browser (firefox or chrome) and type localhost:5000 into the URL b
 
 TODOS:
 
-None!
+Give option to extract directly from GPM, not pairing with reporters.
+
+Instead of PTGN we want PTGND, with a 5th MANDATORY column as description (it can be blank).
+
