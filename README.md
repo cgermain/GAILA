@@ -4,8 +4,12 @@
 ## Prerequisites:
 ### Download python:
 https://www.python.org/downloads/release/python-2710/
-(Click "Windows x86-64 MSI installer" if you have 64 bit windows, and "Windows x86 MSI installer" if you have 32 bit windows)
-Then run the .msi installer to install
+(Click "Windows x86-64 MSI installer" if you have 64 bit windows, and "Windows x86 MSI installer" if you have 32 bit windows (all newer computers run 64 bit windows))
+Then follow installation instructions
+
+###Make sure Perl is installed:
+http://www.activestate.com/activeperl/downloads
+(Click "Download ActivePerl for Windows (64-bit, x64)" if you have 64 bit windows, and "Download ActivePerl for Windows (x86)" if you have 32 bit windows (all newer computers run 64 bit windows))
 
 ### Download Microsoft Visual C++ compiler: 
 https://www.microsoft.com/en-us/download/details.aspx?id=44266

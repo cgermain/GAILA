@@ -8,7 +8,7 @@
         <option value="0">Use pre-extracted reporter ion (.reporter) files</option>
       </select>
       <span class="input-group-btn">
-        <button class="btn btn-info" onclick="alert('If you don\'t have the mgf.txt files you used for the GPM search, you can re-select them here.')">?</button>
+        <button class="btn btn-info" onclick="alert('If you don\'t have the .reporter files you used for the GPM search, you can re-select them here.')">?</button>
       </span>
     </div>
     <div id="options_if_selecting">
@@ -116,7 +116,7 @@
       </select>
     </div>
     <div class="input-group" style="margin: 1%">
-      <span class="input-group-addon" id="basic-addon1">Include spectra peptide expectation <= </span>
+      <span class="input-group-addon" id="basic-addon1">Include spectra peptide expectation &ge </span>
       <input type="text" class="form-control" id="logErrorThreshold" value="0.1">
       <span class="input-group-btn">
         <button class="btn btn-info" onclick="alert('GPM outputs an match probability for each spectra. This filters out spectra with higher error than the value given. Must be a number between 0 and 1, written in either decimal form or scientific notation (1.3e-5)')">?</button>
@@ -288,7 +288,7 @@
           // contentType: "application/json",
           success : function(result){
             console.log(result);
-            rightSide.append('<div style="color:green">XML parsed successfully. You can find the parsed xml in the same folder which stores the selected reporter ion files</div>');
+            rightSide.append('<h3 style="color:green">XML parsed successfully. You can find the parsed xml in the same folder which stores the selected reporter ion files</h3>');
             return callback(null);
           },
           error: function(response, textStatus, HTTPError){

@@ -7,7 +7,6 @@ debug = False
 
 def select_only_one(mgf_read_path, mgf_write_path, mgf_txt_write_path, mz_error, reporter_type, min_intensity, min_reporters, should_select):
 	print "Selecting only one, not precompiled"
-	# precomp_name = 'mgf_select_only_one_precompile_regex.pl'
 	perl_file = 'mgf_select_only_one.pl'
 
 	if os.path.isfile(mgf_txt_write_path):

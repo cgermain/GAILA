@@ -104,7 +104,7 @@ def add_c_labels_to_duplicate_marker_column(filename):
 	filename_index = first_line_arr.index("filename")
 	scan_index = first_line_arr.index("scan")
 	duplicate_index = first_line_arr.index("duplicate_flag")
-	log_e_index = first_line_arr.index("log(e)") #Hopefully it's there
+	log_e_index = first_line_arr.index("peptide expectation") #Hopefully it's there
 	if scan_index == -1 or filename_index == -1 or duplicate_index == -1 or log_e_index == -1:
 		raise Exception("something is wrong with the file formatting")
 	scan_list = []
@@ -161,7 +161,7 @@ def take_in_file_sorted_by_filename_scan_output_file_with_duplicate_marker_colum
 	temp_file.write(first_line.strip() + "\tduplicate_flag\n")
 
 	first_line_arr = first_line.split('\t')
-	log_e_index = first_line_arr.index("log(e)") #Hopefully it's there
+	log_e_index = first_line_arr.index("peptide expectation") #Hopefully it's there
 	scan_index = first_line_arr.index("scan")
 	filename_index = first_line_arr.index("filename")
 	if scan_index == -1 or filename_index == -1:
@@ -200,7 +200,7 @@ def remove_log_e_duplicates(filename):
 
 	first_line = a.readline()
 	first_line_arr = first_line.split('\t')
-	log_e_index = first_line_arr.index("log(e)") #Hopefully it's there
+	log_e_index = first_line_arr.index("peptide expectation") #Hopefully it's there
 	scan_index = first_line_arr.index("scan")
 
 	scan_set = set()

@@ -1,7 +1,6 @@
 #!/usr/local/bin/perl
 
 use strict;
-use File::Path qw(rmtree);
 use File::Basename;
 
 # THE FIRST PARAMETER IS PATH TO FILE

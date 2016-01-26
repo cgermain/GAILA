@@ -15,6 +15,7 @@ echo beginning setup ...
 WHERE /r "c:\Python27" "python"
 IF %ERRORLEVEL% NEQ 0 (
 	echo "python is not installed, install python 2.7 for windows and then try again"
+	echo "this installation expects a computer with vanilla python, if your computer has Anaconda or another python package, open install.bat in notepad and change all instances of c:\Python27 to the folder with your python executable"
 	echo exiting . . .
 	pause
 	exit 1
@@ -34,7 +35,7 @@ IF %ERRORLEVEL% NEQ 0 (
 	ECHO "NO PIP INSTALLED"
 	echo installing pip now...
 	VERIFY
-	python get-pip.py
+	c:\Python27\Scripts get-pip.py
 	ECHO "pip should be installed"
 	WHERE /r "c:\Python27\Scripts" "pip"
 	IF %ERRORLEVEL% NEQ 0 (

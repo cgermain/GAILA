@@ -9,7 +9,7 @@
         <option value="1">Extract reporter ion intensities AND select viable spectra (creates .reporter AND new .mgf files)</option>
       </select>
       <span class="input-group-btn">
-        <button class="btn btn-info" onclick="alert('Selecting viable spectra creates a series of mgf files filtered by whether a given run meet your minimum intensity and reporter count criteria')">?</button>
+        <button class="btn btn-info" onclick="alert('Selecting viable spectra creates a series of mgf files filtered by whether a given run meet your minimum intensity and reporter count criteria. ')">?</button>
       </span>
     </div>
 
@@ -17,7 +17,7 @@
       <span class="input-group-addon" id="basic-addon1">FULL PATH to MGF DIRECTORY</span>
       <input type="text" class="form-control" id="mgfReadDirPath">
       <span class="input-group-btn">
-        <button class="btn btn-info" onclick="alert('On windows, open windows explorer and navigate to your mgf directory. Clicking on your url bar will highlight the directory path, copy paste that into this text box')">?</button>
+        <button class="btn btn-info" onclick="alert('On windows, open windows explorer and navigate to your mgf directory. Clicking on its url bar, to the right of the folder names, will highlight the directory path. Copy paste that into this text box')">?</button>
       </span>
 
     </div>
@@ -39,7 +39,7 @@
       </span>
     </div>
     <div class="input-group" style="margin: 1%">
-      <span class="input-group-addon" id="basic-addon1">Minimum Reporters with said intensity</span>
+      <span class="input-group-addon" id="basic-addon1">Minimum number of Reporters with said intensity</span>
       <input type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' class="form-control" id="minReporters" value="2">
       <span class="input-group-btn">
         <button class="btn btn-info" onclick="alert('Part of the filtering process. For a run to be selected as valid, this many runs must appear with at least the prescribed intensity')">?</button>
@@ -51,7 +51,7 @@
       <span class="input-group-addon" id="basic-addon1">Perform largest-reporter recalibration</span>
       <select class='form-control' id="performRecalibration">
         <option value="1">Perform recalibration</option>
-        <option value="0">Do Not Perform recalibration</option>
+        <option value="0">DO NOT Perform recalibration</option>
       </select>
       <!-- <span class="input-group-btn">
         <button class="btn btn-info" onclick="alert('Option to perform reporter-ion mass-recalibration before selecting runs. Provides more accuracy as a slight tradeoff for speed')">?</button>
@@ -60,7 +60,7 @@
 
     <div id="options_if_recalibrating">
       <div class="input-group" style="margin: 1%">
-        <span class="input-group-addon" id="basic-addon1">&nbspm/z error for initial runthrough (ppm, integer) &nbsp</span>
+        <span class="input-group-addon" id="basic-addon1">&nbspm/z error to select maximum reporter for recalibration (ppm) &nbsp</span>
         <input type="text" class="form-control" id="mzErrorInitialRun" value="20">
         <span class="input-group-btn">
           <button class="btn btn-info" onclick="alert('Error used to categorize spectral peaks in order to scale reporter ion target-masses to more accurate values. \n\nThe units of this number are millionths of a percent away from target mass. So, inputting 20 would mean that, for a reporter ion with m/z=100, anything with m/z between 99.998 and 100.002 would be classified as that ion')">?</button>
@@ -68,7 +68,7 @@
       </div>
 
       <div class="input-group" style="margin: 1%">
-        <span class="input-group-addon" id="basic-addon1">&nbsp m/z error for recalibration  (ppm, integer, must be smaller than initial m/z error) &nbsp</span>
+        <span class="input-group-addon" id="basic-addon1">&nbsp m/z error to select recalibrated data (ppm, must be smaller than initial m/z error) &nbsp</span>
         <input type="text" class="form-control" id="mzErrorRecalibration" value="5">
         <span class="input-group-btn">
           <button class="btn btn-info" onclick="alert('Error used to categorize spectral peaks AFTER reporter ion masses have been recalibrated. \n\nThe units of this number are millionths of a percent away from target mass. So, inputting 5 would mean that, for a reporter ion with recalibrated m/z=100, anything with m/z between 99.9995 and 100.0005 would be classified as that ion')">?</button>
@@ -77,7 +77,7 @@
     </div>
     <div id="options_if_not_recalibrating" style="display: none">
       <div class="input-group" style="margin: 1%">
-        <span class="input-group-addon" id="basic-addon1">&nbspmz_error (ppm, integer) &nbsp</span>
+        <span class="input-group-addon" id="basic-addon1">&nbspmz_error (ppm) &nbsp</span>
         <input type="text" class="form-control" id="mzError" value="20">
         <span class="input-group-btn">
           <button class="btn btn-info" onclick="alert('Error used to categorize spectral peaks, based on hard-coded reporter ion masses. \n\nThe units of this number are millionths of a percent away from target mass. So, inputting 20 would mean that, for a reporter ion with recalibrated m/z=100, anything with m/z between 99.998 and 100.002 would be classified as that ion')">?</button>
@@ -174,7 +174,7 @@
         console.log(err);
       }
       else{
-        rightSide.append('<div style="color:green">Sucessfully parsed MGF files</div>')
+        rightSide.append('<h3 style="color:green">Sucessfully parsed all MGF files</h3>')
       }
       that.attr('disabled', false);
       that.text('Click to submit');
