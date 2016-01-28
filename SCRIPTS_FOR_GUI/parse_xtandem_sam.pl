@@ -80,7 +80,7 @@ if ($error==0)
   #print qq!###$genes{"ENSRNOP00000019021"}###\n!;
   open (IN,qq!$xmlfile!) || die "Could not open $xmlfile\n";
   open (OUT,qq!>$xmlfile.txt!) || die "Could not open $xmlfile\n";
-  print OUT qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tlabeling\tstart\tpeptide expectation\ttryptic\tmissed\tunacceptable modifications\tprotein\tgene\tgene_id\tprotein_description\tprotein log(e)\tother proteins\tother genes\tother gene ids\tother protein descriptions\tdifferent genes\n!;
+  print OUT qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tlabeling\ttryptic\tmissed\tunacceptable modifications\tprotein log(e)\tprotein\tprotein_description\tgene\tgene_id\tother proteins\tother protein descriptions\tother genes\tother gene ids\tdifferent genes\n!;
   my $xmlfile_=$xmldir;
   # $xmlfile_=~s/\.xml$//;
   # mkdir($xmlfile_);
@@ -448,16 +448,15 @@ if ($error==0)
         my $protein_description=$protein_descriptions{$protein_};
         if ($protein_description!~/\w/) { $protein_description="None"; }
         if ($other_protein_descriptions!~/\w/) { $other_protein_descriptions="None"; }
-
-
-        print OUT qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$labeling\t$start\t$expect\t$tryptic\t$missed\t$unacceptable\t$protein_\t$gene\t$gene_id\t$protein_description\t$protein_expect\t$protein_other\t$other_genes\t$other_gene_ids\t$other_protein_descriptions\t$different_genes\n!;
+        
+        print OUT qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$start\t$expect\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
         open (OUT_,qq!>>$xmlfile_/$f_name_sans_mgf.reporter!) || die "Could not open $xmlfile_/$filename.reporter\n";
         if ($filenames{$filename}!~/\w/)
         {
           $filenames{$filename}=1;
-          print OUT_ qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tlabeling\tstart\tpeptide expectation\ttryptic\tmissed\tunacceptable modifications\tprotein\tgene\tgene_id\tprotein_description\tprotein expectation, log10\tother proteins\tother genes\tother gene ids\tother protein descriptions\tdifferent genes\n!;
+          print OUT_ qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tlabeling\ttryptic\tmissed\tunacceptable modifications\tprotein log(e)\tprotein\tprotein_description\tgene\tgene_id\tother proteins\tother protein descriptions\tother genes\tother gene ids\tdifferent genes\n!;
         }
-        print OUT_ qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$labeling\t$start\t$expect\t$tryptic\t$missed\t$unacceptable\t$protein_\t$gene\t$gene_id\t$protein_description\t$protein_expect\t$protein_other\t$other_genes\t$other_gene_ids\t$other_protein_descriptions\t$different_genes\n!;
+        print OUT_ qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$start\t$expect\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
         close(OUT_);
       }
       $mh="";
