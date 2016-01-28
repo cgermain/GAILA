@@ -12,6 +12,7 @@ from os.path import join
 this_dir = os.path.dirname(os.path.realpath(__file__))
 
 def remove_duplicate_lines(filename):
+	print "removing duplicate lines"
 	suffix = '_with_duplicates_removed'
 	lines_seen = set()
 	write_dest = filename + suffix
@@ -29,6 +30,7 @@ def remove_duplicate_lines(filename):
 
 
 def clear_directory_of_files(directory):
+	print "clearing dir of files"
 	for item in os.listdir(directory):
 		if os.path.isfile(item):
 			toRemove = directory + '/' + item
@@ -88,6 +90,7 @@ def add_a_or_b_label_to_sorted_mfg_txt_file(filename):
 	temp_file.close()
 	os.remove(filename)
 	os.rename(temp_filename,filename)
+	print "a and b labels added"
 
 # REMEMBER TO DO ONE AT THE END TOO!
 
@@ -324,8 +327,6 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type):
 				print filename
 				xml_filename = join(xmldir, filename)
 				mgf_txt_filename = join(selected_mgfdir, filename)
-				xml = pd.read_table(xml_filename, index_col=['filename','scan','charge'])
-				print "read xml filename"
 				mgf = pd.read_table(mgf_txt_filename, index_col=['filename','scan','charge'])
 				print "read mgf_txt filename"
 				mgf.sort_index()
@@ -334,12 +335,19 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type):
 				mgf.to_csv(testing_filename, sep='\t')
 				print "wrote one csv"
 				add_a_or_b_label_to_sorted_mfg_txt_file(testing_filename)
+				print "about to read mgf table"
 				mgf = pd.read_table(testing_filename, index_col=['filename','scan','charge'])
+				print "mgf table read."
+				xml = pd.read_table(xml_filename, index_col=['filename','scan','charge'])
+				print "read xml filename"
+				print "about to merge"
 				dfc=pd.merge(mgf,xml, left_index=True, right_index=True)
+				print "merged. about to dropna"
 				dfc_=dfc.dropna()
 				csv_filename = join(xmldir, filename + '_nocal_table.txt')
 				print "Writing to " + str(csv_filename)
 				dfc_.to_csv(csv_filename,sep='\t')
+				print "written to csv"
 
 				os.remove(testing_filename)
 

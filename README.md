@@ -27,5 +27,5 @@ TODOS:
 
 Give option to extract directly from GPM, not pairing with reporters.
 
-Instead of PTGN we want PTGND, with a 5th MANDATORY column as description (it can be blank).
+Instead of PTGN we want PTGND, with a 5th MANDATORY column as description (it can be blank).   √√√ I THINK THAT THIS WILL WORK, WAIT ON DAD'S DATA.
 
