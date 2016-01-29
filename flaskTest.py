@@ -18,14 +18,10 @@ from SCRIPTS_FOR_GUI import makeFolderNames
 
 @app.route("/")
 def main():
-	# print render_template('index.html')
 	return render_template('index_new.html')
 
 @app.route("/tab", methods=['GET'])
 def tab():
-	# tab_num = request.args.get('num')
-	# file_name = "tab_" + str(tab_num) + ".html"
-	# print file_name
 	file_name = str(request.args.get('name')) + '.html'
 	# print "fetching gene_files"
 	gene_files = utility.get_gene_files_array()
@@ -213,31 +209,6 @@ def tab_2_helper_function():
 
 
 
-@app.route("/tab_3_function", methods=['POST'])
-def tab_3_function():
-	print "HANDLE TAB 3"
-	xml_read_path = str(request.form['xmlReadPath'])
-	# print xml_read_path
-	try:
-		threshold = int(request.form['threshold'])
-		threshold = str(round(threshold / 100.0, 2))
-	except ValueError:
-		print "bad threshold value"
-		return "ERROR: Bad Threshold Value", 500
-	try:
-		labelMass = str(int(request.form['labelMass']))
-	except ValueError:
-		print "bad labelMass value"
-		return "ERROR: Bad Label Mass Value", 500
-	# print labelMass
-	geneFile = str(request.form['geneFile'])
-	a = call_xml_parser.parse_xtandem(xml_read_path, threshold, labelMass, geneFile)
-	to_return =  "Return from parse_xtandem: " + str(a)
-	if a:
-		return a, 500
-	print to_return
-	return to_return
-
 @app.route("/combine_parsed_xml_with_parsed_mgf", methods=["POST"])
 def combine_parsed_xml_with_parsed_mgf():
 	print "COMBINING PARSED XML WITH PARSED MGF"
@@ -274,28 +245,6 @@ def getMGFFiles():
 		return "Error selecting mgf files, make sure you have a proper mgf directory name", 500
 
 
-
-@app.route("/submitForm", methods=['POST'])
-def submitForm():
-	t_1 = time()
-	while time() - t_1 < 1:
-		i = 0
-
-	print "yoyoyo"
-	return "<div>Hello you</div>"	
-
-@app.route("/secondSubmit", methods=['POST'])
-def secondSubmit():
-
-	t_1 = time()
-	while time() - t_1 < 2:
-		i = 0
-	print "oyoyoyo"
-	# return {'html' : "<div>Submitted</div>"}
-	return "<div>Goodbye you</div>"
-
-
-
 def return_form_copy():
 	to_return = {}
 	for key in request.form:
@@ -310,10 +259,6 @@ def multiple_select_to_two_arrays(unacceptable_mods):
 	mass_val_arr = [j[0] for j in two_d_array]
 	mod_val_arr = [k[1] for j in two_d_array]
 	return mass_val_arr, mod_val_arr 
-
-
-
-
 
 
 if __name__ == "__main__":
