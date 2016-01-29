@@ -53,7 +53,7 @@ def add_a_or_b_label_to_sorted_mfg_txt_file(filename):
 	temp_file = open(temp_filename, "w")
 
 	first_line = a.readline()
-	temp_file.write(first_line.strip() + "\tduplicate_flag\n")
+	temp_file.write(first_line.strip() + "\treplicate_spec_flag\n")
 	first_line_arr = first_line.split('\t')
 	filename_index = first_line_arr.index("filename")
 	scan_index = first_line_arr.index("scan")
@@ -106,7 +106,7 @@ def add_c_labels_to_duplicate_marker_column(filename):
 	first_line_arr = first_line.split('\t')
 	filename_index = first_line_arr.index("filename")
 	scan_index = first_line_arr.index("scan")
-	duplicate_index = first_line_arr.index("duplicate_flag")
+	duplicate_index = first_line_arr.index("replicate_spec_flag")
 	log_e_index = first_line_arr.index("peptide expectation") #Hopefully it's there
 	if scan_index == -1 or filename_index == -1 or duplicate_index == -1 or log_e_index == -1:
 		raise Exception("something is wrong with the file formatting")
@@ -117,7 +117,7 @@ def add_c_labels_to_duplicate_marker_column(filename):
 		line_arr = line.split("\t")
 		curr_scan = line_arr[scan_index]
 		curr_filename = line_arr[filename_index]
-		curr_duplicate_flag = line_arr[duplicate_index]
+		curr_replicate_spec_flag = line_arr[duplicate_index]
 		tup = (curr_filename, curr_scan)
 		if (not first) and (not (most_recent[1] == tup[1])):
 			if len(scan_list) == 0:
@@ -161,7 +161,7 @@ def take_in_file_sorted_by_filename_scan_output_file_with_duplicate_marker_colum
 	temp_file = open(filename + "_PLACEHOLDER", "w")
 	
 	first_line = a.readline()
-	temp_file.write(first_line.strip() + "\tduplicate_flag\n")
+	temp_file.write(first_line.strip() + "\treplicate_spec_flag\n")
 
 	first_line_arr = first_line.split('\t')
 	log_e_index = first_line_arr.index("peptide expectation") #Hopefully it's there
