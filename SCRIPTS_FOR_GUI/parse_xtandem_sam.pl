@@ -80,7 +80,7 @@ if ($error==0)
   #print qq!###$genes{"ENSRNOP00000019021"}###\n!;
   open (IN,qq!$xmlfile!) || die "Could not open $xmlfile\n";
   open (OUT,qq!>$xmlfile.txt!) || die "Could not open $xmlfile\n";
-  print OUT qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tlabeling\ttryptic\tmissed\tunacceptable modifications\tprotein log(e)\tprotein\tprotein_description\tgene\tgene_id\tother proteins\tother protein descriptions\tother genes\tother gene ids\tdifferent genes\n!;
+  print OUT qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tlabeling\ttryptic\tmissed\tunacceptable modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
   my $xmlfile_=$xmldir;
   # $xmlfile_=~s/\.xml$//;
   # mkdir($xmlfile_);
@@ -454,7 +454,7 @@ if ($error==0)
         if ($filenames{$filename}!~/\w/)
         {
           $filenames{$filename}=1;
-          print OUT_ qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tlabeling\ttryptic\tmissed\tunacceptable modifications\tprotein log(e)\tprotein\tprotein_description\tgene\tgene_id\tother proteins\tother protein descriptions\tother genes\tother gene ids\tdifferent genes\n!;
+          print OUT_ qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tlabeling\ttryptic\tmissed\tunacceptable modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
         }
         print OUT_ qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$start\t$expect\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
         close(OUT_);

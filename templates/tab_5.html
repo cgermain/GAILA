@@ -28,7 +28,7 @@
       </div>
       <div class="input-group" style="margin: 1%">
         <span class="input-group-addon" id="basic-addon1">Minimum Reporters with said intensity</span>
-        <input type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' class="form-control" id="minReporters" value="2">
+        <input type="text" class="form-control" id="minReporters" value="2">
         <span class="input-group-btn">
           <button class="btn btn-info" onclick="alert('Part of the filtering process. For a run to be selected as valid, this many runs must appear with at least the prescribed intensity')">?</button>
         </span>
@@ -45,7 +45,7 @@
 
       <div id="options_if_recalibrating">
         <div class="input-group" style="margin: 1%">
-          <span class="input-group-addon" id="basic-addon1">&nbspm/z error for initial runthrough (ppm, integer) &nbsp</span>
+          <span class="input-group-addon" id="basic-addon1">&nbspm/z error for initial runthrough (ppm) &nbsp</span>
           <input type="text" class="form-control" id="mzErrorInitialRun" value="20">
           <span class="input-group-btn">
             <button class="btn btn-info" onclick="alert('Error used to categorize spectral peaks in order to scale reporter ion target-masses to more accurate values. \n\nThe units of this number are millionths of a percent away from target mass. So, inputting 20 would mean that, for a reporter ion with m/z=100, anything with m/z between 99.998 and 100.002 would be classified as that ion')">?</button>
@@ -53,7 +53,7 @@
 
         </div>
         <div class="input-group" style="margin: 1%">
-          <span class="input-group-addon" id="basic-addon1">&nbsp m/z error for recalibration  (ppm, integer, must be smaller than initial m/z error) &nbsp</span>
+          <span class="input-group-addon" id="basic-addon1">&nbsp m/z error for recalibration  (ppm, must be smaller than initial m/z error) &nbsp</span>
           <input type="text" class="form-control" id="mzErrorRecalibration" value="5">
           <span class="input-group-btn">
             <button class="btn btn-info" onclick="alert('Error used to categorize spectral peaks AFTER reporter ion masses have been recalibrated. \n\nThe units of this number are millionths of a percent away from target mass. So, inputting 5 would mean that, for a reporter ion with recalibrated m/z=100, anything with m/z between 99.9995 and 100.0005 would be classified as that ion')">?</button>
