@@ -6,14 +6,9 @@ import sys, os, shutil
 
 
 def create_inverse(full_path_to_crossover):
-	# table = pd.read_table(full_path_to_crossover)
-	# table_dict = {}
-	# for (index, row) in table.iterrows():
-	# 	s = sum(row)
-	# 	i_s = 1.0 / s
-	# 	sub_l = [i_s for p in row]
-	# 	l.append(sub_l)
-	# table = 
+	# This reads in a text file, with a the first row being labels, 
+	# and the remaining rows making a tab-separated square matrix, and outputs
+	# an inverse matrix.
 	a = open(full_path_to_crossover, 'r')
 	firstline = a.readline()
 	a.close()
@@ -39,8 +34,8 @@ def create_inverse(full_path_to_crossover):
 	print "inverse matrix: "
 	print inverse
 
-
-create_inverse('/Users/samlobel/Code/DAD/FINAL_LOBEL_GUI/inverse_creation/tmt6_new.txt')
+# example:
+# create_inverse('/Users/samlobel/Code/DAD/FINAL_LOBEL_GUI/inverse_creation/tmt6_new.txt')
 
 
 

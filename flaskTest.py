@@ -207,6 +207,41 @@ def tab_2_helper_function():
 		else:
 			return "mgf_select without recalibration run successfully"
 
+@app.route("/check_if_gpm_merge_already_exists", methods=["POST"])
+def check_if_gpm_merge_already_exists():
+	print "checking if gmp merge already exists"
+	valid, validation_error = validation.validate_tab_5(request.form)
+	if not valid:
+		return validation_error, 500
+
+	try:
+		if request.form["mgfOperationToPerform"] == "1":
+			print "if we need to create the .reporter folder, it can't already exist"
+			return {existsAlready : False}
+
+		folder_name = request.form['mgfTxtReadDirPath']
+		print folder_name
+		if not folder_name:
+			return {existsAlready : False}
+		if not os.path.isdir(folder_name):
+			return {existsAlready : False}
+		else:
+			parent_xml_filename = os.path.basename(os.path.normpath(request.form["xmlReadPath"]))
+			print parent_xml_filename
+			parent_xml_filename = parent_xml_filename.rsplit('.', 1)[0]
+			outfile_name = join(folder_name, parent_xml_filename + '-pep-reporter-merged.txt')
+			print "outfile_name"
+			print outfile_name
+			if os.path.isfile(outfile_name):
+				print "This means the file already exists. Thats bad, because we don't want to repeat ourselves."
+				return "It seems that the merged GPM-reporter file we want to create, already exists.", 500
+			else:
+				return {existsAlready : False}
+	except:
+		print "error creating the foldername. At least that means it doesn't exist"
+		return "Does not exist already"
+
+
 
 
 @app.route("/combine_parsed_xml_with_parsed_mgf", methods=["POST"])

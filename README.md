@@ -21,6 +21,9 @@ When this runs, it will create a file called startup.bat. Double click this to s
 Open your web browser (firefox or chrome) and type localhost:5000 into the URL bar. This is the projects User Interface
 
 
+Notes:
+PTGND files must be tab-delimited, with 5 files.
+
 
 
 TODOS:

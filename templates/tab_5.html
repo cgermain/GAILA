@@ -268,6 +268,23 @@
 
     // }
     async.waterfall([
+      function checkIfFinalProductExistsAlready(callback){
+        $.ajax({
+          type:"POST",
+          url:"check_if_gpm_merge_already_exists",
+          data:serializedForm,
+          success : function(result){
+            console.log("final product doesn't already exist");
+            console.log(result);
+            return callback(null);
+          },
+          error: function(response, textStatus, HTTPError){
+            console.log(response.responseText);
+            rightSide.append('<h3 style="color:red">' + response.responseText + '</h3>');
+            return callback("error: " + response.responseText);
+          }
+        })
+      },
       function maybeSelectMGF(callback){
         if (serializedForm.mgfOperationToPerform == '1'){
           rightSide.append("<div>Need to select from MGF files, doing that now</div>");

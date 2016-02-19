@@ -1,1 +1,0 @@
-python stupid.py
