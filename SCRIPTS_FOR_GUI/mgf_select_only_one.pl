@@ -232,14 +232,18 @@ if (open (IN, "$read_file_path"))
 					my %reporter_intensity=();
 					my $reporter_max=$reporters[0];
 					my $reporter_count=0;
+					my $biggest_value_we_care_about=0;
 					foreach my $reporter (@reporters)
 					{
 						my $max_=0;
 						my $dm_at_max=0;
 						$sum[$reporter_count]=0;
 						$reporter_intensity{"$reporter"}=0;
+						$biggest_value_we_care_about = $reporter + ((3*$mz_error*$reporter)/1e+6);
+
 						for(my $i=0;$i<$points;$i++)
 						{
+							if ($mz[$i] > $biggest_value_we_care_about){last;}
 							# This works if the selected_mgf file is sorted, looks like it always is
 							# if ($mz[$i] > ($reporter_largest+2)){last;}
 							if (abs($reporter-$mz[$i])<$mz_error*$reporter/1e+6)

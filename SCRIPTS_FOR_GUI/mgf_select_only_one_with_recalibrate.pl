@@ -247,8 +247,10 @@ while($line=<IN>)
 			my $mz_max=0;
 			my $reporter_count=0;
 			my $scaling_at_max=0;
+			my $biggest_value_we_care_about=0;
 			foreach my $reporter (@reporters)
 			{
+				$biggest_value_we_care_about = $reporter + ((3*$mz_error*$reporter)/1e+6);
 				for(my $i=0;$i<$points;$i++)
 				{
 					# if it's inside the original threshold:
@@ -266,8 +268,10 @@ while($line=<IN>)
 							# reporters, we move on.
 						}
 					}
+					if ($mz[$i] > $biggest_value_we_care_about){last;}
 				}
-				# Outside of iterating over points. Now, move on to outside reporters
+				# points come in sorted order, that means we can stop reading when
+				# we get past the miggest we care about
 			}
 			if (0<$max)
 			{
@@ -295,10 +299,12 @@ while($line=<IN>)
 				my $recal_sum=0;
 				my $recal_sum_max=0;
 				my $recal_reporters_found=0;
+				my $biggest_scaled_value_we_care_about=0;
 				foreach my $scaled_reporter (@scaled_reporters)
 				{
 					$recal_sum=0;
 					$recal_sum[$recal_reporter_count]=0;
+					$biggest_scaled_value_we_care_about = $scaled_reporter + ((3*$recal_mz_error*$scaled_reporter)/1e+6);
 					for(my $i=0;$i<$points;$i++)
 					{
 						# if ($mz[$i] > $scaled_reporter_largest+2){last;}
@@ -307,6 +313,7 @@ while($line=<IN>)
 							$recal_sum+=$intensity[$i];
 							# $recal_sum[$recal_reporter_count]+=$intensity[$i];
 						}
+						if ($mz[$i] > $biggest_scaled_value_we_care_about){last;}
 					}
 					$recal_sum[$recal_reporter_count]=$recal_sum;
 					if($recal_sum_max<$recal_sum)
