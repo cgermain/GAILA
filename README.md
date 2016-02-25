@@ -1,6 +1,9 @@
 # LOBEL_GUI_FINAL
 
 
+
+
+
 ## Prerequisites:
 ### Download python:
 https://www.python.org/downloads/release/python-2710/
@@ -29,4 +32,4 @@ PTGND files must be tab-delimited, with 5 files.
 TODOS:
 
 Give option to extract directly from GPM, not pairing with reporters.
-
+Have flask disable cache, caching sucks.

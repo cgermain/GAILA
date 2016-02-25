@@ -59,3 +59,20 @@ def construct_reporter_folder_path(form):
 	else:
 		raise Exception("Did not catch anything, must be a bad input")
 
+def construct_merged_gpm_reporter_filename(form):
+	reporter_path = None
+	if form['mgfOperationToPerform'] == '1':
+		reporter_path = construct_reporter_folder_path(form)
+	reporter_path = form['mgfTxtReadDirPath']
+	print "reporter path is: " + str(reporter_path)
+	parent_xml_basename = os.path.basename(os.path.normpath(form["xmlReadPath"]))
+	print "parent path basename is: " + str(parent_xml_basename)
+	parent_xml_filename = parent_xml_basename.rsplit('.', 1)[0]
+	print "parent path filename is: " + str(parent_xml_filename)
+	outfile_name = join(reporter_path, parent_xml_filename + '-pep-reporter-merged.txt')
+	print "outfile_name: " + str(outfile_name)
+	return outfile_name
+
+
+
+

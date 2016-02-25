@@ -33,8 +33,8 @@ def clear_directory_of_files(directory):
 	print "clearing dir of files"
 	for item in os.listdir(directory):
 		if os.path.isfile(item):
-			toRemove = directory + '/' + item
-			os.remove(directory + '/' + item)
+			toRemove = directory + os.sep + item
+			os.remove(directory + os.sep + item)
 			print toRemove + " removed"
 
 

@@ -33,7 +33,7 @@ def parse_xtandem_new(full_path_to_xml, error_threshold, reporter_type, genefile
 		return "reporter type not valid"
 	# xml_dir_name = full_path_to_xml.partition('.xml')[0]
 	# xml_dir_name = join(xml_dir_name, '')
-	xml_dir_name = xml_dirname_from_filename(full_path_to_xml)
+	xml_dir_name = utility.xml_dirname_from_filename(full_path_to_xml)
 	if os.path.isdir(xml_dir_name):
 		print "xml directory already exists here, if you don't need it anymore try deleting it and running again"
 		return "xml directory already exists here, if you don't need it anymore try deleting it and running again"
@@ -98,7 +98,7 @@ def parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, reporter_t
 	print "selected mgfdir:"
 	print selected_mgfdir
 
-	xml_dir_name = xml_dirname_from_filename(full_path_to_xml)
+	xml_dir_name = utility.xml_dirname_from_filename(full_path_to_xml)
 	resp_2 = combine_parsed_xml_mgf(selected_mgfdir, xml_dir_name, reporter_type)
 	if resp_2:
 		print "from parse_xtandem_combine_with_mgf, error in combine_parsed_xml_mgf: " + str(resp_2)
@@ -122,10 +122,10 @@ def parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, reporter_t
 
 
 
-def xml_dirname_from_filename(full_path_to_xml):
-	almost_xml_dir_name = full_path_to_xml.partition('.xml')[0]
-	xml_dir_name = join(almost_xml_dir_name, '')
-	return xml_dir_name
+# def xml_dirname_from_filename(full_path_to_xml):
+# 	almost_xml_dir_name = full_path_to_xml.partition('.xml')[0]
+# 	xml_dir_name = join(almost_xml_dir_name, '')
+# 	return xml_dir_name
 
 
 def convert_reporter_to_label_mass(reporter):

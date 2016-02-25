@@ -1,5 +1,8 @@
 import re
 import os
+import shutil
+
+# shutil.rmtree(xml_dir_name)
 
 # def form_contains_array_of_fields(arr_of_fields):
 
@@ -125,6 +128,35 @@ def get_inverse_files_array():
 		if f.endswith('-inv.txt'):
 			inverse_file_array.append(f)
 	return inverse_file_array
+
+def xml_dirname_from_filename(full_path_to_xml):
+	print "xml_dirname_from_filename on input: " + str(full_path_to_xml)
+	if not full_path_to_xml:
+		print "bad, no full_path_to_xml"
+		return False
+	almost_xml_dir_name = full_path_to_xml.partition('.xml')[0]
+	if not almost_xml_dir_name:
+		print "bad, no almost_xml_dir_name"
+		return False
+	# check to make sure we don't delete the home directory or something crazy.
+	after_slash = almost_xml_dir_name.rpartition(os.sep)[2]
+	if not after_slash:
+		print "passed in something like aaa/.xml, that's dangerous"
+		return False
+	xml_dir_name = os.path.join(almost_xml_dir_name, '')
+	return xml_dir_name
+
+
+def clean_up_after_bad_tab_5(form):
+
+	shutil.rmtree(xml_dir_name)
+	# First, I need to find all the places where a temporary file may be created.
+	# I definitely need to delete the entire GPM folder that's created.
+	# things that end with "_with_duplicates_removed" are temporary.
+	# things that end with "_PLACEHOLDER" are temporary.
+	# _with_duplicates_deleted is temporary
+	# things that end with '_duplicate_sorted.reporter' are temporary.
+	pass
 
 
 

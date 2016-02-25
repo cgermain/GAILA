@@ -15,6 +15,7 @@ from SCRIPTS_FOR_GUI import validation
 # from copy import copy
 # from science_code import science
 from SCRIPTS_FOR_GUI import makeFolderNames
+import shutil
 
 @app.route("/")
 def main():
@@ -110,7 +111,10 @@ def tab_5_helper_function():
 	a = call_xml_parser.parse_xtandem_combine_with_mgf(xml_read_path, log_error_threshold, reporter_type, geneFile, mgf_txt_foldername, unacceptable_mods)
 
 	if a:
-		return a, 500
+		try:
+			clean_up_after_tab_5()
+		finally: #In case it breaks
+			return a, 500
 	else:
 		return "Looks good"
 
@@ -219,28 +223,16 @@ def check_if_gpm_merge_already_exists():
 			print "if we need to create the .reporter folder, it can't already exist"
 			return {existsAlready : False}
 
-		folder_name = request.form['mgfTxtReadDirPath']
-		print folder_name
-		if not folder_name:
-			return {existsAlready : False}
-		if not os.path.isdir(folder_name):
-			return {existsAlready : False}
+		write_destination_filename = makeFolderNames.construct_merged_gpm_reporter_filename(request.form)
+		if os.path.isfile(write_destination_filename):
+			print "This means the file already exists. Thats bad, because we don't want to repeat ourselves."
+			return "It seems that the merged GPM-reporter file we want to create, already exists.", 500 
 		else:
-			parent_xml_filename = os.path.basename(os.path.normpath(request.form["xmlReadPath"]))
-			print parent_xml_filename
-			parent_xml_filename = parent_xml_filename.rsplit('.', 1)[0]
-			outfile_name = join(folder_name, parent_xml_filename + '-pep-reporter-merged.txt')
-			print "outfile_name"
-			print outfile_name
-			if os.path.isfile(outfile_name):
-				print "This means the file already exists. Thats bad, because we don't want to repeat ourselves."
-				return "It seems that the merged GPM-reporter file we want to create, already exists.", 500
-			else:
-				return {existsAlready : False}
+			print "file does not already exist."
+			return "Does not already exist." #That means true
 	except:
 		print "error creating the foldername. At least that means it doesn't exist"
-		return "Does not exist already"
-
+		return "Does not exist already" #That means true
 
 
 
@@ -278,6 +270,70 @@ def getMGFFiles():
 		return text
 	except:
 		return "Error selecting mgf files, make sure you have a proper mgf directory name", 500
+
+
+
+def clean_up_after_tab_5():
+	print "cleaning up possible leaked files, if there was an error somewhere."
+	# tempdest = filename + "_with_duplicates_deleted" is a line in combine_xml_mgf where
+	# we make temporary files.
+	# testing_filename = mgf_txt_filename.split('.reporter')[0] + '_duplicate_sorted' + '.reporter'
+	# is another.
+	xml_read_path = request.form['xmlReadPath']
+	print "xml_read_path: " + xml_read_path
+	xml_directory_path = utility.xml_dirname_from_filename(xml_read_path)
+	if not xml_directory_path:
+		print "Something funky, stop for now"
+		return
+	if (os.path.isfile(xml_read_path + '.txt')):
+		os.remove(xml_read_path + '.txt')
+
+	if (os.path.isdir(xml_directory_path)):
+		# I REALLY want to make sure this doesn't delete everything on somebodys computer.
+		# Done, in xml_dirname_from_filename
+		try:
+			shutil.rmtree(xml_directory_path)
+		except Exception:
+			print "no luck, probably read-only files or something. There's nothing we can do about that."
+	print "cleaned up xmldir, now for the temporary files in .reporter directory"
+	mgf_txt_foldername = None
+	if request.form['mgfOperationToPerform'] == '1':
+		print "Looks like we had to select from the mgf folder before this, that means I'll recalculate the mgf_foldername"
+		# mgf_txt_foldername = join(request.form['mgfReadDirPath'], 'selected_mgf_txt', '')
+		mgf_txt_foldername = makeFolderNames.construct_reporter_folder_path(request.form)
+	else:
+		mgf_txt_foldername = request.form["mgfTxtReadDirPath"]
+	if not mgf_txt_foldername:
+		print "Something is wrong here, but anyways, nothing to delete"
+		return
+
+	for item in os.listdir(mgf_txt_foldername):
+		full_name = os.path.join(mgf_txt_foldername, item)
+		if os.path.isfile(full_name):
+			if full_name.ends_with('_with_duplicates_deleted'):
+				os.remove(full_name)
+				continue
+			if full_name.ends_with('_duplicate_sorted.reporter'):
+				os.remove(full_name)
+				continue
+			if full_name.ends_with('_PLACEHOLDER'):
+				os.remove(full_name)
+				continue
+
+	print "Cleaned up successfully"
+	return
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def return_form_copy():
