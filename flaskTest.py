@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, make_response
+from functools import update_wrapper
 app = Flask(__name__)
 from time import time
 from SCRIPTS_FOR_GUI import mgf_select_one
@@ -17,11 +18,21 @@ from SCRIPTS_FOR_GUI import validation
 from SCRIPTS_FOR_GUI import makeFolderNames
 import shutil
 
+
+def nocache(f):
+	def new_func(*args, **kwargs):
+		resp = make_response(f(*args, **kwargs))
+		resp.cache_control.no_cache = True
+		return resp
+	return update_wrapper(new_func, f)
+
 @app.route("/")
+@nocache
 def main():
 	return render_template('index_new.html')
 
 @app.route("/tab", methods=['GET'])
+@nocache
 def tab():
 	file_name = str(request.args.get('name')) + '.html'
 	print "fetched " + str(file_name)
@@ -252,15 +263,6 @@ def clean_up_after_tab_5():
 
 	print "Cleaned up successfully"
 	return
-
-
-
-
-
-
-
-
-
 
 
 
