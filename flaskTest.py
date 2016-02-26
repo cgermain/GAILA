@@ -31,45 +31,6 @@ def tab():
 	 inverse_files=inverse_files)
 
 
-# @app.route("/combine_mgf_files", methods=['POST'])
-# def combine_mgf_files():
-# 	print "combine_mgf_files"
-# 	mgf_read_path = str(request.form['mgfWriteDirPath'])
-# 	merged_dir = join(mgf_read_path, "MERGED")
-# 	print merged_dir
-# 	if not os.path.exists(merged_dir):
-# 		print "Going to make a directory now"
-# 		os.mkdir(merged_dir)
-# 		print "Directory Made"
-# 	else:
-# 		print "Path exists already?"
-
-# 	mgf_write_path = join(merged_dir, "MERGED.mgf")
-
-# 	print "MGFWRITEPATH: " + str(mgf_write_path)
-# 	error = combine_selected_mgf_files.concat_mgf_files_given_dirname(mgf_write_path, mgf_read_path)
-# 	if error:
-# 		return error, 500
-# 	else:
-# 		return "Combined"
-	
-# @app.route("/combine_mgf_txt_files", methods=['POST'])
-# def combine_mgf_txt_files():
-# 	print "combine_mgf_txt_files"
-# 	mgf_read_path = str(request.form['mgfWriteDirPath'])
-# 	merged_dir = join(mgf_read_path, "MERGED")
-# 	print merged_dir
-# 	if not os.path.exists(merged_dir):
-# 		os.mkdir(merged_dir)
-
-# 	mgf_write_path = join(merged_dir, "MERGED.reporter")
-# 	error = combine_selected_mgf_files.concat_mgf_txt_files_given_dirname(mgf_write_path, mgf_read_path)
-# 	# return "GOOD JOB DOOD"
-# 	if error:
-# 		return error, 500
-# 	else:
-# 		return "Combined"
-
 @app.route("/tab_5_helper_function", methods=['POST'])
 def tab_5_helper_function():
 	# print request.form
@@ -227,31 +188,6 @@ def check_if_gpm_merge_already_exists():
 	except:
 		print "error creating the foldername. At least that means it doesn't exist"
 		return "Does not exist already" #That means true
-
-
-
-# @app.route("/combine_parsed_xml_with_parsed_mgf", methods=["POST"])
-# def combine_parsed_xml_with_parsed_mgf():
-# 	print "COMBINING PARSED XML WITH PARSED MGF"
-# 	mgf_selected_path = request.form['mgfSelectedPath']
-# 	if not mgf_selected_path:
-# 		return "Error: mgf_selected_path is required", 500
-# 	if not os.path.isdir(mgf_selected_path):
-# 		return "Error: mgf_selected_path is not a directory", 500
-# 	xml_directory_path = request.form['xmlDirectoryPath']
-# 	if not xml_directory_path:
-# 		return "Error: xml_directory_path is required", 500
-# 	if not os.path.isdir(xml_directory_path):
-# 		return "Error: mgf_selected_path is not an existing directory", 500
-# 	reporter_type = request.form['reporterIonType']
-# 	if not reporter_type:
-# 		return "Error: No reporter-type specified", 500
-# 	print "All good so far"
-# 	a = combine_xml_mgf.combine_parsed_xml_mgf(mgf_selected_path, xml_directory_path, reporter_type)
-# 	if a:
-# 		print a
-# 		return a, 500
-# 	return "Looking good"
 
 
 
