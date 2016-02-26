@@ -25,11 +25,11 @@ After unzipping, you should be able to set up the project by clicking on install
 
 
 ### TO RUN
-The installation creates a file called startup.bat. Double click this file to run the server. 
+The installation creates a file called startup.bat. Double click this file to run the server. The server has to be running in order for the scripts to execute. When finished using it, you can shut the server down by exiting the command prompt window that startup.bat creates.
 
-To use the the program, open your web browser (firefox or chrome) and type localhost:5000 into the URL bar. If the server is running correctly, you should see the User Interface for our GPM and MGF-parsing scripts.
+To use the interface, open your web browser (firefox or chrome) and type localhost:5000 into the URL bar. If the server is running correctly, you should see the User Interface for our GPM and MGF-parsing scripts.
 
-## FOR Mac
-Unfortunately, an installation script hasn't been written for macs quite yet, but one is coming.
+## FOR MAC
+Unfortunately, an installation script hasn't been written for macs yet, but one is coming soon.
 
 ### If the installation doesn't work, or you have any questions about how to use the interface, you can contact me at samuel.lobel@gmail.com for help.
