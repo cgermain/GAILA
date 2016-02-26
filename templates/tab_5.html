@@ -4,7 +4,7 @@
     <div class="input-group" style="margin: 1%">
       <span class="input-group-addon" id="basic-addon1">Operation to perform</span>
       <select class='form-control' id="mgfOperationToPerform">
-        <option value="1">Select reporter ions from mgf files</option>
+        <option value="1">Select reporter ions from unfiltered .mgf files</option>
         <option value="0">Use pre-extracted reporter ion (.reporter) files</option>
       </select>
       <span class="input-group-btn">
@@ -191,7 +191,7 @@
       $('div[id="tab_5"]').find("#options_if_not_recalibrating").show();
     }
     else{
-      alert("Something is funky, ask sam whats going on");
+      alert("Something is funky, ask Sam Lobel whats going on");
     }
   });
   </script>
@@ -222,26 +222,10 @@
       $('div[id="tab_5"]').find('#options_if_not_selecting').show();
     }
     else{
-      alert('Somethings fishy with mgfOperationToPerform, tell Sam');
+      alert('Somethings fishy with mgfOperationToPerform, tell Sam Lobel');
     }
   });
-  // $("#mgfOperationToPerform").change(function(e){
-  //   var val = e.target.value;
-  //   console.log("mgfOperationToPerform value is " + val);
-  //   if(val=='1'){
-  //     console.log('val is 1')
-  //     $('#options_if_selecting_5').show();
-  //     $('#options_if_not_selecting_5').hide();
-  //   }
-  //   else if (val=='0'){
-  //     console.log('val is 0')
-  //     $('#options_if_selecting_5').hide();
-  //     $('#options_if_not_selecting_5').show();
-  //   }
-  //   else{
-  //     alert('Somethings fishy with mgfOperationToPerform, tell Sam');
-  //   }
-  // })
+
   </script>
   <script>$('#tab_5_button').click(function(e){
 

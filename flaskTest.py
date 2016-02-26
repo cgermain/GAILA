@@ -24,52 +24,51 @@ def main():
 @app.route("/tab", methods=['GET'])
 def tab():
 	file_name = str(request.args.get('name')) + '.html'
-	# print "fetching gene_files"
+	print "fetched " + str(file_name)
 	gene_files = utility.get_gene_files_array()
 	inverse_files = utility.get_inverse_files_array()
-	# print gene_files
 	return render_template(file_name, gene_files=gene_files,\
 	 inverse_files=inverse_files)
 
 
-@app.route("/combine_mgf_files", methods=['POST'])
-def combine_mgf_files():
-	print "combine_mgf_files"
-	mgf_read_path = str(request.form['mgfWriteDirPath'])
-	merged_dir = join(mgf_read_path, "MERGED")
-	print merged_dir
-	if not os.path.exists(merged_dir):
-		print "Going to make a directory now"
-		os.mkdir(merged_dir)
-		print "Directory Made"
-	else:
-		print "Path exists already?"
+# @app.route("/combine_mgf_files", methods=['POST'])
+# def combine_mgf_files():
+# 	print "combine_mgf_files"
+# 	mgf_read_path = str(request.form['mgfWriteDirPath'])
+# 	merged_dir = join(mgf_read_path, "MERGED")
+# 	print merged_dir
+# 	if not os.path.exists(merged_dir):
+# 		print "Going to make a directory now"
+# 		os.mkdir(merged_dir)
+# 		print "Directory Made"
+# 	else:
+# 		print "Path exists already?"
 
-	mgf_write_path = join(merged_dir, "MERGED.mgf")
+# 	mgf_write_path = join(merged_dir, "MERGED.mgf")
 
-	print "MGFWRITEPATH: " + str(mgf_write_path)
-	error = combine_selected_mgf_files.concat_mgf_files_given_dirname(mgf_write_path, mgf_read_path)
-	if error:
-		return error, 500
-	else:
-		return "Combined"
+# 	print "MGFWRITEPATH: " + str(mgf_write_path)
+# 	error = combine_selected_mgf_files.concat_mgf_files_given_dirname(mgf_write_path, mgf_read_path)
+# 	if error:
+# 		return error, 500
+# 	else:
+# 		return "Combined"
 	
-@app.route("/combine_mgf_txt_files", methods=['POST'])
-def combine_mgf_txt_files():
-	print "combine_mgf_txt_files"
-	mgf_read_path = str(request.form['mgfWriteDirPath'])
-	merged_dir = join(mgf_read_path, "MERGED")
-	print merged_dir
-	if not os.path.exists(merged_dir):
-		os.mkdir(merged_dir)
+# @app.route("/combine_mgf_txt_files", methods=['POST'])
+# def combine_mgf_txt_files():
+# 	print "combine_mgf_txt_files"
+# 	mgf_read_path = str(request.form['mgfWriteDirPath'])
+# 	merged_dir = join(mgf_read_path, "MERGED")
+# 	print merged_dir
+# 	if not os.path.exists(merged_dir):
+# 		os.mkdir(merged_dir)
 
-	mgf_write_path = join(merged_dir, "MERGED.reporter")
-	error = combine_selected_mgf_files.concat_mgf_txt_files_given_dirname(mgf_write_path, mgf_read_path)
-	# return "GOOD JOB DOOD"
-	if error:
-		return error, 500
-	else:
-		return "Combined"
+# 	mgf_write_path = join(merged_dir, "MERGED.reporter")
+# 	error = combine_selected_mgf_files.concat_mgf_txt_files_given_dirname(mgf_write_path, mgf_read_path)
+# 	# return "GOOD JOB DOOD"
+# 	if error:
+# 		return error, 500
+# 	else:
+# 		return "Combined"
 
 @app.route("/tab_5_helper_function", methods=['POST'])
 def tab_5_helper_function():
@@ -86,8 +85,6 @@ def tab_5_helper_function():
 	should_use_unacceptable = request.form['assignUnacceptableModifications']
 	unacceptable_mods = request.form.getlist('unacceptableMods[]')
 
-	print "parsed form"
-
 	if request.form['mgfOperationToPerform'] == '1':
 		print "Looks like we had to select from the mgf folder before this, that means I'll recalculate the mgf_foldername"
 		# mgf_txt_foldername = join(request.form['mgfReadDirPath'], 'selected_mgf_txt', '')
@@ -95,22 +92,20 @@ def tab_5_helper_function():
 	else:
 		mgf_txt_foldername = request.form["mgfTxtReadDirPath"]
 
-	print "parsed form more"
-
 	# should_use_unacceptable = request.form['assignUnacceptableModifications']
-	print "should_use_unacceptable: " + str(should_use_unacceptable)
+	# print "should_use_unacceptable: " + str(should_use_unacceptable)
 	# unacceptable_mods = request.form.getlist('unacceptableMods[]')
-	print "unacceptable_mods: " + str(unacceptable_mods)
+	# print "unacceptable_mods: " + str(unacceptable_mods)
 	if should_use_unacceptable == "1":
 		unacceptable_mods = []
 
 
-	print "going to ball parse_xtandem stuff from tab 5"
+	# print "going to call parse_xtandem stuff from tab 5"
 
-	
 	a = call_xml_parser.parse_xtandem_combine_with_mgf(xml_read_path, log_error_threshold, reporter_type, geneFile, mgf_txt_foldername, unacceptable_mods)
 
 	if a:
+		print "Error in tab 5. Trying cleanup now, either way returning error"
 		try:
 			clean_up_after_tab_5()
 		finally: #In case it breaks
@@ -122,16 +117,16 @@ def tab_5_helper_function():
 
 @app.route("/tab_2_helper_function", methods=['POST'])
 def tab_2_helper_function():
-	print request.form
+	# print request.form
 	valid, validation_error = validation.validate_tab_2(request.form)
-	print valid
-	print validation_error
+	# print valid
+	# print validation_error
 	if not valid:
 		print "not valid! error!"
 		print "Not valid, error is " + str(validation_error)
 		return validation_error, 500
-	else:
-		print "validation passed, this is being printed inside of tab_2_helper_function"
+	# else:
+	# 	print "validation passed, this is being printed inside of tab_2_helper_function"
 	# Wow,  that's so much better.
 	# Now, to make the values.
 
@@ -152,7 +147,7 @@ def tab_2_helper_function():
 	mz_error_recalibration = request.form['mzErrorRecalibration']
 
 	#Now, to check/make directories 
-	print "accessed all of the variables"
+	# print "accessed all of the variables"
 
 	if should_select == "1":
 		mgf_write_dir_path = makeFolderNames.construct_selected_mgf_path(request.form)
@@ -173,7 +168,7 @@ def tab_2_helper_function():
 	if not os.path.isdir(mgf_txt_write_dir_path):
 		return "selected_mgf_txt directory could not be created", 500
 
-	print "made a directory maybe"
+	# print "made a directory maybe"
 	if should_select == '1':
 		try:
 			os.makedirs(mgf_write_dir_path)
@@ -183,11 +178,10 @@ def tab_2_helper_function():
 			return "selected_mgf directory could not be created", 500	
 
 		# Still ugly, but that's because it's complicated
-	print "maybe made another"
+	# print "maybe made another"
 
 
 	if perform_recalibration == '1':
-		# pass
 		print "calling perform_recalibration from 1"
 		error = mgf_select_one.select_only_one_recalibrate(mgf_read_path, \
 			mgf_write_path, mgf_txt_write_path, mz_error_initial_run,\
@@ -200,7 +194,7 @@ def tab_2_helper_function():
 			return "mgf_select run with recalibration"
 
 	else:
-		print "calling perform_recalibration from 1"
+		print "calling mgf_select_no_recalibrate from 1"
 		# I can do this because I checked for both in validation
 		error = mgf_select_one.select_only_one(mgf_read_path, \
 			mgf_write_path, mgf_txt_write_path, mz_error, reporter_type, \
@@ -236,28 +230,28 @@ def check_if_gpm_merge_already_exists():
 
 
 
-@app.route("/combine_parsed_xml_with_parsed_mgf", methods=["POST"])
-def combine_parsed_xml_with_parsed_mgf():
-	print "COMBINING PARSED XML WITH PARSED MGF"
-	mgf_selected_path = request.form['mgfSelectedPath']
-	if not mgf_selected_path:
-		return "Error: mgf_selected_path is required", 500
-	if not os.path.isdir(mgf_selected_path):
-		return "Error: mgf_selected_path is not a directory", 500
-	xml_directory_path = request.form['xmlDirectoryPath']
-	if not xml_directory_path:
-		return "Error: xml_directory_path is required", 500
-	if not os.path.isdir(xml_directory_path):
-		return "Error: mgf_selected_path is not an existing directory", 500
-	reporter_type = request.form['reporterIonType']
-	if not reporter_type:
-		return "Error: No reporter-type specified", 500
-	print "All good so far"
-	a = combine_xml_mgf.combine_parsed_xml_mgf(mgf_selected_path, xml_directory_path, reporter_type)
-	if a:
-		print a
-		return a, 500
-	return "Looking good"
+# @app.route("/combine_parsed_xml_with_parsed_mgf", methods=["POST"])
+# def combine_parsed_xml_with_parsed_mgf():
+# 	print "COMBINING PARSED XML WITH PARSED MGF"
+# 	mgf_selected_path = request.form['mgfSelectedPath']
+# 	if not mgf_selected_path:
+# 		return "Error: mgf_selected_path is required", 500
+# 	if not os.path.isdir(mgf_selected_path):
+# 		return "Error: mgf_selected_path is not a directory", 500
+# 	xml_directory_path = request.form['xmlDirectoryPath']
+# 	if not xml_directory_path:
+# 		return "Error: xml_directory_path is required", 500
+# 	if not os.path.isdir(xml_directory_path):
+# 		return "Error: mgf_selected_path is not an existing directory", 500
+# 	reporter_type = request.form['reporterIonType']
+# 	if not reporter_type:
+# 		return "Error: No reporter-type specified", 500
+# 	print "All good so far"
+# 	a = combine_xml_mgf.combine_parsed_xml_mgf(mgf_selected_path, xml_directory_path, reporter_type)
+# 	if a:
+# 		print a
+# 		return a, 500
+# 	return "Looking good"
 
 
 

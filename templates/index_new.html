@@ -12,19 +12,13 @@
 		<nav class="navbar navbar-default height:10vh">
 	    <div class="container-fluid">
 	      <ul class="nav navbar-nav">
-	        <!-- <li class="active" name="tab_link" id="tab_1"><a href="#">First Link</a></li> -->
 	        <li name="tab_link" id="tab_2" class="active"><a href="#">SELECT SPECTRA</a></li>
-	        <!-- <li name="tab_link" id="tab_3"><a href="#">PARSE XML</a></li>
-	        <li name="tab_link" id="tab_4" class="active" ><a href="#">COMBINE MGF AND XML</a></li> -->
 	        <li name="tab_link" id="tab_2">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</li>
 	        <li name="tab_link" class="active" id="tab_5"><a href="#">WRITE PEPTIDES AND REPORTERS</a></li>
 	      </ul>
 	    </div>
 	  </nav>
-	  <!-- <div id="tab_1" name="tab_body"></div> -->
 	  <div id="tab_2" name="tab_body"></div>
-	  <!-- <div id="tab_3" name="tab_body" style="display: none"></div>
-	  <div id="tab_4" name="tab_body" style="display: none"></div> -->
 	  <div id="tab_5" name="tab_body" style="display: none"></div>
 	  <script type="text/javascript">
 	  $('[name=tab_body]').each(function(index){
@@ -83,7 +77,7 @@
 	            return callback(null, result)
 	          },
 	          error: function(response, textStatus, HTTPError){
-	            rightSide.append('<div style="color:red">' + response.responseText + '</div>')
+	            rightSide.append('<h3 style="color:red">' + response.responseText + '</h3>')
 	            return callback("ERROR IN PASSING BACK FILE NAMES");
 	          }
 	        })
@@ -104,8 +98,6 @@
 	          var data = JSON.parse(JSON.stringify(serializedForm));
 	          console.log(data);
 	          data['mgfFileName'] = elem;
-	          // console.log("data from stringify")
-	          // console.log(data);
 
 	          console.log("Parsing file");
 	          rightSide.append("<div>Began selecting from file " + elem + "</div>");
@@ -114,8 +106,6 @@
 	            type:"POST",
 	            url:"tab_2_helper_function",
 	            data : data,
-	            // dataType : 'json',
-	            // contentType: "application/json",
 	            success : function(result){
 	              console.log(result);
 	              rightSide.append("<div>Finished Selecting from file " + elem + "</div>");
@@ -124,7 +114,6 @@
 	            error: function(response, textStatus, HTTPError){
 	              var responseText = (response && response.responseText) ?
 	                response.responseText : "ERROR IN EACHSERIES";
-	                // rightSide.append('<div style="color:red">' + responseText + '</div>')
 	              return next(responseText);
 	            }
 	          });
@@ -145,12 +134,12 @@
 	      if (err){
 	      	console.log(err);
       		if (err){
-        		rightSide.append('<div style="color:red">' + err + '</div>')	
+        		rightSide.append('<h3 style="color:red">' + err + '</h3>')	
         	}
 	      	// rightSide.append("<div style='color:red'>Error in selecting mgf!<div>");
 	      }
 	      var difference = new Date() - startTime;
-	      rightSide.append("<div>MILLISECONDS TAKEN: " + difference + " <div>")
+	      rightSide.append("<h4>MILLISECONDS TAKEN: " + difference + " <h4>")
 	      // that.attr('disabled', false);
 	      // that.text('Click to submit Tab 1');
 	      // Figure out how to do this part.
