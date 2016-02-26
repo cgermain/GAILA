@@ -32,4 +32,4 @@ To use the the program, open your web browser (firefox or chrome) and type local
 ## FOR Mac
 Unfortunately, an installation script hasn't been written for macs quite yet, but one is coming.
 
-### If the installation doesn't work, or you have any questions about how to use the interface, you can contact me at samuel.lobel@gmail.com
+### If the installation doesn't work, or you have any questions about how to use the interface, you can contact me at samuel.lobel@gmail.com for help.
