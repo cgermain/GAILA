@@ -38,13 +38,6 @@ def clear_directory_of_files(directory):
 			print toRemove + " removed"
 
 
-# def remove_worse_error_scores(filename):
-# 	file_scans_seen = set()
-# 	duplicate_file_scans_seen = set()
-	
-# 	for line in open(filename, "r"):
-
-
 
 def add_a_or_b_label_to_sorted_mfg_txt_file(filename):
 	print "adding a and b labels "

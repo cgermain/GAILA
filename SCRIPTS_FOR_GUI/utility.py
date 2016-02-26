@@ -147,16 +147,6 @@ def xml_dirname_from_filename(full_path_to_xml):
 	return xml_dir_name
 
 
-def clean_up_after_bad_tab_5(form):
-
-	shutil.rmtree(xml_dir_name)
-	# First, I need to find all the places where a temporary file may be created.
-	# I definitely need to delete the entire GPM folder that's created.
-	# things that end with "_with_duplicates_removed" are temporary.
-	# things that end with "_PLACEHOLDER" are temporary.
-	# _with_duplicates_deleted is temporary
-	# things that end with '_duplicate_sorted.reporter' are temporary.
-	pass
 
 
 

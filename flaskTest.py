@@ -214,7 +214,7 @@ def tab_2_helper_function():
 @app.route("/check_if_gpm_merge_already_exists", methods=["POST"])
 def check_if_gpm_merge_already_exists():
 	print "checking if gmp merge already exists"
-	valid, validation_error = validation.validate_tab_5(request.form)
+	valid, validation_error = validation.validate_check_for_final_product(request.form)
 	if not valid:
 		return validation_error, 500
 

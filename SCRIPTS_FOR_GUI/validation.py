@@ -176,6 +176,8 @@ def validate_tab_5(form):
 			print "mgf_operation_to_perform is bad"
 			return False, "Invalid mgfOperationToPerform"
 
+		# The folder shouldn't exist if it's operation 1.
+
 		if mgf_operation_to_perform == "1":
 			mgf_txt_foldername = makeFolderNames.construct_reporter_folder_path(form)
 		if mgf_operation_to_perform == "0":
@@ -201,6 +203,30 @@ def validate_tab_5(form):
 		print "looks good you"
 		return True, None
 
+	except Exception as e:
+		print "Missing form input"
+		print "error: " + str(e)
+		return False, "Missing form input"
+
+
+
+def validate_check_for_final_product(form):
+	print "validating check_if_gpm_merge_already_exists"
+	try:
+		# print form
+		mgf_operation_to_perform = form['mgfOperationToPerform']
+		xml_read_path = form['xmlReadPath']
+		if not xml_read_path:
+			print "Bad form input, missing xml file path"
+			return False, "Bad form input, missing xml file path"
+		if not mgf_operation_to_perform:
+			print "Bad form input, missing mgfOperationToPerform"
+			return False, "Bad form input, missing mgfOperationToPerform"
+		if not mgf_operation_to_perform or (mgf_operation_to_perform != "0" and mgf_operation_to_perform != "1"):
+			print "mgf_operation_to_perform is bad"
+			return False, "Invalid mgfOperationToPerform"
+
+		return True, None
 	except Exception as e:
 		print "Missing form input"
 		print "error: " + str(e)

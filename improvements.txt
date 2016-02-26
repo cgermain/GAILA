@@ -1,3 +1,7 @@
 I should make more things configurable. Maybe inside of inverses, I'll have info on each reporter. Change the name of the folder from inverse to reporter, and have TMT10.inv, TMT10.info, etc. 
 
 Most importantly, I need better validation. And I need to use a better thing than os.system, because that's super dangerous and bad form.
+
+
+
+NOTE: WHEN I CALL SELECT FROM MGF IN THE XML PARSER, IT CREATES THE SELECTED MGF FOLDER AS WELL. I DON'T KNOW IF THiS SHOULD HAPPEN. I guess it should, because that's where the selection takes place. Maybe it should delete the folder afterwards? No, I should keep it the way it is. They're probably completely unselected, otherwise they'd have the .reporter files already.
