@@ -68,8 +68,7 @@ IF %ERRORLEVEL% NEQ 0 (
 	) ELSE (
 		echo Installation worked!
 	)
-)
-else (
+) else (
 	virtualenv found
 )
 

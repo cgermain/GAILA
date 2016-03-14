@@ -108,7 +108,8 @@ if ($error==0)
   my %protein_expect=();
   while ($line=<IN>)
   {
-    if ($line=~/^\<protein\s+.*expect="([^\"]+)"\s+.*label="([^\"]+)"/)
+    # if ($line=~/^\<protein\s+.*expect="([^\"]+)"\s+.*label="([^\"]+)"/)
+    if ($line=~/^\<protein\s+.*expect="([^\"]+)"\s+.*label="([^\"\.\s]+).*"/)
     {
       my $protein_expect=$1;
       my $protein_name=$2;
@@ -348,6 +349,7 @@ if ($error==0)
               }
             }
             if ($protein_descriptions{$temp_}=~/\w/ and (index($other_protein_descriptions,"#$protein_descriptions{$temp_}#")==-1))
+            # if ($protein_descriptions{$temp_}=~/\w/ and $other_protein_descriptions!~/#$protein_descriptions{$temp_}#/)
             {
               $other_protein_descriptions.="#$protein_descriptions{$temp_}#";
             }
