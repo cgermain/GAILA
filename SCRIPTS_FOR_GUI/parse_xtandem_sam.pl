@@ -109,7 +109,7 @@ if ($error==0)
   while ($line=<IN>)
   {
     # if ($line=~/^\<protein\s+.*expect="([^\"]+)"\s+.*label="([^\"]+)"/)
-    if ($line=~/^\<protein\s+.*expect="([^\"]+)"\s+.*label="([^\"\.\s]+).*"/)
+    if ($line=~/^\<protein\s+.*expect="([^\"]+)"\s+.*label="([^\".\s]+).*"/)
     {
       my $protein_expect=$1;
       my $protein_name=$2;
