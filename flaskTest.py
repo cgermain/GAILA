@@ -191,8 +191,8 @@ def check_if_gpm_merge_already_exists():
 
 		write_destination_filename = makeFolderNames.construct_merged_gpm_reporter_filename(request.form)
 		if os.path.isfile(write_destination_filename):
-			print "This means the file already exists. Thats bad, because we don't want to repeat ourselves."
-			return "It seems that the merged GPM-reporter file we want to create, already exists.", 500 
+			print "There is an existing merged GPM-reporter ion file.  Please delete or rename existing file in selected reporter ion folder and run again."
+			return "There is an existing merged GPM-reporter ion file.  Please delete or rename existing file in selected reporter ion folder and run again.", 500 
 		else:
 			print "file does not already exist."
 			return "Does not already exist." #That means true
