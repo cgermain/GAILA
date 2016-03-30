@@ -2,9 +2,41 @@ from utility import *
 import os
 from os.path import join
 import makeFolderNames
+
+
+def elem_or_empty_string(form, elem_name):
+	try:
+		a = form[elem_name]
+		return a
+	except:
+		return ""
+
+
+
+
+
+def form_contains_dropbox_path(form):
+	mgf_read_dir_path = elem_or_empty_string(form, 'mgfReadDirPath')
+	mgf_file_name = elem_or_empty_string(form, 'mgfFileName')
+	mgf_read_dir_path = elem_or_empty_string(form, 'mgfReadDirPath')
+	xml_read_path = elem_or_empty_string(form, 'xmlReadPath')
+	mgf_txt_foldername = elem_or_empty_string(form, 'mgfTxtReadDirPath')
+
+	paths = [mgf_read_dir_path, mgf_file_name, mgf_read_dir_path,
+																xml_read_path, mgf_txt_foldername]
+
+	for p in paths:
+		if 'dropbox' in p.lower():
+			print str(p) + " contains the substring 'Dropbox' "
+			# return False, "A path you entered appears to be a Dropbox folder. Dropbox has been know to create problems with these scripts. Please move your data to a non-synced folder and try again"
+			return True
+
+	return False
 	
 def validate_tab_2(form):
 	print "validating tab_2"
+	if form_contains_dropbox_path(form):
+		return False, "A path you entered appears to be a Dropbox folder. Dropbox has been know to create problems with these scripts. Please move your data to a non-synced folder and try again"
 	try:
 		mgf_read_dir_path = form['mgfReadDirPath']
 		mgf_file_name = form['mgfFileName']
@@ -111,6 +143,9 @@ def validate_tab_2(form):
 
 def validate_tab_5(form):
 	print "validating tab_5"
+	if form_contains_dropbox_path(form):
+		return False, "A path you entered appears to be a Dropbox folder. Dropbox has been know to create problems with these scripts. Please move your data to a non-synced folder and try again"
+
 	try:
 		xml_read_path = form['xmlReadPath']
 		log_error_threshold = form['logErrorThreshold']
@@ -196,6 +231,8 @@ def validate_tab_5(form):
 
 def validate_check_for_final_product(form):
 	print "validating check_if_gpm_merge_already_exists"
+	if form_contains_dropbox_path(form):
+		return False, "A path you entered appears to be a Dropbox folder. Dropbox has been know to create problems with these scripts. Please move your data to a non-synced folder and try again"
 	try:
 		mgf_operation_to_perform = form['mgfOperationToPerform']
 		xml_read_path = form['xmlReadPath']
