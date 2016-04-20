@@ -142,3 +142,17 @@ def convert_reporter_to_label_mass(reporter):
 		return None
 	return mapping[reporter]
 
+
+
+if __name__ == '__main__':
+	xml_path = "/Users/samlobel/Code/DAD/filesforSam/NewMGFformat/GPM33300000085.xml"
+	error_threshold = "20" #???
+	reporter_type="TMT10" #???
+	genefile="Human_GRCh38p5_PTGND.txt" #???
+	unacceptable_mods=[]
+	a = parse_xtandem_new(xml_path, error_threshold, reporter_type, genefile, unacceptable_mods)
+	print a
+
+
+
+

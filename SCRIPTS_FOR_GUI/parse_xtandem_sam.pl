@@ -281,6 +281,7 @@ if ($error==0)
       {
         $scan=$1;
         $scan=~s/,.*$//;
+        $scan=~s/&quot;//g;
       }
       if($title=~/source=(.*\.mgf)/)
       {
