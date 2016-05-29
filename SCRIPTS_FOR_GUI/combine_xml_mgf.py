@@ -38,6 +38,31 @@ def clear_directory_of_files(directory):
 			print toRemove + " removed"
 
 
+def transform_firstline_for_n_and_c(firstline):
+	stripped = firstline.strip()
+	split = stripped.split('\t')
+	num_fields = len(split)
+	i = 0
+	while i < num_fields - 1:
+		first = split[i]
+		second = split[i+1]
+		if second.endswith('.1'):
+			pre_end = second.partition('.1')[0]
+			if pre_end != first:
+				print "Changeing first line so rep. ions end in N or C instead of .1. " +\
+							" This should only happen when two rep. ions have the same integer-mass." +\
+							" For some reason it is happening elsewhere. Printing old first line for debugging."
+				print firstline
+				raise Exception("very strange these headers are not equal, they should be.")
+			new_first = pre_end + "N"
+			new_second = pre_end + "C"
+			split[i] = new_first
+			split[i+1]=new_second
+			i += 1
+		i += 1
+	new_firstline = '\t'.join(split)
+	return new_firstline
+	
 
 def add_a_or_b_label_to_sorted_mfg_txt_file(filename):
 	print "adding a and b labels "
@@ -46,6 +71,10 @@ def add_a_or_b_label_to_sorted_mfg_txt_file(filename):
 	temp_file = open(temp_filename, "w")
 
 	first_line = a.readline()
+	# print "first line: " + str(first_line)
+	first_line = transform_firstline_for_n_and_c(first_line)
+	# print "new first line: " + str(first_line)
+
 	temp_file.write(first_line.strip() + "\treplicate_spec_flag\n")
 	first_line_arr = first_line.split('\t')
 	filename_index = first_line_arr.index("filename")
