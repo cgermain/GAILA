@@ -29,6 +29,12 @@ def nocache(f):
 @app.route("/")
 @nocache
 def main():
+	if not utility.inverse_array_is_correct():
+		# return "<div>OH HELLO</div>"
+		return render_template('bad_inverse_names.html')
+	# Right now, the m,ain thing that might mess up is, if someone
+	# messed with the names of the inverse files.
+
 	return render_template('index_new.html')
 
 @app.route("/tab", methods=['GET'])
@@ -42,11 +48,11 @@ def tab():
 	 inverse_files=inverse_files)
 
 
-@app.route("/tab_5_helper_function", methods=['POST'])
-def tab_5_helper_function():
+@app.route("/tab_2_helper_function", methods=['POST'])
+def tab_2_helper_function():
 	# print request.form
 	print "tab 5 helper function"
-	valid, validation_error = validation.validate_tab_5(request.form)
+	valid, validation_error = validation.validate_tab_2(request.form)
 	if not valid:
 		return validation_error, 500
 
@@ -79,7 +85,7 @@ def tab_5_helper_function():
 	if a:
 		print "Error in tab 5. Trying cleanup now, either way returning error"
 		try:
-			clean_up_after_tab_5()
+			clean_up_after_tab_2()
 		finally: #In case it breaks
 			return a, 500
 	else:
@@ -87,10 +93,10 @@ def tab_5_helper_function():
 
 
 
-@app.route("/tab_2_helper_function", methods=['POST'])
-def tab_2_helper_function():
+@app.route("/tab_1_helper_function", methods=['POST'])
+def tab_1_helper_function():
 	# print request.form
-	valid, validation_error = validation.validate_tab_2(request.form)
+	valid, validation_error = validation.validate_tab_1(request.form)
 	# print valid
 	# print validation_error
 	if not valid:
@@ -98,7 +104,7 @@ def tab_2_helper_function():
 		print "Not valid, error is " + str(validation_error)
 		return validation_error, 500
 	# else:
-	# 	print "validation passed, this is being printed inside of tab_2_helper_function"
+	# 	print "validation passed, this is being printed inside of tab_1_helper_function"
 	# Wow,  that's so much better.
 	# Now, to make the values.
 
@@ -214,7 +220,7 @@ def getMGFFiles():
 
 
 
-def clean_up_after_tab_5():
+def clean_up_after_tab_2():
 	print "cleaning up possible leaked files, if there was an error somewhere."
 	# tempdest = filename + "_with_duplicates_deleted" is a line in combine_xml_mgf where
 	# we make temporary files.

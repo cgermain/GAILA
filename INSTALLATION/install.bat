@@ -166,4 +166,3 @@ echo finished sucessfully!
 :END
 echo exiting script
 pause
-pause

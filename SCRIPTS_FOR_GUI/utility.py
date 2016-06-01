@@ -121,13 +121,53 @@ def get_gene_files_array():
 			gene_file_array.append(f)
 	return gene_file_array
 
-def get_inverse_files_array():
-	inverse_file_array = []
+def inverse_array_is_correct():
+	inverse_file_array = [
+		'iTRAQ4-inv.txt',
+		'iTRAQ8-inv.txt',
+		'TMT10-inv.txt',
+		'TMT0-inv.txt',
+		'TMT2-inv.txt',
+		'TMT6-inv.txt',
+		'TMT6OLD-inv.txt'
+	]
+
+	inverse_file_array_calculated = []
 	this_dir = os.path.dirname(os.path.realpath(__file__))
 	for f in os.listdir(os.path.join(this_dir, "inverse_files")):
 		if f.endswith('-inv.txt'):
-			inverse_file_array.append(f)
+			inverse_file_array_calculated.append(f)
+	
+	if set(inverse_file_array) != set(inverse_file_array_calculated):
+		return False
+	return True
+
+
+
+def get_inverse_files_array():
+	# I think I need to hardcode this now, considering that people are
+	# going to mess with the files in there.
+	inverse_file_array = [
+		'iTRAQ4-inv.txt',
+		'iTRAQ8-inv.txt',
+		'TMT10-inv.txt',
+		'TMT0-inv.txt',
+		'TMT2-inv.txt',
+		'TMT6-inv.txt',
+		'TMT6OLD-inv.txt'
+	]
 	return inverse_file_array
+
+	# inverse_file_array_calculated = []
+	# this_dir = os.path.dirname(os.path.realpath(__file__))
+	# for f in os.listdir(os.path.join(this_dir, "inverse_files")):
+	# 	if f.endswith('-inv.txt'):
+	# 		inverse_file_array_calculated.append(f)
+	
+	# if set(inverse_file_array) != set(inverse_file_array_calculated):
+	# 	return ['ERROR! THERE ARE FILES INAPPROPRIATELY NAMED IN THE INVERSE FILE DIRECTORY-inv.txt']
+	# return inverse_file_array
+
 
 def xml_dirname_from_filename(full_path_to_xml):
 	print "xml_dirname_from_filename on input: " + str(full_path_to_xml)

@@ -1,0 +1,316 @@
+<div>
+  <div style="float:left;width:60%" id="leftSide">
+    <h2 style="margin:1%">CREATE INVERSE FILE FROM SPEC SHEET</h2>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">REPORTER ION TYPE</span>
+      <select class='form-control' id="reporterIonType">
+        {% if inverse_files %}
+          {% for f in inverse_files %}
+            <option value={{f.rpartition('-inv.txt')[0]}}>{{f.rpartition('-inv.txt')[0]}}</option>
+          {% endfor %}
+        {% endif %}
+      </select>
+    </div>
+    <span id="inverse_matrix_forms">
+      <div class="input-group" id="iTRAQ4" style="margin:1%">
+      <!-- What should I have here? Well, I think that I should have a 
+      HEADERS array. Except those can be hard-coded. I can actually 
+      do it by having funky names with like a underscore (_) in them or something.
+      That's probably the move.
+      -->
+        <div class="container">
+          <table class="table table-bordered">
+            <thead>
+            <tr>
+              <th>-2</th>
+              <th>-1</th>
+              <th>Monoisotopic</th>
+              <th>2</th>
+              <th>1</th>
+            </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input type="text" class="form-control" id="114_NA"></td>
+                <td><input type="text" class="form-control"></td>
+                <td><b>100</b></td>
+                <td><input type="text" class="form-control"></td>
+                <td><input type="text" class="form-control"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="input-group" id="iTRAQ8" style="margin:1%;display:none">
+          OPTION TWO!
+      </div>
+      <div class="input-group" id="TMT0" style="margin:1%;display:none">
+          OPTION THREE!
+      </div>
+      <div class="input-group" id="TMT10" style="margin:1%;display:none">
+        <div class="container">
+          <table class="table table-bordered">
+            <thead>
+            <tr>
+              <th>Mass Tag</th>
+              <th>-2</th>
+              <th>-1</th>
+              <th>Monoisotopic</th>
+              <th>2</th>
+              <th>1</th>
+            </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>TMT-126</th>
+                <td><input type="text" class="form-control" id="126_NA" value="0.0"></td>
+                <td><input type="text" class="form-control" id="126_NA" value="0.0"></td>
+                <td><b>100</b></td>
+                <td><input type="text" class="form-control" id="126_127C" value="0.0"></td>
+                <td><input type="text" class="form-control" id="126_128C" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>TMT-127N</th>
+                <td><input type="text" class="form-control" id="127N_NA" value="0.0"></td>
+                <td><input type="text" class="form-control" id="127N_126" value="0.0"></td>
+                <td><b>100</b></td>
+                <td><input type="text" class="form-control" id="127N_128N" value="0.0"></td>
+                <td><input type="text" class="form-control" id="127N_129N" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>TMT-127C</th>
+                <td><input type="text" class="form-control" id="127C_NA" value="0.0"></td>
+                <td><input type="text" class="form-control" id="127C_126" value="0.0"></td>
+                <td><b>100</b></td>
+                <td><input type="text" class="form-control" id="127C_128C" value="0.0"></td>
+                <td><input type="text" class="form-control" id="127C_129C" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>TMT-128N</th>
+                <td><input type="text" class="form-control" id="128N_NA" value="0.0"></td>
+                <td><input type="text" class="form-control" id="128N_127N" value="0.0"></td>
+                <td><b>100</b></td>
+                <td><input type="text" class="form-control" id="128N_129N" value="0.0"></td>
+                <td><input type="text" class="form-control" id="128N_130N" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>TMT-128C</th>
+                <td><input type="text" class="form-control" id="128C_126" value="0.0"></td>
+                <td><input type="text" class="form-control" id="128C_127C" value="0.0"></td>
+                <td><b>100</b></td>
+                <td><input type="text" class="form-control" id="128C_129C" value="0.0"></td>
+                <td><input type="text" class="form-control" id="128C_130C" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>TMT-129N</th>
+                <td><input type="text" class="form-control" id="129N_127N" value="0.0"></td>
+                <td><input type="text" class="form-control" id="129N_128N" value="0.0"></td>
+                <td><b>100</b></td>
+                <td><input type="text" class="form-control" id="129N_130N" value="0.0"></td>
+                <td><input type="text" class="form-control" id="129N_131" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>TMT-129C</th>
+                <td><input type="text" class="form-control" id="129C_127C" value="0.0"></td>
+                <td><input type="text" class="form-control" id="129C_128C" value="0.0"></td>
+                <td><b>100</b></td>
+                <td><input type="text" class="form-control" id="129C_130C" value="0.0"></td>
+                <td><input type="text" class="form-control" id="129C_NA" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>TMT-130N</th>
+                <td><input type="text" class="form-control" id="130N_128N" value="0.0"></td>
+                <td><input type="text" class="form-control" id="130N_129N" value="0.0"></td>
+                <td><b>100</b></td>
+                <td><input type="text" class="form-control" id="130N_131" value="0.0"></td>
+                <td><input type="text" class="form-control" id="130N_NA" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>TMT-130C</th>
+                <td><input type="text" class="form-control" id="130C_128C" value="0.0"></td>
+                <td><input type="text" class="form-control" id="130C_129C" value="0.0"></td>
+                <td><b>100</b></td>
+                <td><input type="text" class="form-control" id="130C_NA" value="0.0"></td>
+                <td><input type="text" class="form-control" id="130C_NA" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>TMT-131</th>
+                <td><input type="text" class="form-control" id="130N_129N" value="0.0"></td>
+                <td><input type="text" class="form-control" id="130N_130N" value="0.0"></td>
+                <td><b>100</b></td>
+                <td><input type="text" class="form-control" id="130N_NA" value="0.0"></td>
+                <td><input type="text" class="form-control" id="130N_NA" value="0.0"></td>
+              </tr>       
+            </tbody>
+          </table>
+        </div>      
+      </div>
+      <div class="input-group" id="TMT2" style="margin:1%;display:none">
+          OPTION FIVE!
+      </div>
+      <div class="input-group" id="TMT6" style="margin:1%;display:none">
+          OPTION SIX!
+      </div>
+      <div class="input-group" id="TMT6OLD" style="margin:1%;display:none">
+          OPTION SEVEN!
+      </div>
+    </span>
+
+    <!-- <h2 style="margin:1%">SELECT FROM ALL MGF FILES IN FOLDER</h2>
+
+
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">Operation to perform</span>
+      <select class='form-control' id="mgfOperationToPerform">
+        <option value="0">Only Extract reporter ion intensities (creates .reporter files)</option>
+        <option value="1">Extract reporter ion intensities AND select viable spectra (creates .reporter AND new .mgf files)</option>
+      </select>
+      <span class="input-group-btn">
+        <button class="btn btn-info" onclick="alert('Selecting viable spectra creates a series of mgf files filtered by whether a given run meet your minimum intensity and reporter count criteria. ')">?</button>
+      </span>
+    </div>
+
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">FULL PATH to MGF DIRECTORY</span>
+      <input type="text" class="form-control" id="mgfReadDirPath">
+      <span class="input-group-btn">
+        <button class="btn btn-info" onclick="alert('On windows, open windows explorer and navigate to your mgf directory. Clicking on its url bar, to the right of the folder names, will highlight the directory path. Copy paste that into this text box')">?</button>
+      </span>
+
+    </div>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">REPORTER ION TYPE</span>
+      <select class='form-control' id="reporterIonType">
+        {% if inverse_files %}
+          {% for f in inverse_files %}
+            <option value={{f.rpartition('-inv.txt')[0]}}>{{f.rpartition('-inv.txt')[0]}}</option>
+          {% endfor %}
+        {% endif %}
+      </select>
+    </div>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">Minimum Intensity per reporter</span>
+      <input type="text" class="form-control" id="minIntensity" value="1000">
+      <span class="input-group-btn">
+        <button class="btn btn-info" onclick="alert('Part of the filtering process. For a reporter ion to be considered present in a given run, it must appear in total this many times')">?</button>
+      </span>
+    </div>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">Minimum number of Reporters with said intensity</span>
+      <input type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' class="form-control" id="minReporters" value="2">
+      <span class="input-group-btn">
+        <button class="btn btn-info" onclick="alert('Part of the filtering process. For a run to be selected as valid, this many runs must appear with at least the prescribed intensity')">?</button>
+      </span>
+
+    </div>
+    <br>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">Perform largest-reporter recalibration</span>
+      <select class='form-control' id="performRecalibration">
+        <option value="1">Perform recalibration</option>
+        <option value="0">DO NOT Perform recalibration</option>
+      </select>
+    </div>
+
+    <div id="options_if_recalibrating">
+      <div class="input-group" style="margin: 1%">
+        <span class="input-group-addon" id="basic-addon1">&nbspm/z error to select maximum reporter for recalibration (ppm) &nbsp</span>
+        <input type="text" class="form-control" id="mzErrorInitialRun" value="20">
+        <span class="input-group-btn">
+          <button class="btn btn-info" onclick="alert('Error used to categorize spectral peaks in order to scale reporter ion target-masses to more accurate values. \n\nThe units of this number are millionths of a percent away from target mass. So, inputting 20 would mean that, for a reporter ion with m/z=100, anything with m/z between 99.998 and 100.002 would be classified as that ion')">?</button>
+        </span>
+      </div>
+
+      <div class="input-group" style="margin: 1%">
+        <span class="input-group-addon" id="basic-addon1">&nbsp m/z error to select recalibrated data (ppm, must be smaller than initial m/z error) &nbsp</span>
+        <input type="text" class="form-control" id="mzErrorRecalibration" value="5">
+        <span class="input-group-btn">
+          <button class="btn btn-info" onclick="alert('Error used to categorize spectral peaks AFTER reporter ion masses have been recalibrated. \n\nThe units of this number are millionths of a percent away from target mass. So, inputting 5 would mean that, for a reporter ion with recalibrated m/z=100, anything with m/z between 99.9995 and 100.0005 would be classified as that ion')">?</button>
+        </span>
+      </div>
+    </div>
+    <div id="options_if_not_recalibrating" style="display: none">
+      <div class="input-group" style="margin: 1%">
+        <span class="input-group-addon" id="basic-addon1">&nbspmz_error (ppm) &nbsp</span>
+        <input type="text" class="form-control" id="mzError" value="20">
+        <span class="input-group-btn">
+          <button class="btn btn-info" onclick="alert('Error used to categorize spectral peaks, based on hard-coded reporter ion masses. \n\nThe units of this number are millionths of a percent away from target mass. So, inputting 20 would mean that, for a reporter ion with recalibrated m/z=100, anything with m/z between 99.998 and 100.002 would be classified as that ion')">?</button>
+        </span>
+      </div>
+    </div>
+
+    <br>
+    <button id="tab_3_button" class="btn btn-primary">Click to submit</button> -->
+  </div>
+  <!-- <div style="float:right;width:30%;height:88vh;border-style:solid;border-width:5px;overflow:scroll;padding:10px" id="rightSide">
+    <h1>Progress</h1>
+    <ul>
+    </ul>
+  </div> -->
+  <script>
+  $('div[id="tab_3"]').find('#reporterIonType').change(function(e){
+    console.log("Yo");
+    console.log(e.target.value);
+    var value = e.target.value;
+    $('div').find("#inverse_matrix_forms").children().each(function(){
+      var id = $(this).attr('id');
+      if (id == value){
+        $(this).show();
+      }
+      else{
+        $(this).hide();
+      }
+      // console.log($(this).attr('id'));
+    })
+  })
+  </script>
+  <script>
+  $('div[id="tab_3"]').find("#performRecalibration").change(function(e){
+    console.log("Yippie");
+    console.log(e.target.value);
+    var value = e.target.value;
+    if (value == '1'){
+      console.log("value is perform_recalibration");
+      $('div[id="tab_3"]').find("#options_if_recalibrating").show();
+      $('div[id="tab_3"]').find("#options_if_not_recalibrating").hide();
+    }
+    else if (value == '0'){
+      console.log("value is do_not_perform_recalibration");
+      $('div[id="tab_3"]').find("#options_if_recalibrating").hide();
+      $('div[id="tab_3"]').find("#options_if_not_recalibrating").show();
+    }
+    else{
+      alert("Something is funky, ask sam whats up");
+    }
+  });
+  </script>
+
+  <script>
+  $('#tab_3_button').click(function(e){
+    console.log("clicked");
+    $(this).attr('disabled', true);
+    $(this).text("Processing ... ")
+    var that = $(this);
+    var leftSide = that.parent();
+    var inputs = leftSide.find('input, select');
+    
+    var serializedForm = serializeForm(inputs);
+
+    var rightSide = $(this).parent().siblings("#rightSide").first()
+    rightSide.append("<div>Executing Function Now</div>")
+    var startTime = new Date();
+    givenRightsideAndDataObjSelectMGF(rightSide, serializedForm, function(err){
+      if (err){
+        console.log("error in tab 3");
+        console.log(err);
+      }
+      else{
+        rightSide.append('<h3 style="color:green">Sucessfully parsed all MGF files</h3>')
+      }
+      that.attr('disabled', false);
+      that.text('Click to submit');
+      return;
+    });
+  });
+  </script>
+</div>

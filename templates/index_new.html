@@ -12,14 +12,17 @@
 		<nav class="navbar navbar-default height:10vh">
 	    <div class="container-fluid">
 	      <ul class="nav navbar-nav">
-	        <li name="tab_link" id="tab_2" class="active"><a href="#">SELECT SPECTRA</a></li>
-	        <li name="tab_link" id="tab_2">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</li>
-	        <li name="tab_link" class="active" id="tab_5"><a href="#">WRITE PEPTIDES AND REPORTERS</a></li>
+	        <li name="tab_link" id="tab_1" class="active"><a href="#">SELECT SPECTRA</a></li>
+	        <li name="tab_link">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</li>
+	        <li name="tab_link" class="active" id="tab_2"><a href="#">WRITE PEPTIDES AND REPORTERS</a></li>
+	        <li name="tab_link">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</li>
+	        <li name="tab_link" class="active" id="tab_3"><a href="#">CREATE INVERSE FILES</a></li>
 	      </ul>
 	    </div>
 	  </nav>
-	  <div id="tab_2" name="tab_body"></div>
-	  <div id="tab_5" name="tab_body" style="display: none"></div>
+	  <div id="tab_1" name="tab_body"></div>
+	  <div id="tab_2" name="tab_body" style="display: none"></div>
+	  <div id="tab_3" name="tab_body" style="display: none"></div>
 	  <script type="text/javascript">
 	  $('[name=tab_body]').each(function(index){
 	  	console.log(index)
@@ -104,7 +107,7 @@
 
 	          $.ajax({
 	            type:"POST",
-	            url:"tab_2_helper_function",
+	            url:"tab_1_helper_function",
 	            data : data,
 	            success : function(result){
 	              console.log(result);
@@ -123,26 +126,14 @@
 	      }
 	    ],
 	    function(err, result){
-	      // if (err){console.log(err)}
-	      // if(result){console.log(result)}
-	      // console.log("in final waterfall catcher");
-	      // if (err && err.err && err.err == "NO FILES TO WRITE"){return;}
-	      // console.log(err);
-	      // if (err){
-	      //   alert(err)
-	      // }
 	      if (err){
 	      	console.log(err);
       		if (err){
         		rightSide.append('<h3 style="color:red">' + err + '</h3>')	
         	}
-	      	// rightSide.append("<div style='color:red'>Error in selecting mgf!<div>");
 	      }
 	      var difference = new Date() - startTime;
 	      rightSide.append("<h4>MILLISECONDS TAKEN: " + difference + " <h4>")
-	      // that.attr('disabled', false);
-	      // that.text('Click to submit Tab 1');
-	      // Figure out how to do this part.
 	      return callbackOuter(err); //could be null
 	    })
 	  }
