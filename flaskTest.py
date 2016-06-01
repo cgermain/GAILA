@@ -219,6 +219,14 @@ def getMGFFiles():
 		return "Error selecting mgf files, make sure you have a proper mgf directory name", 500
 
 
+@app.route("/createInverseFiles", methods=['POST'])
+def createInverseFiles():
+	print "do"
+	print request.get_json()
+	print "done"
+	return "shamalalamlam"
+
+
 
 def clean_up_after_tab_2():
 	print "cleaning up possible leaked files, if there was an error somewhere."
