@@ -135,11 +135,11 @@
               </tr>
               <tr>
                 <th>TMT-131</th>
-                <td><input type="text" class="form-control" id="130N_129N" value="0.0"></td>
-                <td><input type="text" class="form-control" id="130N_130N" value="0.0"></td>
+                <td><input type="text" class="form-control" id="131_129N" value="0.0"></td>
+                <td><input type="text" class="form-control" id="131_130N" value="0.0"></td>
                 <td><b>100</b></td>
-                <td><input type="text" class="form-control" id="130N_NA" value="0.0"></td>
-                <td><input type="text" class="form-control" id="130N_NA" value="0.0"></td>
+                <td><input type="text" class="form-control" id="131_NA" value="0.0"></td>
+                <td><input type="text" class="form-control" id="131_NA" value="0.0"></td>
               </tr>       
             </tbody>
           </table>
@@ -164,9 +164,16 @@
   </div> -->
   <script>
   $('div[id="tab_3"]').find('#reporterIonType').change(function(e){
+    var invalidIonList = ['TMT0','TMT2'];
     console.log("Yo");
     console.log(e.target.value);
     var value = e.target.value;
+    if (_.contains(invalidIonList, value)){
+      $('#tab_3_button').attr('disabled', true);
+    }
+    else{
+      $('#tab_3_button').attr('disabled', false);
+    }
     $('div').find("#inverse_matrix_forms").children().each(function(){
       var id = $(this).attr('id');
       if (id == value){
@@ -275,6 +282,20 @@
       success : function(result){
         console.log("good job friend!");
         console.log(result);
+        // console.log('bob');
+        var filename = reporterType.val() + "-inv.txt"
+        console.log('filename: ' + filename);
+        var type='text/plain';
+        var blob = new Blob([result], {type : type});
+        var URL = window.URL || window.webkitURL;
+        var downloadUrl = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = downloadUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        console.log('clicked');
+
       },
       error : function(response, textStatus, HTTPError){
         console.log('error creating inverse');

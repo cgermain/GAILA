@@ -13,6 +13,7 @@ from SCRIPTS_FOR_GUI import combine_xml_mgf
 import math
 from SCRIPTS_FOR_GUI import utility
 from SCRIPTS_FOR_GUI import validation
+from SCRIPTS_FOR_GUI import handle_inverse_posts
 # from copy import copy
 # from science_code import science
 from SCRIPTS_FOR_GUI import makeFolderNames
@@ -220,11 +221,35 @@ def getMGFFiles():
 
 
 @app.route("/createInverseFiles", methods=['POST'])
+@nocache
 def createInverseFiles():
 	print "do"
-	print request.get_json()
-	print "done"
-	return "shamalalamlam"
+	# print request.get_json()
+	post_obj = request.get_json()
+	# print "reporter type"
+	# print post_obj['reporterType']
+	reporter_type = post_obj['reporterType']
+	# print 'data:'
+	# print post_obj['data']
+	inverse_string = handle_inverse_posts.create_inverse_file(post_obj)
+	print 'inverse_string'
+	print inverse_string
+	return inverse_string
+	# response = make_response(inverse_string)
+	# # content_disposition = 'attachment; filename="' + str(reporter_type) + '-inv.txt"'
+	# content_disposition = 'attachment; filename="whocares.txt"'
+	# print 'content_disposition'
+	# print content_disposition
+	# response.headers['Content-Type'] = 'text/plain'
+	# response.headers["Content-Disposition"] = content_disposition
+	# # response.headers['mimetype'] = 'text/plain'
+	# # response.headers['Content-Transfer-Encoding'] = 'binary'
+	# # "Content-Transfer-Encoding: binary"
+	# print response.headers
+	# # response.headers['Content-type'] = 'application/force-download'
+	# print "did it do it?"
+	# return response
+	# return "shamalalamlam"
 
 
 
@@ -299,7 +324,8 @@ def multiple_select_to_two_arrays(unacceptable_mods):
 
 
 if __name__ == "__main__":
-  app.run()
+	# app.debug = True
+	app.run()
   # app.run(processes=8, debug=True)
   
   # app.run()
