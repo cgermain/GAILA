@@ -13,15 +13,11 @@
     </div>
     <span id="inverse_matrix_forms">
       <div class="input-group" id="iTRAQ4" style="margin:1%">
-      <!-- What should I have here? Well, I think that I should have a 
-      HEADERS array. Except those can be hard-coded. I can actually 
-      do it by having funky names with like a underscore (_) in them or something.
-      That's probably the move.
-      -->
         <div class="container">
           <table class="table table-bordered">
             <thead>
             <tr>
+              <th>Mass Tag</th>
               <th>-2</th>
               <th>-1</th>
               <th>Monoisotopic</th>
@@ -31,21 +27,125 @@
             </thead>
             <tbody>
               <tr>
-                <td><input type="text" class="form-control" id="114_NA"></td>
-                <td><input type="text" class="form-control"></td>
-                <td><b>100</b></td>
-                <td><input type="text" class="form-control"></td>
-                <td><input type="text" class="form-control"></td>
+                <th>iTRAQ-114</th>
+                <td><input type="text" class="form-control" id="114_NA1" value="0.0"></td>
+                <td><input type="text" class="form-control" id="114_NA2" value="0.0"></td>
+                <td><input type="text" class="form-control" id="114_114" value="100.0"></td>
+                <td><input type="text" class="form-control" id="114_115" value="0.0"></td>
+                <td><input type="text" class="form-control" id="114_116" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>iTRAQ-115</th>
+                <td><input type="text" class="form-control" id="115_NA1" value="0.0"></td>
+                <td><input type="text" class="form-control" id="115_114" value="0.0"></td>
+                <td><input type="text" class="form-control" id="115_115" value="100.0"></td>
+                <td><input type="text" class="form-control" id="115_116" value="0.0"></td>
+                <td><input type="text" class="form-control" id="115_117" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>iTRAQ-116</th>
+                <td><input type="text" class="form-control" id="116_114" value="0.0"></td>
+                <td><input type="text" class="form-control" id="116_115" value="0.0"></td>
+                <td><input type="text" class="form-control" id="116_116" value="100.0"></td>
+                <td><input type="text" class="form-control" id="116_117" value="0.0"></td>
+                <td><input type="text" class="form-control" id="116_NA1" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>iTRAQ-117</th>
+                <td><input type="text" class="form-control" id="117_115" value="0.0"></td>
+                <td><input type="text" class="form-control" id="117_116" value="0.0"></td>
+                <td><input type="text" class="form-control" id="117_117" value="100.0"></td>
+                <td><input type="text" class="form-control" id="117_NA1" value="0.0"></td>
+                <td><input type="text" class="form-control" id="117_NA2" value="0.0"></td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
       <div class="input-group" id="iTRAQ8" style="margin:1%;display:none">
-          OPTION TWO!
+        <div class="container">
+          <table class="table table-bordered">
+            <thead>
+            <tr>
+              <th>Mass Tag</th>
+              <th>-2</th>
+              <th>-1</th>
+              <th>Monoisotopic</th>
+              <th>2</th>
+              <th>1</th>
+            </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>iTRAQ-113</th>
+                <td><input type="text" class="form-control" id="113_NA1" value="0.0"></td>
+                <td><input type="text" class="form-control" id="113_NA2" value="0.0"></td>
+                <td><input type="text" class="form-control" id="113_113" value="100.0"></td>
+                <td><input type="text" class="form-control" id="113_114" value="0.0"></td>
+                <td><input type="text" class="form-control" id="113_115" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>iTRAQ-114</th>
+                <td><input type="text" class="form-control" id="114_NA1" value="0.0"></td>
+                <td><input type="text" class="form-control" id="114_113" value="0.0"></td>
+                <td><input type="text" class="form-control" id="114_114" value="100.0"></td>
+                <td><input type="text" class="form-control" id="114_115" value="0.0"></td>
+                <td><input type="text" class="form-control" id="114_116" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>iTRAQ-115</th>
+                <td><input type="text" class="form-control" id="115_113" value="0.0"></td>
+                <td><input type="text" class="form-control" id="115_114" value="0.0"></td>
+                <td><input type="text" class="form-control" id="115_115" value="100.0"></td>
+                <td><input type="text" class="form-control" id="115_116" value="0.0"></td>
+                <td><input type="text" class="form-control" id="115_117" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>iTRAQ-116</th>
+                <td><input type="text" class="form-control" id="116_114" value="0.0"></td>
+                <td><input type="text" class="form-control" id="116_115" value="0.0"></td>
+                <td><input type="text" class="form-control" id="116_116" value="100.0"></td>
+                <td><input type="text" class="form-control" id="116_117" value="0.0"></td>
+                <td><input type="text" class="form-control" id="116_118" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>iTRAQ-117</th>
+                <td><input type="text" class="form-control" id="117_115" value="0.0"></td>
+                <td><input type="text" class="form-control" id="117_116" value="0.0"></td>
+                <td><input type="text" class="form-control" id="117_117" value="100.0"></td>
+                <td><input type="text" class="form-control" id="117_118" value="0.0"></td>
+                <td><input type="text" class="form-control" id="117_119" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>iTRAQ-118</th>
+                <td><input type="text" class="form-control" id="118_116" value="0.0"></td>
+                <td><input type="text" class="form-control" id="118_117" value="0.0"></td>
+                <td><input type="text" class="form-control" id="118_118" value="100.0"></td>
+                <td><input type="text" class="form-control" id="118_119" value="0.0"></td>
+                <td><input type="text" class="form-control" id="118_121" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>iTRAQ-119</th>
+                <td><input type="text" class="form-control" id="119_117" value="0.0"></td>
+                <td><input type="text" class="form-control" id="119_118" value="0.0"></td>
+                <td><input type="text" class="form-control" id="119_119" value="100.0"></td>
+                <td><input type="text" class="form-control" id="119_121" value="0.0"></td>
+                <td><input type="text" class="form-control" id="119_NA1" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>iTRAQ-121</th>
+                <td><input type="text" class="form-control" id="121_118" value="0.0"></td>
+                <td><input type="text" class="form-control" id="121_119" value="0.0"></td>
+                <td><input type="text" class="form-control" id="121_121" value="100.0"></td>
+                <td><input type="text" class="form-control" id="121_NA1" value="0.0"></td>
+                <td><input type="text" class="form-control" id="121_NA2" value="0.0"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
       <div class="input-group" id="TMT0" style="margin:1%;display:none">
-          OPTION THREE!
+          Not available for inverse creation
       </div>
       <div class="input-group" id="TMT10" style="margin:1%;display:none">
         <div class="container">
@@ -65,7 +165,7 @@
                 <th>TMT-126</th>
                 <td><input type="text" class="form-control" id="126_NA1" value="0.0"></td>
                 <td><input type="text" class="form-control" id="126_NA2" value="0.0"></td>
-                <td><b>100</b></td>
+                <td><input type="text" class="form-control" id="126_126" value="100.0"></td>
                 <td><input type="text" class="form-control" id="126_127C" value="0.0"></td>
                 <td><input type="text" class="form-control" id="126_128C" value="0.0"></td>
               </tr>
@@ -73,7 +173,7 @@
                 <th>TMT-127N</th>
                 <td><input type="text" class="form-control" id="127N_NA1" value="0.0"></td>
                 <td><input type="text" class="form-control" id="127N_126" value="0.0"></td>
-                <td><b>100</b></td>
+                <td><input type="text" class="form-control" id="127N_127N" value="100.0"></td>
                 <td><input type="text" class="form-control" id="127N_128N" value="0.0"></td>
                 <td><input type="text" class="form-control" id="127N_129N" value="0.0"></td>
               </tr>
@@ -81,7 +181,7 @@
                 <th>TMT-127C</th>
                 <td><input type="text" class="form-control" id="127C_NA1" value="0.0"></td>
                 <td><input type="text" class="form-control" id="127C_126" value="0.0"></td>
-                <td><b>100</b></td>
+                <td><input type="text" class="form-control" id="127C_127C" value="100.0"></td>
                 <td><input type="text" class="form-control" id="127C_128C" value="0.0"></td>
                 <td><input type="text" class="form-control" id="127C_129C" value="0.0"></td>
               </tr>
@@ -89,7 +189,7 @@
                 <th>TMT-128N</th>
                 <td><input type="text" class="form-control" id="128N_NA1" value="0.0"></td>
                 <td><input type="text" class="form-control" id="128N_127N" value="0.0"></td>
-                <td><b>100</b></td>
+                <td><input type="text" class="form-control" id="128N_128N" value="100.0"></td>
                 <td><input type="text" class="form-control" id="128N_129N" value="0.0"></td>
                 <td><input type="text" class="form-control" id="128N_130N" value="0.0"></td>
               </tr>
@@ -97,7 +197,7 @@
                 <th>TMT-128C</th>
                 <td><input type="text" class="form-control" id="128C_126" value="0.0"></td>
                 <td><input type="text" class="form-control" id="128C_127C" value="0.0"></td>
-                <td><b>100</b></td>
+                <td><input type="text" class="form-control" id="128C_128C" value="100.0"></td>
                 <td><input type="text" class="form-control" id="128C_129C" value="0.0"></td>
                 <td><input type="text" class="form-control" id="128C_130C" value="0.0"></td>
               </tr>
@@ -105,7 +205,7 @@
                 <th>TMT-129N</th>
                 <td><input type="text" class="form-control" id="129N_127N" value="0.0"></td>
                 <td><input type="text" class="form-control" id="129N_128N" value="0.0"></td>
-                <td><b>100</b></td>
+                <td><input type="text" class="form-control" id="129N_129N" value="100.0"></td>
                 <td><input type="text" class="form-control" id="129N_130N" value="0.0"></td>
                 <td><input type="text" class="form-control" id="129N_131" value="0.0"></td>
               </tr>
@@ -113,7 +213,7 @@
                 <th>TMT-129C</th>
                 <td><input type="text" class="form-control" id="129C_127C" value="0.0"></td>
                 <td><input type="text" class="form-control" id="129C_128C" value="0.0"></td>
-                <td><b>100</b></td>
+                <td><input type="text" class="form-control" id="129C_129C" value="100.0"></td>
                 <td><input type="text" class="form-control" id="129C_130C" value="0.0"></td>
                 <td><input type="text" class="form-control" id="129C_NA1" value="0.0"></td>
               </tr>
@@ -121,7 +221,7 @@
                 <th>TMT-130N</th>
                 <td><input type="text" class="form-control" id="130N_128N" value="0.0"></td>
                 <td><input type="text" class="form-control" id="130N_129N" value="0.0"></td>
-                <td><b>100</b></td>
+                <td><input type="text" class="form-control" id="130N_130N" value="100.0"></td>
                 <td><input type="text" class="form-control" id="130N_131" value="0.0"></td>
                 <td><input type="text" class="form-control" id="130N_NA1" value="0.0"></td>
               </tr>
@@ -129,7 +229,7 @@
                 <th>TMT-130C</th>
                 <td><input type="text" class="form-control" id="130C_128C" value="0.0"></td>
                 <td><input type="text" class="form-control" id="130C_129C" value="0.0"></td>
-                <td><b>100</b></td>
+                <td><input type="text" class="form-control" id="130C_130C" value="100.0"></td>
                 <td><input type="text" class="form-control" id="130C_NA1" value="0.0"></td>
                 <td><input type="text" class="form-control" id="130C_NA2" value="0.0"></td>
               </tr>
@@ -137,24 +237,149 @@
                 <th>TMT-131</th>
                 <td><input type="text" class="form-control" id="131_129N" value="0.0"></td>
                 <td><input type="text" class="form-control" id="131_130N" value="0.0"></td>
-                <td><b>100</b></td>
-                <td><input type="text" class="form-control" id="131_NA" value="0.0"></td>
-                <td><input type="text" class="form-control" id="131_NA" value="0.0"></td>
+                <td><input type="text" class="form-control" id="131_131" value="100.0"></td>
+                <td><input type="text" class="form-control" id="131_NA1" value="0.0"></td>
+                <td><input type="text" class="form-control" id="131_NA2" value="0.0"></td>
               </tr>       
             </tbody>
           </table>
         </div>      
       </div>
       <div class="input-group" id="TMT2" style="margin:1%;display:none">
-          OPTION FIVE!
+          Not available for inverse creation  
       </div>
       <div class="input-group" id="TMT6" style="margin:1%;display:none">
-          OPTION SIX!
+        <div class="container">
+          <table class="table table-bordered">
+            <thead>
+            <tr>
+              <th>Mass Tag</th>
+              <th>-2</th>
+              <th>-1</th>
+              <th>Monoisotopic</th>
+              <th>2</th>
+              <th>1</th>
+            </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>TMT-126</th>
+                <td><input type="text" class="form-control" id="126_NA1" value="0.0"></td>
+                <td><input type="text" class="form-control" id="126_NA2" value="0.0"></td>
+                <td><input type="text" class="form-control" id="126_126" value="100.0"></td>
+                <td><input type="text" class="form-control" id="126_127" value="0.0"></td>
+                <td><input type="text" class="form-control" id="126_128" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>TMT-127</th>
+                <td><input type="text" class="form-control" id="127_NA1" value="0.0"></td>
+                <td><input type="text" class="form-control" id="127_126" value="0.0"></td>
+                <td><input type="text" class="form-control" id="127_127" value="100.0"></td>
+                <td><input type="text" class="form-control" id="127_128" value="0.0"></td>
+                <td><input type="text" class="form-control" id="127_129" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>TMT-128</th>
+                <td><input type="text" class="form-control" id="128_126" value="0.0"></td>
+                <td><input type="text" class="form-control" id="128_127" value="0.0"></td>
+                <td><input type="text" class="form-control" id="128_128" value="100.0"></td>
+                <td><input type="text" class="form-control" id="128_129" value="0.0"></td>
+                <td><input type="text" class="form-control" id="128_130" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>TMT-129</th>
+                <td><input type="text" class="form-control" id="129_127" value="0.0"></td>
+                <td><input type="text" class="form-control" id="129_128" value="0.0"></td>
+                <td><input type="text" class="form-control" id="129_129" value="100.0"></td>
+                <td><input type="text" class="form-control" id="129_130" value="0.0"></td>
+                <td><input type="text" class="form-control" id="129_131" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>TMT-130</th>
+                <td><input type="text" class="form-control" id="130_128" value="0.0"></td>
+                <td><input type="text" class="form-control" id="130_129" value="0.0"></td>
+                <td><input type="text" class="form-control" id="130_130" value="100.0"></td>
+                <td><input type="text" class="form-control" id="130_131" value="0.0"></td>
+                <td><input type="text" class="form-control" id="130_NA1" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>TMT-131</th>
+                <td><input type="text" class="form-control" id="131_129" value="0.0"></td>
+                <td><input type="text" class="form-control" id="131_130" value="0.0"></td>
+                <td><input type="text" class="form-control" id="131_131" value="100.0"></td>
+                <td><input type="text" class="form-control" id="131_NA1" value="0.0"></td>
+                <td><input type="text" class="form-control" id="131_NA2" value="0.0"></td>
+              </tr>       
+            </tbody>
+          </table>
+        </div>        
       </div>
       <div class="input-group" id="TMT6OLD" style="margin:1%;display:none">
-          OPTION SEVEN!
-      </div>
-    </span>
+        <div class="container">
+          <table class="table table-bordered">
+            <thead>
+            <tr>
+              <th>Mass Tag</th>
+              <th>-2</th>
+              <th>-1</th>
+              <th>Monoisotopic</th>
+              <th>2</th>
+              <th>1</th>
+            </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>TMT-126</th>
+                <td><input type="text" class="form-control" id="126_NA1" value="0.0"></td>
+                <td><input type="text" class="form-control" id="126_NA2" value="0.0"></td>
+                <td><input type="text" class="form-control" id="126_126" value="100.0"></td>
+                <td><input type="text" class="form-control" id="126_127" value="0.0"></td>
+                <td><input type="text" class="form-control" id="126_128" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>TMT-127</th>
+                <td><input type="text" class="form-control" id="127_NA1" value="0.0"></td>
+                <td><input type="text" class="form-control" id="127_126" value="0.0"></td>
+                <td><input type="text" class="form-control" id="127_127" value="100.0"></td>
+                <td><input type="text" class="form-control" id="127_128" value="0.0"></td>
+                <td><input type="text" class="form-control" id="127_129" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>TMT-128</th>
+                <td><input type="text" class="form-control" id="128_126" value="0.0"></td>
+                <td><input type="text" class="form-control" id="128_127" value="0.0"></td>
+                <td><input type="text" class="form-control" id="128_128" value="100.0"></td>
+                <td><input type="text" class="form-control" id="128_129" value="0.0"></td>
+                <td><input type="text" class="form-control" id="128_130" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>TMT-129</th>
+                <td><input type="text" class="form-control" id="129_127" value="0.0"></td>
+                <td><input type="text" class="form-control" id="129_128" value="0.0"></td>
+                <td><input type="text" class="form-control" id="129_129" value="100.0"></td>
+                <td><input type="text" class="form-control" id="129_130" value="0.0"></td>
+                <td><input type="text" class="form-control" id="129_131" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>TMT-130</th>
+                <td><input type="text" class="form-control" id="130_128" value="0.0"></td>
+                <td><input type="text" class="form-control" id="130_129" value="0.0"></td>
+                <td><input type="text" class="form-control" id="130_130" value="100.0"></td>
+                <td><input type="text" class="form-control" id="130_131" value="0.0"></td>
+                <td><input type="text" class="form-control" id="130_NA1" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>TMT-131</th>
+                <td><input type="text" class="form-control" id="131_129" value="0.0"></td>
+                <td><input type="text" class="form-control" id="131_130" value="0.0"></td>
+                <td><input type="text" class="form-control" id="131_131" value="100.0"></td>
+                <td><input type="text" class="form-control" id="131_NA1" value="0.0"></td>
+                <td><input type="text" class="form-control" id="131_NA2" value="0.0"></td>
+              </tr>       
+            </tbody>
+          </table>
+        </div>        
+      </div>    </span>
     <button id="tab_3_button" class="btn btn-primary">Create Inverse File</button>
   </div>
   <!-- <div style="float:right;width:30%;height:88vh;border-style:solid;border-width:5px;overflow:scroll;padding:10px" id="rightSide">

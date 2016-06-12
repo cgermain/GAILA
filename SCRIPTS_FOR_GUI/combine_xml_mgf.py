@@ -301,20 +301,20 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type):
 			end_col=reporter_ion_type+'-121'
 			label_mass_int=304
 		elif reporter_ion_type=='TMT0':
-			start_col=type+'-126'
-			end_col=type+'-126'
+			start_col=reporter_ion_type+'-126'
+			end_col=reporter_ion_type+'-126'
 			label_mass_int=225
 		elif reporter_ion_type=='TMT2':
-			start_col=type+'-126'
-			end_col=type+'-127'
+			start_col=reporter_ion_type+'-126'
+			end_col=reporter_ion_type+'-127'
 			label_mass_int=225
 		elif reporter_ion_type=='TMT6':
-			start_col=type+'-126'
-			end_col=type+'-131'
+			start_col=reporter_ion_type+'-126'
+			end_col=reporter_ion_type+'-131'
 			label_mass_int=229
 		elif reporter_ion_type=='TMT6OLD':
-			start_col=type+'-126'
-			end_col=type+'-131'
+			start_col=reporter_ion_type+'-126'
+			end_col=reporter_ion_type+'-131'
 			label_mass_int=229
 		elif reporter_ion_type=='TMT10':
 			start_col=reporter_ion_type+'-126'

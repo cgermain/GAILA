@@ -223,33 +223,13 @@ def getMGFFiles():
 @app.route("/createInverseFiles", methods=['POST'])
 @nocache
 def createInverseFiles():
-	print "do"
-	# print request.get_json()
+	print "createInverseFile called"
 	post_obj = request.get_json()
-	# print "reporter type"
-	# print post_obj['reporterType']
 	reporter_type = post_obj['reporterType']
-	# print 'data:'
-	# print post_obj['data']
 	inverse_string = handle_inverse_posts.create_inverse_file(post_obj)
 	print 'inverse_string'
 	print inverse_string
 	return inverse_string
-	# response = make_response(inverse_string)
-	# # content_disposition = 'attachment; filename="' + str(reporter_type) + '-inv.txt"'
-	# content_disposition = 'attachment; filename="whocares.txt"'
-	# print 'content_disposition'
-	# print content_disposition
-	# response.headers['Content-Type'] = 'text/plain'
-	# response.headers["Content-Disposition"] = content_disposition
-	# # response.headers['mimetype'] = 'text/plain'
-	# # response.headers['Content-Transfer-Encoding'] = 'binary'
-	# # "Content-Transfer-Encoding: binary"
-	# print response.headers
-	# # response.headers['Content-type'] = 'application/force-download'
-	# print "did it do it?"
-	# return response
-	# return "shamalalamlam"
 
 
 
