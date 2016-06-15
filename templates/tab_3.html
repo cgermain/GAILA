@@ -20,9 +20,9 @@
               <th>Mass Tag</th>
               <th>-2</th>
               <th>-1</th>
-              <th>Monoisotopic</th>
-              <th>2</th>
+              <th>Main</th>
               <th>1</th>
+              <th>2</th>
             </tr>
             </thead>
             <tbody>
@@ -70,9 +70,9 @@
               <th>Mass Tag</th>
               <th>-2</th>
               <th>-1</th>
-              <th>Monoisotopic</th>
-              <th>2</th>
+              <th>Main</th>
               <th>1</th>
+              <th>2</th>
             </tr>
             </thead>
             <tbody>
@@ -155,9 +155,9 @@
               <th>Mass Tag</th>
               <th>-2</th>
               <th>-1</th>
-              <th>Monoisotopic</th>
-              <th>2</th>
+              <th>Main</th>
               <th>1</th>
+              <th>2</th>
             </tr>
             </thead>
             <tbody>
@@ -246,7 +246,38 @@
         </div>      
       </div>
       <div class="input-group" id="TMT2" style="margin:1%;display:none">
-          Not available for inverse creation  
+        <div class="container">
+          <table class="table table-bordered">
+            <thead>
+            <tr>
+              <th>Mass Tag</th>
+              <th>-2</th>
+              <th>-1</th>
+              <th>Main</th>
+              <th>1</th>
+              <th>2</th>
+            </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>TMT-126</th>
+                <td><input type="text" class="form-control" id="126_NA1" value="0.0"></td>
+                <td><input type="text" class="form-control" id="126_NA2" value="0.0"></td>
+                <td><input type="text" class="form-control" id="126_126" value="100.0"></td>
+                <td><input type="text" class="form-control" id="126_127" value="0.0"></td>
+                <td><input type="text" class="form-control" id="126_NA3" value="0.0"></td>
+              </tr>
+              <tr>
+                <th>TMT-127</th>
+                <td><input type="text" class="form-control" id="127_NA1" value="0.0"></td>
+                <td><input type="text" class="form-control" id="127_126" value="0.0"></td>
+                <td><input type="text" class="form-control" id="127_127" value="100.0"></td>
+                <td><input type="text" class="form-control" id="127_NA2" value="0.0"></td>
+                <td><input type="text" class="form-control" id="127_NA3" value="0.0"></td>
+              </tr>  
+            </tbody>
+          </table>
+        </div>
       </div>
       <div class="input-group" id="TMT6" style="margin:1%;display:none">
         <div class="container">
@@ -256,9 +287,9 @@
               <th>Mass Tag</th>
               <th>-2</th>
               <th>-1</th>
-              <th>Monoisotopic</th>
-              <th>2</th>
+              <th>Main</th>
               <th>1</th>
+              <th>2</th>
             </tr>
             </thead>
             <tbody>
@@ -322,9 +353,9 @@
               <th>Mass Tag</th>
               <th>-2</th>
               <th>-1</th>
-              <th>Monoisotopic</th>
-              <th>2</th>
+              <th>Main</th>
               <th>1</th>
+              <th>2</th>
             </tr>
             </thead>
             <tbody>
@@ -389,8 +420,7 @@
   </div> -->
   <script>
   $('div[id="tab_3"]').find('#reporterIonType').change(function(e){
-    var invalidIonList = ['TMT0','TMT2'];
-    console.log("Yo");
+    var invalidIonList = ['TMT0'];
     console.log(e.target.value);
     var value = e.target.value;
     if (_.contains(invalidIonList, value)){
