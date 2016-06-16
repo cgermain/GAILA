@@ -121,28 +121,14 @@ def get_gene_files_array():
 			gene_file_array.append(f)
 	return gene_file_array
 
-def inverse_array_is_correct():
-	inverse_file_array = [
-		'iTRAQ4-inv.txt',
-		'iTRAQ8-inv.txt',
-		'TMT10-inv.txt',
-		'TMT0-inv.txt',
-		'TMT2-inv.txt',
-		'TMT6-inv.txt',
-		'TMT6OLD-inv.txt'
-	]
 
-	inverse_file_array_calculated = []
+def get_true_inverse_array():
 	this_dir = os.path.dirname(os.path.realpath(__file__))
+	inverse_file_array_calculated = []
 	for f in os.listdir(os.path.join(this_dir, "inverse_files")):
 		if f.endswith('-inv.txt'):
 			inverse_file_array_calculated.append(f)
-	
-	if set(inverse_file_array) != set(inverse_file_array_calculated):
-		return False
-	return True
-
-
+	return inverse_file_array_calculated
 
 def get_inverse_files_array():
 	# I think I need to hardcode this now, considering that people are
@@ -157,6 +143,36 @@ def get_inverse_files_array():
 		'TMT6OLD-inv.txt'
 	]
 	return inverse_file_array
+
+
+
+def inverse_array_is_correct():
+	true_inverse_array = get_true_inverse_array()
+	inverse_file_array = get_inverse_files_array()
+	if set(true_inverse_array) != set(inverse_file_array):
+		return False
+	return True
+	# inverse_file_array = [
+	# 	'iTRAQ4-inv.txt',
+	# 	'iTRAQ8-inv.txt',
+	# 	'TMT10-inv.txt',
+	# 	'TMT0-inv.txt',
+	# 	'TMT2-inv.txt',
+	# 	'TMT6-inv.txt',
+	# 	'TMT6OLD-inv.txt'
+	# ]
+
+	# inverse_file_array_calculated = []
+	# this_dir = os.path.dirname(os.path.realpath(__file__))
+	# for f in os.listdir(os.path.join(this_dir, "inverse_files")):
+	# 	if f.endswith('-inv.txt'):
+	# 		inverse_file_array_calculated.append(f)
+	
+	# if set(inverse_file_array) != set(inverse_file_array_calculated):
+	# 	return False
+	# return True
+
+
 
 	# inverse_file_array_calculated = []
 	# this_dir = os.path.dirname(os.path.realpath(__file__))

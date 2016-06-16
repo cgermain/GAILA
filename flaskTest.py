@@ -32,7 +32,10 @@ def nocache(f):
 def main():
 	if not utility.inverse_array_is_correct():
 		# return "<div>OH HELLO</div>"
-		return render_template('bad_inverse_names.html')
+		true_inverse_files = utility.get_true_inverse_array()
+		inverse_file_array = utility.get_inverse_files_array()
+		return render_template('bad_inverse_names.html', true_inverse_files=true_inverse_files,\
+			inverse_file_array=inverse_file_array)
 	# Right now, the m,ain thing that might mess up is, if someone
 	# messed with the names of the inverse files.
 

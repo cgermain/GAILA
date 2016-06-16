@@ -5,15 +5,38 @@
   <h3 style="margin:1%">Names in folder 'SCRIPTS_FOR_GUI\inverse_files should be exactly as follows: </h3> 
   <div style="border:solid;width:fit-content">
     <ul style="margin:5%">
-      <li>iTRAQ4-inv.txt</li>
+      {% if inverse_file_array %}
+        {% for f in inverse_file_array %}
+        <li>{{f}}</li>
+        {% endfor %}
+      {% endif %}
+
+      <!-- <li>iTRAQ4-inv.txt</li>
       <li>iTRAQ8-inv.txt</li>
       <li>TMT0-inv.txt</li>
       <li>TMT10-inv.txt</li>
       <li>TMT2-inv.txt</li>
       <li>TMT6-inv.txt</li>
-      <li>TMT6OLD-inv.txt</li>
+      <li>TMT6OLD-inv.txt</li> -->
     </ul>
   </div>
-  <h3 style="margin:1%">Editing folder to comply with this will fix this page</h3>
+  <h3 style="margin:1%">Currently the files in this folder are: </h3>
+  <div style="border:solid;width:fit-content">
+    <ul style="margin:5%">
+      {% if true_inverse_files %}
+        {% for f in true_inverse_files %}
+        <li>{{f}}</li>
+        {% endfor %}
+      {% endif %}
+      <!-- <li>iTRAQ4-inv.txt</li>
+      <li>iTRAQ8-inv.txt</li>
+      <li>TMT0-inv.txt</li>
+      <li>TMT10-inv.txt</li>
+      <li>TMT2-inv.txt</li>
+      <li>TMT6-inv.txt</li>
+      <li>TMT6OLD-inv.txt</li> -->
+    </ul>
+  </div>
+  <h3 style="margin:1%">Editing folder so the second and first list are the same will fix this page.</h3>
   </body>
 </html>
