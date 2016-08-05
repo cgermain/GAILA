@@ -288,6 +288,84 @@ def check_for_selected_xmldir_lineup(selected_mgfdir, xmldir):
 					return False, str(filename) + " does not exist in the selected mgfdir"
 	return True, None
 
+def combine_plain_parsed_xml_mgf(selected_mgfdir, xmldir):
+	try:
+		this_dir = os.path.dirname(os.path.realpath(__file__))	
+
+		# I should check here to make sure the files line up.
+		linesup, message = check_for_selected_xmldir_lineup(selected_mgfdir, xmldir)
+		if not linesup:
+			print "doesn't line up"
+			return message
+
+		#not using because no reporter ion type
+		#corr_path = join(this_dir, "inverse_files", reporter_ion_type + "-inv.txt")
+		#if not os.path.isfile(corr_path):
+		#	return "Cannot find inverse file"
+		#print "reading pd table"
+		#corr = pd.read_table(corr_path)
+		#print "pd table read"
+		#corr=corr.drop('Unnamed: 0', axis=1)
+		# xmldir,sep,ext = xmlfile.rpartition('.')
+		print "something dropped"
+		xmldir = join(xmldir,"")
+		parent_xml_filename = os.path.basename(os.path.normpath(xmldir))
+		print "about to loop files"
+		# Problem is that it's an empty folder!
+		for filename in os.listdir(xmldir):
+			if filename.endswith('.reporter'):
+				xml_filename = join(xmldir, filename)
+				mgf_txt_filename = join(selected_mgfdir, filename)
+				mgf = pd.read_table(mgf_txt_filename, index_col=['filename','scan','charge'])
+				print "read mgf_txt filename"
+				mgf.sort_index()
+				print "did initial work on them"
+				testing_filename = mgf_txt_filename.split('.reporter')[0] + '_duplicate_sorted' + '.reporter'
+				mgf.to_csv(testing_filename, sep='\t')
+				print "wrote one csv"
+				add_a_or_b_label_to_sorted_mfg_txt_file(testing_filename)
+				print "about to read mgf table"
+				mgf = pd.read_table(testing_filename, index_col=['filename','scan','charge'])
+				print "mgf table read."
+				xml = pd.read_table(xml_filename, index_col=['filename','scan','charge'])
+				#print xml
+				print "read xml filename"
+				print "about to merge"
+				dfc=pd.merge(mgf,xml, left_index=True, right_index=True)
+				print "merged. about to dropna"
+				dfc_=dfc.dropna()
+				dfc_=dfc_.drop("labeling",1)
+				csv_filename = join(xmldir, filename + '_nocal_table.txt')
+				print "Writing to " + str(csv_filename)
+				dfc_.to_csv(csv_filename,sep='\t')
+				print "written to csv"
+
+				os.remove(testing_filename)
+				data = pd.read_table(csv_filename)
+				#this should be able to be combined with naming above
+				this_filename = join(xmldir, filename + '_nocal_table_corrected.txt')
+				data.to_csv(this_filename,sep='\t',index=False)
+
+		first=1
+		outfile_name = join(selected_mgfdir, parent_xml_filename + '-pep-reporter-merged.txt')
+		with open(outfile_name, 'w') as outfile:
+			for filename in os.listdir(xmldir):
+
+				if filename.endswith('_nocal_table_corrected.txt'):
+					with open(join(xmldir, filename)) as infile:
+						for line in infile:
+							if (not 'other proteins' in line) or (first==1):
+								first = 0
+								outfile.write(line)
+		print outfile_name
+		add_c_labels_to_duplicate_marker_column(outfile_name)
+		print "Done!"
+		return
+	except Exception as err:
+		print "error"
+		print err
+		return "Error combining xml and mgf"
+
 def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type):
 	try:
 		this_dir = os.path.dirname(os.path.realpath(__file__))
@@ -348,7 +426,9 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type):
 			if filename.endswith('.reporter'):
 				print filename
 				xml_filename = join(xmldir, filename)
+				print xml_filename
 				mgf_txt_filename = join(selected_mgfdir, filename)
+				print mgf_txt_filename
 				mgf = pd.read_table(mgf_txt_filename, index_col=['filename','scan','charge'])
 				print "read mgf_txt filename"
 				mgf.sort_index()
@@ -361,6 +441,7 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type):
 				mgf = pd.read_table(testing_filename, index_col=['filename','scan','charge'])
 				print "mgf table read."
 				xml = pd.read_table(xml_filename, index_col=['filename','scan','charge'])
+				#print xml
 				print "read xml filename"
 				print "about to merge"
 				dfc=pd.merge(mgf,xml, left_index=True, right_index=True)
@@ -372,35 +453,43 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type):
 				print "written to csv"
 
 				os.remove(testing_filename)
-
+				print "1"
 				data = pd.read_table(csv_filename)
-				for k in range(len(data)):
+				print "2"
+				#for k in range(len(data)):
 					#print k,len(data),start_col,end_col,data
 					#print data.ix[k,start_col:end_col]
 					
 					# this next line gets the kth row, and the start_col to end_col columns, which are strings like iTRAQ-115.
-					
-					temp=np.dot(data.ix[k,start_col:end_col].values,corr.values)
-					# print "data: " + str(data.ix[k,start_col:end_col].values)
-					# print "temp: " + str(temp)
-					# print "corr: " + str(corr.values)
-					temp=temp.astype(float)
-					temp[temp<0]=0
-					temp/=sum(temp)
-					data.ix[k,start_col:end_col]=temp
+					#print start_col
+					#print end_col
+					#print data
+				#	temp=np.dot(data.ix[k,start_col:end_col].values,corr.values)
+					#print "data: " + str(data.ix[k,start_col:end_col].values)
+					#print "temp: " + str(temp)
+					#print "corr: " + str(corr.values)
+				#	temp=temp.astype(float)
+				#	temp[temp<0]=0
+				#	temp/=sum(temp)
+				#	data.ix[k,start_col:end_col]=temp
+				print "3"
 				this_filename = join(xmldir, filename + '_nocal_table_corrected.txt')
+				print "4"
 				data.to_csv(this_filename,sep='\t',index=False)
+				print "5"
 
 		first=1
 		outfile_name = join(selected_mgfdir, parent_xml_filename + '-pep-reporter-merged.txt')
 		with open(outfile_name, 'w') as outfile:
 			for filename in os.listdir(xmldir):
+
 				if filename.endswith('_nocal_table_corrected.txt'):
 					with open(join(xmldir, filename)) as infile:
 						for line in infile:
 							if (not 'other proteins' in line) or (first==1):
 								first = 0
 								outfile.write(line)
+		print outfile_name
 		add_c_labels_to_duplicate_marker_column(outfile_name)
 		print "Done!"
 		return

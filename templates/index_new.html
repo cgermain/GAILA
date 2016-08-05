@@ -16,12 +16,15 @@
 	        <li name="tab_link">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</li>
 	        <li name="tab_link" class="active" id="tab_2"><a href="#">WRITE PEPTIDES AND REPORTERS</a></li>
 	        <li name="tab_link">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</li>
+	       	<li name="tab_link" class="active" id="tab_4"><a href="#">PLAIN PARSER</a></li>
+	        <li name="tab_link">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</li>
 	        <li name="tab_link" class="active" id="tab_3"><a href="#">CREATE INVERSE FILES</a></li>
 	      </ul>
 	    </div>
 	  </nav>
 	  <div id="tab_1" name="tab_body"></div>
 	  <div id="tab_2" name="tab_body" style="display: none"></div>
+	  <div id="tab_4" name="tab_body" style="display: none"></div>
 	  <div id="tab_3" name="tab_body" style="display: none"></div>
 	  <script type="text/javascript">
 	  $('[name=tab_body]').each(function(index){
@@ -105,9 +108,21 @@
 	          console.log("Parsing file");
 	          rightSide.append("<div>Began selecting from file " + elem + "</div>");
 
+	          var tab_url = "";
+	          var plain_parsing = data["plain_parse"];
+
+	          if (plain_parsing){
+	          	console.log("Plain parsing");
+	          	tab_url="tab_4_helper_function";
+	          }
+	          else{
+	          	console.log("Full parsing");
+	          	tab_url="tab_1_helper_function";
+	          }
+
 	          $.ajax({
 	            type:"POST",
-	            url:"tab_1_helper_function",
+	            url: tab_url,
 	            data : data,
 	            success : function(result){
 	              console.log(result);

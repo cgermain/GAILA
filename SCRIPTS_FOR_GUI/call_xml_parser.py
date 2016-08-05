@@ -2,6 +2,7 @@ import os
 from os.path import join
 import shutil
 from combine_xml_mgf import combine_parsed_xml_mgf 
+from combine_xml_mgf import combine_plain_parsed_xml_mgf
 import utility
 import subprocess
 
@@ -116,6 +117,58 @@ def parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, reporter_t
 		return "Trouble deleting xml directory afterwards"
 
 	# return 0
+
+def plain_parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, genefile, selected_mgfdir, unacceptable_mods):
+	print "in parse_xtandem_combine_with_mgf"
+	print full_path_to_xml
+	#kinda hacky, but we're gonna drop the labels column anyway
+	resp = parse_xtandem_new(full_path_to_xml, error_threshold, "TMT0", genefile, unacceptable_mods)
+	if resp:
+		print "from plain_parse_xtandem_combine_with_mgf, error detected in parse_xtandem_new: " + str(resp)
+		return resp
+	# print "stop here for now"
+	# return 0
+
+	print "selected mgfdir:"
+	print selected_mgfdir
+
+	xml_dir_name = utility.xml_dirname_from_filename(full_path_to_xml)
+	resp_2 = combine_plain_parsed_xml_mgf(selected_mgfdir, xml_dir_name)
+	if resp_2:
+		print "from plain_parse_xtandem_combine_with_mgf, error in combine_plain_parsed_xml_mgf: " + str(resp_2)
+		return resp_2
+
+	print "Looks good, cleaning up xml directory."
+	try:
+		shutil.rmtree(xml_dir_name)
+		xml_txt_filename = full_path_to_xml + '.txt'
+		os.remove(xml_txt_filename)
+		print "directory cleaned, well done"
+	except:
+		print "trouble deleting the directory afterwards."
+		return "Trouble deleting xml directory afterwards"
+
+	print "Looks good, cleaning up reporter files."
+	try:
+		for item in os.listdir(selected_mgfdir):
+			full_name = os.path.join(selected_mgfdir, item)
+			if os.path.isfile(full_name) and full_name.endswith('.reporter'):
+				os.remove(full_name)
+	except:
+		print "trouble removing reporters"
+		return "trouble removing reporters"
+
+	#TODO integrate this earlier
+	print "renaming xml folder"
+	try:
+		#print "selected mgf directory to rename: " + selected_mgfdir
+		#print "will be renamed to: " + full_path_to_xml[:-4]+"plainparse"
+		os.rename(selected_mgfdir, full_path_to_xml[:-4]+"_plain_parse")
+	except:
+		print "trouble renaming"
+		return "trouble renaming plain parse directory"
+	# return 0
+
 
 
 

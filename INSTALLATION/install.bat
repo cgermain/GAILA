@@ -149,6 +149,23 @@ IF %ERRORLEVEL% NEQ 0 (
 	exit 1
 )
 
+
+echo .
+echo .
+echo .
+echo .
+
+
+echo installing pyteomics
+pip install pyteomics
+IF %ERRORLEVEL% NEQ 0 (
+	echo error installing pyteomics. Installation failed.
+	echo exiting . . .
+	pause
+	exit 1
+)
+
+
 echo everything should be installed
 
 

@@ -51,11 +51,68 @@ def tab():
 	return render_template(file_name, gene_files=gene_files,\
 	 inverse_files=inverse_files)
 
+@app.route("/tab_4_helper_function", methods=['POST'])
+def tab_4_helper_function():
+	print "tab 4 helper function"
+
+	#valid, validation_error = validation.validate_tab_4(request.form)
+	#if not valid:
+#		return validation_error, 500
+
+	#find where this rename goes!
+	#mgf_write_dir_path = "renameme"
+	mgf_txt_write_dir_path = makeFolderNames.construct_plain_parse_reporter_folder_path(request.form)
+	mgf_file_name = request.form['mgfFileName']
+	mgf_read_dir_path = request.form['mgfReadDirPath']
+	mgf_txt_write_path = join(mgf_txt_write_dir_path, mgf_file_name.split('.mgf')[0] + '.reporter')
+	#mgf_write_path = join(mgf_write_dir_path, mgf_file_name)
+	mgf_read_path = join(mgf_read_dir_path, mgf_file_name)
+
+
+	try:
+		os.makedirs(mgf_txt_write_dir_path)
+	except:
+		print "mgf.txt directory probably already there"
+	if not os.path.isdir(mgf_txt_write_dir_path):
+		return "selected_mgf_txt directory could not be created", 500
+	
+	error = mgf_select_one.plain_parse(mgf_read_path, mgf_txt_write_path)
+
+	if error:
+		print "error in plain_parse"
+		return error, 500
+	else:
+		return "mgf_select plain parse ran successfully"
+
+@app.route("/plain_parse_xtandem_combine_with_mgf", methods=['POST'])
+def plain_parse_xtandem_combine_with_mgf():
+	xml_read_path = request.form['xmlReadPath']
+	log_error_threshold = request.form['logErrorThreshold']
+	geneFile = request.form['geneFile']
+	should_use_unacceptable = request.form['assignUnacceptableModifications']
+	unacceptable_mods = request.form.getlist('unacceptableMods[]')
+
+	mgf_txt_foldername = makeFolderNames.construct_plain_parse_reporter_folder_path(request.form)
+
+	# print "going to call parse_xtandem stuff from tab 5"
+
+	a = call_xml_parser.plain_parse_xtandem_combine_with_mgf(xml_read_path, log_error_threshold, geneFile, mgf_txt_foldername, unacceptable_mods)
+
+	if a:
+		print "Error in tab 4. Trying cleanup now, either way returning error"
+		try:
+			#todo fix this
+			clean_up_after_tab_2()
+		finally: #In case it breaks
+			return a, 500
+	else:
+		return "Looks good"
+
 
 @app.route("/tab_2_helper_function", methods=['POST'])
 def tab_2_helper_function():
 	# print request.form
-	print "tab 5 helper function"
+	print "tab 2 helper function"
 	valid, validation_error = validation.validate_tab_2(request.form)
 	if not valid:
 		return validation_error, 500
@@ -189,7 +246,7 @@ def tab_1_helper_function():
 
 @app.route("/check_if_gpm_merge_already_exists", methods=["POST"])
 def check_if_gpm_merge_already_exists():
-	print "checking if gmp merge already exists"
+	print "checking if gpm merge already exists"
 	valid, validation_error = validation.validate_check_for_final_product(request.form)
 	if not valid:
 		return validation_error, 500
