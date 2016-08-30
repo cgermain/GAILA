@@ -347,7 +347,7 @@ def combine_plain_parsed_xml_mgf(selected_mgfdir, xmldir):
 				data.to_csv(this_filename,sep='\t',index=False)
 
 		first=1
-		outfile_name = join(selected_mgfdir, parent_xml_filename + '-pep-reporter-merged.txt')
+		outfile_name = join(selected_mgfdir, parent_xml_filename + '-pep-merged.txt')
 		with open(outfile_name, 'w') as outfile:
 			for filename in os.listdir(xmldir):
 

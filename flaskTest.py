@@ -55,9 +55,9 @@ def tab():
 def tab_4_helper_function():
 	print "tab 4 helper function"
 
-	#valid, validation_error = validation.validate_tab_4(request.form)
-	#if not valid:
-#		return validation_error, 500
+	valid, validation_error = validation.validate_tab_4(request.form)
+	if not valid:
+		return validation_error, 500
 
 	#find where this rename goes!
 	#mgf_write_dir_path = "renameme"
@@ -364,7 +364,7 @@ def multiple_select_to_two_arrays(unacceptable_mods):
 
 
 if __name__ == "__main__":
-	# app.debug = True
+	app.debug = True
 	app.run()
   # app.run(processes=8, debug=True)
   

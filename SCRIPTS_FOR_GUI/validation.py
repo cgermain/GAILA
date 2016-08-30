@@ -265,34 +265,24 @@ def validate_tab_4(form):
 			print "invalid gene file"
 			return False, "Invalid gene file"
 		print "valid 6"
-		# The folder shouldn't exist if it's operation 1.
-
-
-		mgf_txt_foldername = makeFolderNames.construct_reporter_folder_path(form)
-		print "valid 7"
-		print mgf_txt_foldername
-
-		if not os.path.isdir(mgf_txt_foldername):
-			print "mgf_txt foldername doesn't exist for some reason"
-			return False, "mgf_txt foldername doesn't exist for some reason"
-
-		reporter_files = get_reporter_files_given_directory(mgf_txt_foldername)
-		if not len(reporter_files):
-			print "The directory you returned doesn't have any .reporter files."
-			return False, "The directory you returned doesn't have any .reporter files."
-
-
+		
+		mgf_read_dir_path = form['mgfReadDirPath']
+		if not os.path.isdir(mgf_read_dir_path):
+			print "invalid mgf read directory"
+			return False, "invalid mgf read directory"
 
 		if not should_use_unacceptable or (should_use_unacceptable != "0" and should_use_unacceptable != "1"):
 			print "should_use_unacceptable is bad"
 			return False, "should_use_unacceptable is bad"
 
 		xml_txt_filename = xml_read_path + ".txt"
+		print "xml txt filename: " + xml_txt_filename
 		if os.path.isfile(xml_txt_filename):
 			print "an xml.txt file exists, probably as a remnant of a previous run. Please delete this and re-run"
 			return False, "An xml.txt file exists, probably as a remnant of a previous run. Please delete this and re-run"
 
-		xml_dir_name = xml_dirname_from_filename(xml_read_path)
+		xml_dir_name = xml_dirname_from_filename_plain_parse(xml_read_path)
+		print "xml dir name: " + xml_dir_name
 		if not xml_dir_name:
 			print "Something is funky with your xml_read_path."
 			return False, "Something is off about your xml_read_path, please check it and try again"

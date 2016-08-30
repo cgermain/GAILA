@@ -65,11 +65,14 @@ def construct_reporter_folder_path(form):
 		raise Exception("Did not catch anything, must be a bad input")
 
 def construct_plain_parse_reporter_folder_path(form):
-	print "constructing reporter folder path for plain parse"
+
+	print "constructing folder path for plain parse"
+	print os.path.splitext(str(form['xmlReadPath']))[0]
+
 	#a = "MGFSpectraSelected_Min" + str(form['minReporters']) + str(form['reporterIonType']) + "ions" + \
 	#	"_MinIntensity" + str(form['minIntensity']) + "_MassError" + str(form['mzError']) + "ppm"
 	#a = a.replace('.','-')
-	a = "plain_parse_reporter"
+	a = os.path.splitext(str(form['xmlReadPath']))[0]+'_plain_parse_temp'
 	full_path = join(form['mgfReadDirPath'], a, '')
 	print full_path
 	return full_path
