@@ -34,6 +34,7 @@ if ($ARGV[7]=~/\w/) { $should_select=$ARGV[7];} else { exit 1;}
 
 $parsed_filename=basename($read_file_path);
 
+my $summary_path = $write_txt_file_path.".summary";
 
 
 # print "READ FILE PATH: $read_file_path\n";
@@ -135,13 +136,17 @@ if (open (IN, "$read_file_path"))
 	if (1)
 	{
 		open (OUT_TABLE,">$write_txt_file_path");
+		print "writing to sum table";
+		open (TOTAL_INTENSITY_TABLE,">$summary_path" );
 		print OUT_TABLE qq!filename\tscan\tcharge\trt\tMS1_intensity!;
 		foreach my $reporter (@reporters)
 		{
 			my $reporter_=int($reporter);
 			print OUT_TABLE qq!\t$type-$reporter_!;
+			print TOTAL_INTENSITY_TABLE qq!\t$type-$reporter_!;
 		}
 		print OUT_TABLE qq!\t$type-sum\n!;
+
 		my $pepmass=0;
 		my $ms1_intensity="";
 		my $title="";
@@ -163,6 +168,8 @@ if (open (IN, "$read_file_path"))
 		my @all_int=();
 		my @all_count=();
 		my $all_count_max=0;
+		my @total_intensity=();
+
 		while($line=<IN>)
 		{
 			if ($line=~/^TITLE=(.*)$/)
@@ -305,6 +312,8 @@ if (open (IN, "$read_file_path"))
 						}
 						$reporter_count++;
 					}
+
+					#$total_reporter_count = $reporter_count;
 					# $stat{"$filename#$reporters_found"}++;
 					# $stat{"$reporters_found"}++;
 					if ($reporters_found>=$min_reporters)
@@ -325,6 +334,7 @@ if (open (IN, "$read_file_path"))
 						{
 							my $sum_=$sum[$k]/(1.0*$sum);
 							print OUT_TABLE qq!\t$sum_!;
+							$total_intensity[$k]+=$sum_;
 						}
 						print OUT_TABLE qq!\t$sum\n!;
 						# print OUT_CAL $header;
@@ -401,7 +411,14 @@ if (open (IN, "$read_file_path"))
 		{
 			close(OUT);
 		}
+		print TOTAL_INTENSITY_TABLE "\n\t",  join( "\t", @total_intensity ), "\n";
+
+		#for(my $k=0;$k<$total_reporter_count;$k++)
+		#{
+		#	print TOTAL_INTENSITY_TABLE qq!\t$total_intensity[$k]!;	
+		#}
 		close(OUT_TABLE);
+		close(TOTAL_INTENSITY_TABLE);
 	}
 	else
 	{

@@ -364,7 +364,7 @@ def multiple_select_to_two_arrays(unacceptable_mods):
 
 
 if __name__ == "__main__":
-	app.debug = True
+	app.debug = False
 	app.run()
   # app.run(processes=8, debug=True)
   
