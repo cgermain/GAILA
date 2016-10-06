@@ -158,23 +158,8 @@ def plain_parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, gene
 		print "trouble removing reporters"
 		return "trouble removing reporters"
 
-	#TODO integrate this earlier
-	print "renaming xml folder"
-	try:
-		#print "selected mgf directory to rename: " + selected_mgfdir
-		#print "will be renamed to: " + full_path_to_xml[:-4]+"plainparse"
-		os.rename(selected_mgfdir, full_path_to_xml[:-4]+"_plain_parse")
-	except:
-		print "trouble renaming"
-		return "trouble renaming plain parse directory"
-	# return 0
-
-
-
-
-
-
-
+	return 0
+	
 # def xml_dirname_from_filename(full_path_to_xml):
 # 	almost_xml_dir_name = full_path_to_xml.partition('.xml')[0]
 # 	xml_dir_name = join(almost_xml_dir_name, '')

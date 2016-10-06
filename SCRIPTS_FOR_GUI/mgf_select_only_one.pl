@@ -33,9 +33,9 @@ if ($ARGV[6]=~/\w/) { $min_reporters=$ARGV[6];} else { exit 1;}
 if ($ARGV[7]=~/\w/) { $should_select=$ARGV[7];} else { exit 1;}
 
 $parsed_filename=basename($read_file_path);
-
-my $summary_path = $write_txt_file_path.".summary";
-
+my $directory = dirname($write_txt_file_path);
+my $summary_path = $directory."\\intensity_summary.txt";
+my @previous_intensity = ();
 
 # print "READ FILE PATH: $read_file_path\n";
 # print "WRITE FILE PATH: $write_file_path\n";
@@ -136,6 +136,20 @@ if (open (IN, "$read_file_path"))
 	if (1)
 	{
 		open (OUT_TABLE,">$write_txt_file_path");
+		if (-e "$summary_path")
+		{
+			print "Summary already exists.";
+			open (TEMP_SUMMARY, "$summary_path");
+			<TEMP_SUMMARY>;
+			my $intensity_line = <TEMP_SUMMARY>;
+			@previous_intensity = split('\t',$intensity_line);
+			print join(", ",@previous_intensity);
+			print "Summary ingested";
+			close (TEMP_SUMMARY);
+		}
+		else{
+			print "Summary not found";
+		}
 		print "writing to sum table";
 		open (TOTAL_INTENSITY_TABLE,">$summary_path" );
 		print OUT_TABLE qq!filename\tscan\tcharge\trt\tMS1_intensity!;
@@ -168,7 +182,7 @@ if (open (IN, "$read_file_path"))
 		my @all_int=();
 		my @all_count=();
 		my $all_count_max=0;
-		my @total_intensity=();
+		my @total_intensity=@previous_intensity;
 
 		while($line=<IN>)
 		{
@@ -411,7 +425,7 @@ if (open (IN, "$read_file_path"))
 		{
 			close(OUT);
 		}
-		print TOTAL_INTENSITY_TABLE "\n\t",  join( "\t", @total_intensity ), "\n";
+		print TOTAL_INTENSITY_TABLE "\n",  join( "\t", @total_intensity ), "\n";
 
 		#for(my $k=0;$k<$total_reporter_count;$k++)
 		#{

@@ -216,7 +216,7 @@ def xml_dirname_from_filename_plain_parse(full_path_to_xml):
 	if not after_slash:
 		print "passed in something like aaa/.xml, that's dangerous"
 		return False
-	xml_dir_name = os.path.join(almost_xml_dir_name+'_plain_parse','')
+	xml_dir_name = os.path.join(almost_xml_dir_name,'')
 	return xml_dir_name
 
 
