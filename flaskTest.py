@@ -123,6 +123,7 @@ def tab_2_helper_function():
 	geneFile = request.form['geneFile']
 	should_use_unacceptable = request.form['assignUnacceptableModifications']
 	unacceptable_mods = request.form.getlist('unacceptableMods[]')
+	normalize_intensities = request.form.getlist('normalizeIntensities')
 
 	if request.form['mgfOperationToPerform'] == '1':
 		print "Looks like we had to select from the mgf folder before this, that means I'll recalculate the mgf_foldername"
@@ -141,7 +142,7 @@ def tab_2_helper_function():
 
 	# print "going to call parse_xtandem stuff from tab 5"
 
-	a = call_xml_parser.parse_xtandem_combine_with_mgf(xml_read_path, log_error_threshold, reporter_type, geneFile, mgf_txt_foldername, unacceptable_mods)
+	a = call_xml_parser.parse_xtandem_combine_with_mgf(xml_read_path, log_error_threshold, reporter_type, geneFile, mgf_txt_foldername, unacceptable_mods, normalize_intensities)
 
 	if a:
 		print "Error in tab 5. Trying cleanup now, either way returning error"
@@ -257,12 +258,14 @@ def check_if_gpm_merge_already_exists():
 			return {existsAlready : False}
 
 		write_destination_filename = makeFolderNames.construct_merged_gpm_reporter_filename(request.form)
+		
 		if os.path.isfile(write_destination_filename):
 			print "There is an existing merged GPM-reporter ion file.  Please delete or rename existing file in selected reporter ion folder and run again."
 			return "There is an existing merged GPM-reporter ion file.  Please delete or rename existing file in selected reporter ion folder and run again.", 500 
 		else:
 			print "file does not already exist."
 			return "Does not already exist." #That means true
+
 	except:
 		print "error creating the foldername. At least that means it doesn't exist"
 		return "Does not exist already" #That means true
@@ -273,6 +276,8 @@ def check_if_gpm_merge_already_exists():
 def getMGFFiles():
 	try:
 		mgf_read_dir_path = str(request.form['mgfReadDirPath'])
+		if utility.check_if_summary_exists(mgf_read_dir_path):
+			return "Summary file already exists, remove and rerun", 500
 		files = utility.get_mgf_files_given_directory(mgf_read_dir_path)
 		text = json.dumps(files)
 		return text

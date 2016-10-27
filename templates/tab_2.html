@@ -165,6 +165,16 @@
         </span>
       </div>
     </div>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">Normalize Intensities</span>
+      <select class='form-control' id="normalizeIntensities">
+        <option value="0">Normalize each reporter ion to its own total intensity</option>
+        <option value="1">DO NOT normalize reporter ions</option>
+      </select>
+      <span class="input-group-btn">
+        <button class="btn btn-info" onclick="alert('Reporter ion normalizations are included in the final output file')">?</button>
+      </span>
+    </div>
     <br>
 
     <button id="tab_2_button" class="btn btn-primary">Click to submit</button>

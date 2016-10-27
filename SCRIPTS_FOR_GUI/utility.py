@@ -94,8 +94,11 @@ def get_strings_from_unacceptable_mod_form(unacceptable_mods):
 	return ",".join(mod_masses), ",".join(mod_labels), ",".join(reporter_mod_labels)
 
 
-
-
+def check_if_summary_exists(directory):
+	for f in os.listdir(directory):
+		if f.endswith("intensity_summary.txt"):
+			return True
+	return False
 
 def get_mgf_files_given_directory(directory):
 	mgf_array = []

@@ -38,6 +38,9 @@ if ($ARGV[8]=~/\w/) { $recal_mz_error=$ARGV[8];} else { exit 1;}
 
 
 $parsed_filename=basename($read_file_path);
+my $directory = dirname($write_txt_file_path);
+my $summary_path = dirname($directory)."\\intensity_summary.txt";
+my @previous_intensity = ();
 
 
 
@@ -144,13 +147,29 @@ unless (open (OUT_TABLE,">$write_txt_file_path"))
 	exit 1;
 }
 
+if (-e "$summary_path")
+{
+	print "Summary already exists.";
+	open (TEMP_SUMMARY, "$summary_path");
+	<TEMP_SUMMARY>;
+	my $intensity_line = <TEMP_SUMMARY>;
+	@previous_intensity = split('\t',$intensity_line);
+	print join(", ",@previous_intensity);
+	print "Summary ingested";
+	close (TEMP_SUMMARY);
+}
+else{
+	print "Summary not found";
+}
 
+open (TOTAL_INTENSITY_TABLE,">$summary_path" );
 print OUT_TABLE qq!filename\tscan\tcharge\trt\tMS1_intensity!;
 
 foreach my $reporter (@reporters)
 {
 	my $reporter_=int($reporter);
 	print OUT_TABLE qq!\t$type-$reporter_!;
+	print TOTAL_INTENSITY_TABLE qq!\t$type-$reporter_!;
 	##########################################################
 	# Could be problematic with TMT10, because of replicants #
 	##########################################################
@@ -177,6 +196,8 @@ my $line="";
 # my @all_int=();
 # my @all_count=();
 # my $all_count_max=0;
+my @total_intensity=@previous_intensity;
+
 while($line=<IN>)
 {
 	if ($line=~/^TITLE=(.*)$/)
@@ -343,6 +364,7 @@ while($line=<IN>)
 						# For some reason, it used to divide by recal_sum_max
 						my $sum_=$recal_sum[$k]/(1.0*$recal_sum);
 						print OUT_TABLE qq!\t$sum_!;
+						$total_intensity[$k]+=$sum_;
 					}
 					# print OUT_TABLE qq!\t$recal_sum_max\n!;
 					print OUT_TABLE qq!\t$recal_sum\n!;
@@ -366,7 +388,10 @@ if ($should_select)
 {
 	close(OUT);
 }
+print TOTAL_INTENSITY_TABLE "\n",  join( "\t", @total_intensity ), "\n";
+
 close(OUT);
+close(TOTAL_INTENSITY_TABLE);
 
 exit 0;
 

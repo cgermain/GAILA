@@ -87,7 +87,7 @@ def parse_xtandem_new(full_path_to_xml, error_threshold, reporter_type, genefile
 		# return 0
 
 
-def parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, reporter_type, genefile, selected_mgfdir, unacceptable_mods):
+def parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, reporter_type, genefile, selected_mgfdir, unacceptable_mods, normalize_intensities):
 	print "in parse_xtandem_combine_with_mgf"
 	resp = parse_xtandem_new(full_path_to_xml, error_threshold, reporter_type, genefile, unacceptable_mods)
 	if resp:
@@ -100,7 +100,7 @@ def parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, reporter_t
 	print selected_mgfdir
 
 	xml_dir_name = utility.xml_dirname_from_filename(full_path_to_xml)
-	resp_2 = combine_parsed_xml_mgf(selected_mgfdir, xml_dir_name, reporter_type)
+	resp_2 = combine_parsed_xml_mgf(selected_mgfdir, xml_dir_name, reporter_type, normalize_intensities)
 	if resp_2:
 		print "from parse_xtandem_combine_with_mgf, error in combine_parsed_xml_mgf: " + str(resp_2)
 		return resp_2

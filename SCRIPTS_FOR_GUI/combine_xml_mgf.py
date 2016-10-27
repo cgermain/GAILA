@@ -102,7 +102,7 @@ def add_a_or_b_label_to_sorted_mfg_txt_file(filename):
 		most_recent = tup
 		first = False
 	if len(scan_list) == 0:
-		raise Exception("Something is funky, shouldn't be zero")
+		raise Exception("Something is funky, shouldn't be zero - 2")
 	elif len(scan_list) == 1:
 		temp_file.write(scan_list[0].strip() + "\tA\n")
 	else:
@@ -366,7 +366,7 @@ def combine_plain_parsed_xml_mgf(selected_mgfdir, xmldir):
 		print err
 		return "Error combining xml and mgf"
 
-def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type):
+def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize_intensities):
 	try:
 		this_dir = os.path.dirname(os.path.realpath(__file__))
 		print "checking reporter ion type"
@@ -420,6 +420,11 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type):
 		print "something dropped"
 		xmldir = join(xmldir,"")
 		parent_xml_filename = os.path.basename(os.path.normpath(xmldir))
+		summary_file = os.path.dirname(os.path.dirname(selected_mgfdir))+"\intensity_summary.txt"
+		print "Summary file location: " + summary_file
+		normalized_intensities = read_intensities_from_summary_and_normalize(summary_file)
+		dot_normalized_intensities = np.dot(normalized_intensities, corr.values)
+
 		print "about to loop files"
 		# Problem is that it's an empty folder!
 		for filename in os.listdir(xmldir):
@@ -456,7 +461,20 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type):
 				print "1"
 				data = pd.read_table(csv_filename)
 				print "2"
-				#for k in range(len(data)):
+
+				#check to see if we've added the normalized columns yet
+				if normalize_intensities[0] == "0":
+					print "We are adding normalization"
+				labels = list(data.columns.values)
+				print labels
+				if normalize_intensities[0] == "0":
+					norm_start = labels.index(start_col)
+					norm_end = labels.index(end_col) + 1
+
+					for ion_type in labels[norm_start:norm_end]:
+						data[ion_type+"_norm_total"] = ""
+
+				for k in range(len(data)):
 					#print k,len(data),start_col,end_col,data
 					#print data.ix[k,start_col:end_col]
 					
@@ -464,14 +482,20 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type):
 					#print start_col
 					#print end_col
 					#print data
-				#	temp=np.dot(data.ix[k,start_col:end_col].values,corr.values)
+					temp=np.dot(data.ix[k,start_col:end_col].values,corr.values)
 					#print "data: " + str(data.ix[k,start_col:end_col].values)
 					#print "temp: " + str(temp)
 					#print "corr: " + str(corr.values)
-				#	temp=temp.astype(float)
-				#	temp[temp<0]=0
-				#	temp/=sum(temp)
-				#	data.ix[k,start_col:end_col]=temp
+					temp=temp.astype(float)
+					temp[temp<0]=0
+					temp/=sum(temp)
+					data.ix[k,start_col:end_col]=temp
+					if normalize_intensities[0] == "0":
+						temp_intensities = [float(intensity)/norm for intensity, norm in zip(temp, dot_normalized_intensities)]
+						normalized_temp_intensities = [intensity/max(temp_intensities) for intensity in temp_intensities]
+						print normalized_temp_intensities
+						data.ix[k,start_col+"_norm_total":end_col+"_norm_total"] = normalized_temp_intensities
+
 				print "3"
 				this_filename = join(xmldir, filename + '_nocal_table_corrected.txt')
 				print "4"
@@ -482,7 +506,6 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type):
 		outfile_name = join(selected_mgfdir, parent_xml_filename + '-pep-reporter-merged.txt')
 		with open(outfile_name, 'w') as outfile:
 			for filename in os.listdir(xmldir):
-
 				if filename.endswith('_nocal_table_corrected.txt'):
 					with open(join(xmldir, filename)) as infile:
 						for line in infile:
@@ -508,14 +531,16 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type):
 	# async calls. So, I don't need a lot of this stuff.
 	# mgf already selected from, xml is already processed. Just combine them here.
 
-	
 
-
-
-
-
-
-
-
+def read_intensities_from_summary_and_normalize(filename):
+	try:
+		summary = open(filename, "r")
+		summary.readline() #skip the header
+		intensities = [float(intensity) for intensity in summary.readline().split("\t")]
+		normalized_intensities = [intensity/max(intensities) for intensity in intensities]
+		return normalized_intensities
+	except Exception as err:
+		print "Error reading from intensity file"
+		print err
+		return "Error in intensity file"
 						
-							
