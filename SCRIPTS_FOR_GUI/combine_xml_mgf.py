@@ -420,8 +420,12 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 		print "something dropped"
 		xmldir = join(xmldir,"")
 		parent_xml_filename = os.path.basename(os.path.normpath(xmldir))
-		summary_file = os.path.dirname(os.path.dirname(selected_mgfdir))+"\intensity_summary.txt"
+		print "parent xml filename " + parent_xml_filename
+		# if first run through
+		summary_file = selected_mgfdir+"\intensity_summary.txt"
 		print "Summary file location: " + summary_file
+		
+
 		normalized_intensities = read_intensities_from_summary_and_normalize(summary_file)
 		dot_normalized_intensities = np.dot(normalized_intensities, corr.values)
 
@@ -492,8 +496,8 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 					data.ix[k,start_col:end_col]=temp
 					if normalize_intensities[0] == "0":
 						temp_intensities = [float(intensity)/norm for intensity, norm in zip(temp, dot_normalized_intensities)]
-						normalized_temp_intensities = [intensity/max(temp_intensities) for intensity in temp_intensities]
-						print normalized_temp_intensities
+						normalized_temp_intensities = [float(intensity)/sum(temp_intensities) for intensity in temp_intensities]
+						# print normalized_temp_intensities
 						data.ix[k,start_col+"_norm_total":end_col+"_norm_total"] = normalized_temp_intensities
 
 				print "3"

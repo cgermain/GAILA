@@ -155,7 +155,8 @@
         console.log(err);
       }
       else{
-        rightSide.append('<h3 style="color:green">Sucessfully parsed all MGF files</h3>')
+        rightSide.append('<h3 style="color:green">Sucessfully parsed all MGF files</h3>');
+        writeSummaryToFile(rightSide, serializedForm, function(err){});
       }
       that.attr('disabled', false);
       that.text('Click to submit');

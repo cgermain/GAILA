@@ -1,6 +1,8 @@
 from os.path import join
 import os
+from datetime import datetime
 
+TIME_FORMAT =  "%m-%d-%Y_%H-%M-%S"
 
 """
 SelectedMGFSpectra_Min(Field1)(Field2)ions_MinIntensity(Field3)_MassError(Field4)ppm
@@ -41,15 +43,13 @@ def construct_selected_mgf_path(form):
 
 def construct_reporter_folder_path(form):
 
-	print "constructing reporter folder path"
-	print form
-
 	if form['performRecalibration'] == "0":
 		a = "ReportersSelected_Min" + str(form['minReporters']) + str(form['reporterIonType']) + "ions" + \
 			"_MinIntensity" + str(form['minIntensity']) + "_MassError" + str(form['mzError']) + "ppm"
 		a = a.replace('.','-')
 
 		full_path = join(form['mgfReadDirPath'], a, '')
+
 		return full_path
 
 	elif form['performRecalibration'] == "1":
@@ -59,10 +59,16 @@ def construct_reporter_folder_path(form):
 		a = a.replace('.','-')
 		
 		full_path = join(form['mgfReadDirPath'], a, '')
+
 		return full_path
 
 	else:
 		raise Exception("Did not catch anything, must be a bad input")
+
+def construct_short_reporter_folder_path(form):
+	timestamp = datetime.now().strftime(TIME_FORMAT)
+	fullpath = join(form['mgfReadDirPath'], "ReporterSelect_"+timestamp , "")
+	return fullpath
 
 def construct_plain_parse_reporter_folder_path(form):
 

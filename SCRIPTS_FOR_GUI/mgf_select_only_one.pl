@@ -34,11 +34,13 @@ if ($ARGV[7]=~/\w/) { $should_select=$ARGV[7];} else { exit 1;}
 
 $parsed_filename=basename($read_file_path);
 my $directory = dirname($write_txt_file_path);
-my $summary_path = dirname($directory)."\\intensity_summary.txt";
+my $summary_path = $directory."\\intensity_summary.txt";
 my @previous_intensity = ();
 
-# print "READ FILE PATH: $read_file_path\n";
-# print "WRITE FILE PATH: $write_file_path\n";
+ print "PARSED FILENAME: $parsed_filename\n";
+ print "READ FILE PATH: $read_file_path\n";
+ print "WRITE FILE PATH: $write_file_path\n";
+ print "SUMMARY PATH: $summary_path\n";
 # print "mz_error: $mz_error\n";
 # print "type: $type\n";
 # print "min_intensity: $min_intensity\n";
@@ -142,6 +144,7 @@ if (open (IN, "$read_file_path"))
 			open (TEMP_SUMMARY, "$summary_path");
 			<TEMP_SUMMARY>;
 			my $intensity_line = <TEMP_SUMMARY>;
+			print $intensity_line;
 			@previous_intensity = split('\t',$intensity_line);
 			print join(", ",@previous_intensity);
 			print "Summary ingested";
@@ -348,7 +351,7 @@ if (open (IN, "$read_file_path"))
 						{
 							my $sum_=$sum[$k]/(1.0*$sum);
 							print OUT_TABLE qq!\t$sum_!;
-							$total_intensity[$k]+=$sum_;
+							$total_intensity[$k]+=$sum[$k];
 						}
 						print OUT_TABLE qq!\t$sum\n!;
 						# print OUT_CAL $header;

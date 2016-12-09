@@ -152,6 +152,28 @@
 	      return callbackOuter(err); //could be null
 	    })
 	  }
+
+	  function writeSummaryToFile(rightSide, serializedForm, callbackOuter) {
+	    var summary = JSON.parse(JSON.stringify(serializedForm));
+	    //console.log("In writeSummaryToFile");
+	    //console.log(summary);
+
+	    $.ajax({
+	      type: "POST",
+	      url: "writeSummary",
+	      data: summary,
+	      success: function(result) {
+	        console.log(result);
+	        console.log("Writing summary");
+	        rightSide.append("Writing out summary");
+	      },
+	      error: function(response, textStatus, HTTPError) {
+	        var responseText = (response && response.responseText) ?
+	          response.responseText : "ERROR IN WRITING OUT SUMMARY";
+	      }
+	    });
+	  }
+
 	  </script>
 
 	</body>

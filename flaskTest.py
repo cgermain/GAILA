@@ -18,7 +18,9 @@ from SCRIPTS_FOR_GUI import handle_inverse_posts
 # from science_code import science
 from SCRIPTS_FOR_GUI import makeFolderNames
 import shutil
+from datetime import datetime
 
+TIME_FORMAT =  "%m-%d-%Y_%H-%M-%S"
 
 def nocache(f):
 	def new_func(*args, **kwargs):
@@ -129,8 +131,15 @@ def tab_2_helper_function():
 		print "Looks like we had to select from the mgf folder before this, that means I'll recalculate the mgf_foldername"
 		# mgf_txt_foldername = join(request.form['mgfReadDirPath'], 'selected_mgf_txt', '')
 		mgf_txt_foldername = makeFolderNames.construct_reporter_folder_path(request.form)
+		# check to make sure full summary exists
+		# summary_exists = 
+		# parse summary
+		# make intensity_summary.txt
 	else:
 		mgf_txt_foldername = request.form["mgfTxtReadDirPath"]
+		if not check_if_previous_summary_exists(mgf_txt_foldername):
+			return "There was a problem checking the summary"
+
 
 	# should_use_unacceptable = request.form['assignUnacceptableModifications']
 	# print "should_use_unacceptable: " + str(should_use_unacceptable)
@@ -277,7 +286,7 @@ def getMGFFiles():
 	try:
 		mgf_read_dir_path = str(request.form['mgfReadDirPath'])
 		if utility.check_if_summary_exists(mgf_read_dir_path):
-			return "Summary file already exists, remove and rerun", 500
+			return "Temp summary file still exists, remove and rerun", 500
 		files = utility.get_mgf_files_given_directory(mgf_read_dir_path)
 		text = json.dumps(files)
 		return text
@@ -296,6 +305,27 @@ def createInverseFiles():
 	print inverse_string
 	return inverse_string
 
+@app.route("/writeSummary", methods=['POST'])
+@nocache
+def writeSummary():
+	#print request.form
+	timestamp = datetime.now().strftime(TIME_FORMAT)
+	if 'plain_parse' in request.form and request.form['plain_parse'] == "1":
+		mgf_txt_write_dir_path = makeFolderNames.construct_plain_parse_reporter_folder_path(request.form)
+	else:
+		mgf_txt_write_dir_path = makeFolderNames.construct_reporter_folder_path(request.form)
+
+	with open(mgf_txt_write_dir_path+'IDEAA_summary_'+timestamp+'.txt', 'w') as out_file:
+		out_file.write("IDEAA Summary\n")
+		out_file.write(timestamp+"\n\n")
+		for option, value in request.form.items():
+			out_file.write(option + " - " + value+'\n')
+		if os.path.isfile(mgf_txt_write_dir_path+'intensity_summary.txt'):
+			out_file.write("\nTotal Reporter Ion Intensities\n----------\n")
+			with open (mgf_txt_write_dir_path+'intensity_summary.txt') as summary_file:
+				out_file.write(summary_file.read().strip())
+			os.remove(mgf_txt_write_dir_path+'intensity_summary.txt')
+	return "Settings"
 
 
 def clean_up_after_tab_2():
@@ -334,6 +364,7 @@ def clean_up_after_tab_2():
 
 	for item in os.listdir(mgf_txt_foldername):
 		full_name = os.path.join(mgf_txt_foldername, item)
+		print "Cleaning up: " + full_name
 		if os.path.isfile(full_name):
 			if full_name.ends_with('_with_duplicates_deleted'):
 				os.remove(full_name)
@@ -348,6 +379,21 @@ def clean_up_after_tab_2():
 	print "Cleaned up successfully"
 	return
 
+
+def check_if_previous_summary_exists(reporter_folder):
+	for item in os.listdir(reporter_folder):
+		print os.path.splitext(item)[0]
+		if os.path.splitext(item)[0].startswith("IDEAA_summary"):
+			with open(reporter_folder+"\\"+item, "r") as summary:
+				with open(reporter_folder+"\intensity_summary.txt","w") as intensity_summary:
+					for line in summary:
+						print line
+						if "Total Reporter Ion" in line:
+							summary.next()
+							intensity_summary.write(summary.next())
+							intensity_summary.write(summary.next())
+							return True
+	return None
 
 
 
@@ -369,7 +415,7 @@ def multiple_select_to_two_arrays(unacceptable_mods):
 
 
 if __name__ == "__main__":
-	app.debug = False
+	app.debug = True
 	app.run()
   # app.run(processes=8, debug=True)
   

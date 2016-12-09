@@ -67,7 +67,6 @@ def validate_tab_1(form):
 		return False, "Field is missing"
 
 	try:
-		print str(mgf_read_dir_path)
 
 		if not os.path.isdir(str(mgf_read_dir_path)):
 			print "mgf read directory path is not a directory"
@@ -105,7 +104,6 @@ def validate_tab_1(form):
 				print "mz_error recalibration not valid decimal"
 				return False, "mz_error recalibration not valid decimal"
 
-
 		mgf_read_path = join(mgf_read_dir_path, mgf_file_name)
 
 		if not os.path.isfile(mgf_read_path):
@@ -123,7 +121,6 @@ def validate_tab_1(form):
 				print "path where we write selected mgf already has a file there"
 				return False, "path where we write selected mgf already has a file there"
 
-		print form
 		mgf_txt_write_dir_path = makeFolderNames.construct_reporter_folder_path(form)
 		mgf_txt_write_path = join(mgf_txt_write_dir_path, mgf_file_name + '.txt')
 		if os.path.isfile(mgf_txt_write_path):
