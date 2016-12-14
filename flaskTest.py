@@ -319,7 +319,11 @@ def writeSummary():
 		out_file.write("IDEAA Summary\n")
 		out_file.write(timestamp+"\n\n")
 		for option, value in request.form.items():
-			out_file.write(option + " - " + value+'\n')
+			if option.startswith("unacceptableMods"):
+				list_of_mods = request.form.getlist('unacceptableMods[]')
+				out_file.write(get_detailed_summary(option, list_of_mods))
+			else:
+				out_file.write(get_detailed_summary(option, value))
 		if os.path.isfile(mgf_txt_write_dir_path+'intensity_summary.txt'):
 			out_file.write("\nTotal Reporter Ion Intensities\n----------\n")
 			with open (mgf_txt_write_dir_path+'intensity_summary.txt') as summary_file:
@@ -395,7 +399,45 @@ def check_if_previous_summary_exists(reporter_folder):
 							return True
 	return None
 
-
+def get_detailed_summary(option, value):
+	if option == "performRecalibration":
+		if value == "1":
+			return option + " - Perform recalibration\n"
+		else:
+			return option + " - DO NOT Perform recalibration\n"
+	#TODO still need to check what tab we're in for mgfOperationToPerform
+	elif option == "mgfOperationToPerform":
+		if value == "0":
+			return option + " - Only Extract reporter ion intensities\n"
+		else:
+			return option + " - Extract reporter ion intensities and select viable spectra\n"
+	elif option == "normalizeIntensities":
+		if value == "0":
+			return option + " - Normalize each report ion to its own total intensity\n"
+		else:
+			return option + " - Do not normalize report ions"
+	elif option == "unacceptableMods[]":
+		mods = [utility.get_modification_dict()[mod] for mod in value]
+		#TODO check if length 0
+		return "unacceptableMods - " + ", ".join(mods)+"\n"
+	elif option == "assignUnacceptableModifications":
+		if value == "0":
+			return option + " - Flag modifications\n"
+		else:
+			return option + " - Do not flag modifications\n"
+	elif option == "mgfTxtReadDirPath":
+		if value == "":
+			return ""
+		else:
+			return option + " - " + value+'\n'
+	#TODO if plain parsing, don't show mgfOperation to perform
+	elif option == "plain_parse":
+		if value == "1":
+			return option + " - Plain parse MGF and XML\n"
+		else:
+			return ""
+	else:
+		return option + " - " + value+'\n'
 
 
 def return_form_copy():
@@ -413,9 +455,8 @@ def multiple_select_to_two_arrays(unacceptable_mods):
 	mod_val_arr = [k[1] for j in two_d_array]
 	return mass_val_arr, mod_val_arr 
 
-
 if __name__ == "__main__":
-	app.debug = True
+	app.debug = False
 	app.run()
   # app.run(processes=8, debug=True)
   

@@ -147,6 +147,33 @@ def get_inverse_files_array():
 	]
 	return inverse_file_array
 
+def get_modification_dict():
+	mod_dict = {
+		"ISOBARIC_LABEL@Y" : "Reporter Ion modifies with Y-hydroxyl",
+		"15.994915@M" : "Oxidation (M)",
+		"31.98983@M" : "Dioxidation (M)",
+		"15.994915@W" : "Oxidation (W)",
+		"31.98983@W" : "Dioxidation (W)",
+		"0.984016@N" : "Deamidation (N)",
+		"0.984016@Q" : "Deamidation (Q)",
+		"21.982@D,21.982@E" : "Cation:Na (E,D)",
+		"37.955885@D,37.955885@E" : "Cation:K (E,D)",
+		"15.994915@P" : "Hydroxy (P)",
+		"79.966331@S" : "Phospho (S)",
+		"79.966331@T" : "Phospho (T)",
+		"79.966331@Y" : "Phospho (Y)",
+		"79.956815@Y" : "Sulfo (Y)",
+		"42.010565@K" : "Acetyl (K)",
+		"43.989829@E" : "gamma-carboxyl (E)",
+		"43.005814@[" : "Carbamyl (nt)",
+		"43.005814@K" : "Carbamyl (K)",
+		"57.021464@[" : "Carbamidomethyl (nt)",
+		"57.021464@K" : "Carbamidomethyl (K)",
+		"27.994915@K" : "formyl (K)",
+		"27.994915@[" : "formyl (nt)"
+	}
+	return mod_dict
+
 
 
 def inverse_array_is_correct():
