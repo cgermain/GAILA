@@ -537,6 +537,7 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 
 
 def read_intensities_from_summary_and_normalize(filename):
+	#TODO check if summary types match current run
 	try:
 		summary = open(filename, "r")
 		summary.readline() #skip the header

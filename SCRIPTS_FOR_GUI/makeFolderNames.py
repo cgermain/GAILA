@@ -80,8 +80,6 @@ def construct_plain_parse_reporter_folder_path(form):
 	full_path = join(form['mgfReadDirPath'], a, '')
 	return full_path
 
-
-
 def construct_merged_gpm_reporter_filename(form):
 	reporter_path = None
 	if form['mgfOperationToPerform'] == '1':
@@ -97,5 +95,44 @@ def construct_merged_gpm_reporter_filename(form):
 	return outfile_name
 
 
+def rename_folders(form):
+	#TODO - pull timestamp in from end of runtime
+	timestamp = datetime.now().strftime(TIME_FORMAT)
 
+	if form['mgfOperationToPerform'] == '0':
+		#tab 1 - select reporters
+		if 'xmlReadPath' not in form:
+			mgf_folder_name = construct_reporter_folder_path(form)
+			new_mgf_folder_name = join(form['mgfReadDirPath'], "rep_sel_"+timestamp, '')
+			os.rename(mgf_folder_name, new_mgf_folder_name)
+			return
+		#tab 2 - use pre extracted reporters
+		else:
+			# don't rename?
+			return
+	else:
+		#tab 1 - select reporters and make mgf
+		if 'xmlReadPath' not in form:
+			mgf_folder_name = construct_selected_mgf_path(form)
+			new_mgf_folder_name = join(form['mgfReadDirPath'], "mgf_sel_"+timestamp, '')
+			os.rename(mgf_folder_name, new_mgf_folder_name)
+			reporter_folder_name = construct_reporter_folder_path(form)
+			new_reporter_folder_name = join(form['mgfReadDirPath'], "rep_sel_"+timestamp, '')
+			os.rename(reporter_folder_name, new_reporter_folder_name)
+			return
 
+		#tab 4 - plain parse
+		if 'plain_parse' in form:
+			reporter_folder_name = construct_plain_parse_reporter_folder_path(form)
+			new_reporter_folder_name = join(form['mgfReadDirPath'], "plain_parse_"+timestamp, '')
+			os.rename(reporter_folder_name, new_reporter_folder_name)
+			return
+		#tab 2 - use raw mgf
+		else:
+			mgf_folder_name = construct_selected_mgf_path(form)
+			new_mgf_folder_name = join(form['mgfReadDirPath'], "mgf_sel_"+timestamp, '')
+			os.rename(mgf_folder_name, new_mgf_folder_name)
+			reporter_folder_name = construct_reporter_folder_path(form)
+			new_reporter_folder_name = join(form['mgfReadDirPath'], "rep_sel_"+timestamp, '')
+			os.rename(reporter_folder_name, new_reporter_folder_name)
+			return

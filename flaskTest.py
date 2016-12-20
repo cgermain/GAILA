@@ -131,10 +131,6 @@ def tab_2_helper_function():
 		print "Looks like we had to select from the mgf folder before this, that means I'll recalculate the mgf_foldername"
 		# mgf_txt_foldername = join(request.form['mgfReadDirPath'], 'selected_mgf_txt', '')
 		mgf_txt_foldername = makeFolderNames.construct_reporter_folder_path(request.form)
-		# check to make sure full summary exists
-		# summary_exists = 
-		# parse summary
-		# make intensity_summary.txt
 	else:
 		mgf_txt_foldername = request.form["mgfTxtReadDirPath"]
 		if not check_if_previous_summary_exists(mgf_txt_foldername):
@@ -310,10 +306,17 @@ def createInverseFiles():
 def writeSummary():
 	#print request.form
 	timestamp = datetime.now().strftime(TIME_FORMAT)
-	if 'plain_parse' in request.form and request.form['plain_parse'] == "1":
-		mgf_txt_write_dir_path = makeFolderNames.construct_plain_parse_reporter_folder_path(request.form)
+	if request.form['mgfOperationToPerform'] == '1':
+		if 'plain_parse' in request.form and request.form['plain_parse'] == "1":
+			mgf_txt_write_dir_path = makeFolderNames.construct_plain_parse_reporter_folder_path(request.form)
+		else:
+			mgf_txt_write_dir_path = makeFolderNames.construct_reporter_folder_path(request.form)
+
 	else:
-		mgf_txt_write_dir_path = makeFolderNames.construct_reporter_folder_path(request.form)
+		if 'xmlReadPath' in request.form:
+			mgf_txt_write_dir_path = request.form['mgfTxtReadDirPath']+"\\"
+		else:
+			mgf_txt_write_dir_path = makeFolderNames.construct_reporter_folder_path(request.form)
 
 	with open(mgf_txt_write_dir_path+'IDEAA_summary_'+timestamp+'.txt', 'w') as out_file:
 		out_file.write("IDEAA Summary\n")
@@ -329,6 +332,8 @@ def writeSummary():
 			with open (mgf_txt_write_dir_path+'intensity_summary.txt') as summary_file:
 				out_file.write(summary_file.read().strip())
 			os.remove(mgf_txt_write_dir_path+'intensity_summary.txt')
+
+	makeFolderNames.rename_folders(request.form)
 	return "Settings"
 
 
@@ -377,6 +382,10 @@ def clean_up_after_tab_2():
 				os.remove(full_name)
 				continue
 			if full_name.ends_with('_PLACEHOLDER'):
+				os.remove(full_name)
+				continue
+			#TODO clean up intensity summary if it fails
+			if full_name.ends_with('summary.txt'):
 				os.remove(full_name)
 				continue
 
@@ -439,7 +448,6 @@ def get_detailed_summary(option, value):
 	else:
 		return option + " - " + value+'\n'
 
-
 def return_form_copy():
 	to_return = {}
 	for key in request.form:
@@ -456,7 +464,7 @@ def multiple_select_to_two_arrays(unacceptable_mods):
 	return mass_val_arr, mod_val_arr 
 
 if __name__ == "__main__":
-	app.debug = False
+	app.debug = True
 	app.run()
   # app.run(processes=8, debug=True)
   
