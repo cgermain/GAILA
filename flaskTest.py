@@ -19,6 +19,8 @@ from SCRIPTS_FOR_GUI import handle_inverse_posts
 from SCRIPTS_FOR_GUI import makeFolderNames
 import shutil
 from datetime import datetime
+import pandas as pd
+
 
 TIME_FORMAT =  "%m-%d-%Y_%H-%M-%S"
 
@@ -445,6 +447,12 @@ def get_detailed_summary(option, value):
 			return option + " - Plain parse MGF and XML\n"
 		else:
 			return ""
+	elif option == "reporterIonType":
+		ion_type_and_inverse = option + " - " + value + "\n" "Inverse Values\n"
+		this_dir = os.path.dirname(os.path.realpath(__file__))
+		inv_path = join(this_dir, "SCRIPTS_FOR_GUI", "inverse_files", value + "-inv.txt")
+		inverses = pd.read_table(inv_path, index_col=0)
+		return ion_type_and_inverse + inverses.to_string() + "\n"
 	else:
 		return option + " - " + value+'\n'
 
