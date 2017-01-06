@@ -1,8 +1,5 @@
 #!c:/perl/bin/perl.exe
 #
-
-# SOMETHING TO NOTE: NOW I'M USING THE FULL PATHS.
-
 use strict;
 
 my $error=0;
@@ -44,11 +41,8 @@ unless ($length_of_unacceptable_mass == $length_of_unacceptable_mod)
   exit 9;
 }
 
-# $threshold=$threshold*1.0;
-
 if ($error==0)
 {
-  #$xmlfile=~s/\\/\//g;
   my $line="";
   my %genes=();
   my %gene_ids=();
@@ -59,16 +53,13 @@ if ($error==0)
     while($line=<IN>)
     {
       chomp($line);
-      # if ($line=~/^([^\t]+)\t([^\t]*)\t([^\t]*)\t([^\t]*)$/)
       if ($line=~/^([^\t]+)\t([^\t]*)\t([^\t]*)\t([^\t]*)\t([^\t]*)$/)
       {
         $genes{$1}=$4;
         $gene_ids{$1}=$3;
-        # Just trying this out, because there are newline problems.
         $no_newline=$5;
         $no_newline=~s/(\n|\r)//; #because chomp doesn't delete it on mac.
         $protein_descriptions{$1}=$no_newline;
-        #print qq!$1-$4\n!;
       }
     }
     close(IN);
@@ -77,14 +68,11 @@ if ($error==0)
   {
     exit 10;
   }
-  #print qq!###$genes{"ENSRNOP00000019021"}###\n!;
   open (IN,qq!$xmlfile!) || die "Could not open $xmlfile\n";
   open (OUT,qq!>$xmlfile.txt!) || die "Could not open $xmlfile\n";
   print OUT qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tlabeling\ttryptic\tmissed\tunacceptable modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
   my $xmlfile_=$xmldir;
-  # $xmlfile_=~s/\.xml$//;
-  # mkdir($xmlfile_);
-  # system(qq!del $xmlfile_/*!);
+
   my %filenames=();
   my $mh="";
   my $mz="";
@@ -110,7 +98,6 @@ if ($error==0)
 
   while ($line=<IN>)
   {
-    # if ($line=~/^\<protein\s+.*expect="([^\"]+)"\s+.*label="([^\"]+)"/)
     if ($line=~/^\<protein\s+.*expect="([^\"]+)"\s+.*label="([^\".\s]+).*"/)
     {
       my $protein_expect=$1;
@@ -184,7 +171,7 @@ if ($error==0)
           } 
         }
         $unacceptable="N";
-        #$peptide=~tr/L/I/;
+
         if ($line!~/\<domain[^\>]+\/\>/)
         { 
           my $labeled_Y_Nterm=0;
@@ -205,72 +192,37 @@ if ($error==0)
               }
               $line=~s/^\s*\/\>\s*//;
               my $mod_pos_=$mod_pos-$start+1;
-              #my $test_aa = substr $peptide,$mod_pos_-1,1;
-              #if ($test_aa=~/^$mod_aa$/)
-              #{
-                $modifications.="$mod_mass\@$mod_aa$mod_pos_->$mod_pm,";
 
-                my $current_unacc_mass="";
-                my $current_unacc_mod="";
-                for(my $mods=0;$mods<$length_of_unacceptable_mod;$mods++)
+              $modifications.="$mod_mass\@$mod_aa$mod_pos_->$mod_pm,";
+
+              my $current_unacc_mass="";
+              my $current_unacc_mod="";
+              for(my $mods=0;$mods<$length_of_unacceptable_mod;$mods++)
+              {
+                $current_unacc_mass=$unacceptable_mass_array[$mods];
+                $current_unacc_mod=$unacceptable_mod_array[$mods];
+                if ($mod_aa eq $current_unacc_mod and int((1*$current_unacc_mass) + 0.5)==int((1*$mod_mass) + 0.5))
                 {
-                  $current_unacc_mass=$unacceptable_mass_array[$mods];
-                  $current_unacc_mod=$unacceptable_mod_array[$mods];
-                  if ($mod_aa eq $current_unacc_mod and int((1*$current_unacc_mass) + 0.5)==int((1*$mod_mass) + 0.5))
+                  $unacceptable="Y";
+                  last;
+                }
+              }
+              unless ($unacceptable eq "Y")
+              {
+                my $bad_label="";
+                foreach $bad_label (@unacceptable_label_mod_array) {
+                  if ($mod_aa eq $bad_label and $mod_pos_!=1 and int($mod_mass+0.5)==$label_mass_int)
                   {
                     $unacceptable="Y";
                     last;
                   }
-                }
-                unless ($unacceptable eq "Y")
-                {
-                  my $bad_label="";
-                  foreach $bad_label (@unacceptable_label_mod_array) {
-                    if ($mod_aa eq $bad_label and $mod_pos_!=1 and int($mod_mass+0.5)==$label_mass_int)
-                    {
-                      $unacceptable="Y";
-                      last;
-                    }
-                    if ($mod_aa eq $bad_label and $mod_pos_==1)
-                    {
-                      if(int($mod_mass + 0.5)==$label_mass_int){$labeled_Y_Nterm+=1;}
-                      if(int($mod_mass + 0.5)==2*$label_mass_int){$labeled_Y_Nterm+=2;}
-                    }
+                  if ($mod_aa eq $bad_label and $mod_pos_==1)
+                  {
+                    if(int($mod_mass + 0.5)==$label_mass_int){$labeled_Y_Nterm+=1;}
+                    if(int($mod_mass + 0.5)==2*$label_mass_int){$labeled_Y_Nterm+=2;}
                   }
                 }
-                # if ($mod_aa=~/^M$/ and int($mod_mass+0.5)==32)
-                # {
-                #   $unacceptable="Y";
-                # }
-                # if ($mod_aa=~/^W$/ and int($mod_mass+0.5)==32)
-                # {
-                #   $unacceptable="Y";
-                # }
-                # if ($mod_aa=~/^W$/ and int($mod_mass+0.5)==16)
-                # {
-                #   $unacceptable="Y";
-                # }
-                # if ($mod_aa=~/^Q$/ and int($mod_mass+0.5)==1)
-                # {
-                #   $unacceptable="Y";
-                # }
-                # if ($mod_aa=~/^N$/ and int($mod_mass+0.5)==1)
-                # {
-                #   $unacceptable="Y";
-                # }
-                # if ($mod_aa=~/^Y$/ and $mod_pos_!=1 and int($mod_mass+0.5)==$label_mass_int)
-                # {
-                #   $unacceptable="Y";
-                # }
-                # if ($mod_aa=~/^Y$/ and $mod_pos_==1)
-                # {
-                #   if (int($mod_mass+0.5)==$label_mass_int) { $labeled_Y_Nterm+=1; }
-                #   if (int($mod_mass+0.5)==2*$label_mass_int) { $labeled_Y_Nterm+=2; }
-                # }
-
-
-
-              #}
+              }
             }
           }
           if ($labeled_Y_Nterm>1) { $unacceptable="Y"; } 
@@ -288,7 +240,6 @@ if ($error==0)
       }
       if($title=~/source=(.*\.mgf)/)
       {
-        # 
         $filename=$1;
         $filename=~s/^.*[\/\\]([^\/\\]+)$/$1/;
         @f_name_array_to_hold_stuff=split(".mgf",$filename);
@@ -353,7 +304,6 @@ if ($error==0)
               }
             }
             if ($protein_descriptions{$temp_}=~/\w/ and (index($other_protein_descriptions,"#$protein_descriptions{$temp_}#")==-1))
-            # if ($protein_descriptions{$temp_}=~/\w/ and $other_protein_descriptions!~/#$protein_descriptions{$temp_}#/)
             {
               $other_protein_descriptions.="#$protein_descriptions{$temp_}#";
             }
@@ -366,7 +316,6 @@ if ($error==0)
             }
             my $temp__=$genes{$temp_};
             $temp__=~s/([0-9\.]).*$//;
-            #print qq!#$genes{$protein_}#$temp__#\n!;
             if ($genes{$protein_}!~/^$temp__([0-9\.]?).*$/i)
             {
               $different_gene_fam="Y";
@@ -395,32 +344,28 @@ if ($error==0)
           my $mod_aa=$2;
           my $mod_res=$3;
           my $mod_pm=$4;
-          #my $test_aa = substr $peptide,$mod_res-1,1;
-          #if ($test_aa=~/^$mod_aa$/)
-          #{
-            $modifications.="$mod_mass\@$mod_aa$mod_res";
-            if ($mod_pm=~/\w/){ $modifications.="->$mod_pm"; }
-            $modifications.=",";
-            if ($mod_pm=~/^K$/)
+          $modifications.="$mod_mass\@$mod_aa$mod_res";
+          if ($mod_pm=~/\w/){ $modifications.="->$mod_pm"; }
+          $modifications.=",";
+          if ($mod_pm=~/^K$/)
+          {
+            $complete_labeling++;
+          }
+          if ($mod_res==1 or $mod_aa=~/^K$/)
+          {
+            if (int($mod_mass)==$label_mass_int)
             {
-              $complete_labeling++;
+              $itraq_labels{$mod_res}++;
             }
-            if ($mod_res==1 or $mod_aa=~/^K$/)
+            if (int($mod_mass)==-$label_mass_int)
             {
-              if (int($mod_mass)==$label_mass_int)
-              {
-                $itraq_labels{$mod_res}++;
-              }
-              if (int($mod_mass)==-$label_mass_int)
-              {
-                $itraq_labels{$mod_res}--;
-              }
-              if (int($mod_mass)==2*$label_mass_int)
-              {
-                $itraq_labels{$mod_res}+=2;
-              }
+              $itraq_labels{$mod_res}--;
             }
-          #}
+            if (int($mod_mass)==2*$label_mass_int)
+            {
+              $itraq_labels{$mod_res}+=2;
+            }
+          }
         }
         my $labeling=0;
         my $reactive_residue_count=0;
