@@ -324,6 +324,10 @@ def writeSummary():
 			if option.startswith("unacceptableMods"):
 				list_of_mods = request.form.getlist('unacceptableMods[]')
 				out_file.write(get_detailed_summary(option, list_of_mods))
+			elif option.startswith("mgfOperationToPerform") and "plain_parse" in request.form:
+				continue
+			elif option.startswith("mgfTxtReadDirPath") and request.form["mgfOperationToPerform"] == "1":
+				continue
 			else:
 				out_file.write(get_detailed_summary(option, value))
 		if os.path.isfile(mgf_txt_write_dir_path+'intensity_summary.txt'):
@@ -333,7 +337,7 @@ def writeSummary():
 			os.remove(mgf_txt_write_dir_path+'intensity_summary.txt')
 
 	makeFolderNames.rename_folders(request.form)
-	return "Settings"
+	return "Summary complete."
 
 
 def clean_up_after_tab_2():
@@ -417,7 +421,6 @@ def get_detailed_summary(option, value):
 			return option + " - Perform recalibration\n"
 		else:
 			return option + " - DO NOT Perform recalibration\n"
-	#TODO still need to check what tab we're in for mgfOperationToPerform
 	elif option == "mgfOperationToPerform":
 		if value == "0":
 			return option + " - Only Extract reporter ion intensities\n"
@@ -430,7 +433,6 @@ def get_detailed_summary(option, value):
 			return option + " - Do not normalize report ions"
 	elif option == "unacceptableMods[]":
 		mods = [utility.get_modification_dict()[mod] for mod in value]
-		#TODO check if length 0
 		return "unacceptableMods - " + ", ".join(mods)+"\n"
 	elif option == "assignUnacceptableModifications":
 		if value == "0":
@@ -442,7 +444,6 @@ def get_detailed_summary(option, value):
 			return ""
 		else:
 			return option + " - " + value+'\n'
-	#TODO if plain parsing, don't show mgfOperation to perform
 	elif option == "plain_parse":
 		if value == "1":
 			return option + " - Plain parse MGF and XML\n"
