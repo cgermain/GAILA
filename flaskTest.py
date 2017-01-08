@@ -20,6 +20,7 @@ from SCRIPTS_FOR_GUI import makeFolderNames
 import shutil
 from datetime import datetime
 import pandas as pd
+import re
 
 
 TIME_FORMAT =  "%m-%d-%Y_%H-%M-%S"
@@ -135,24 +136,20 @@ def tab_2_helper_function():
 		mgf_txt_foldername = makeFolderNames.construct_reporter_folder_path(request.form)
 	else:
 		mgf_txt_foldername = request.form["mgfTxtReadDirPath"]
-		if not check_if_previous_summary_exists(mgf_txt_foldername):
-			return "There was a problem checking the summary"
+		print "Checking if previous summary exists"
+		previous_ion_type = check_if_previous_summary_exists_and_get_reporter_type(mgf_txt_foldername)
+		if not previous_ion_type:
+			return "No previous summary found.  Please reselect reporters and keep the summary.", 500
+		if previous_ion_type != reporter_type:
+			return "Ion type from summary does not match current selection.", 500
 
-
-	# should_use_unacceptable = request.form['assignUnacceptableModifications']
-	# print "should_use_unacceptable: " + str(should_use_unacceptable)
-	# unacceptable_mods = request.form.getlist('unacceptableMods[]')
-	# print "unacceptable_mods: " + str(unacceptable_mods)
 	if should_use_unacceptable == "1":
 		unacceptable_mods = []
-
-
-	# print "going to call parse_xtandem stuff from tab 5"
 
 	a = call_xml_parser.parse_xtandem_combine_with_mgf(xml_read_path, log_error_threshold, reporter_type, geneFile, mgf_txt_foldername, unacceptable_mods, normalize_intensities)
 
 	if a:
-		print "Error in tab 5. Trying cleanup now, either way returning error"
+		print "Error in tab 2. Cleaning up"
 		try:
 			clean_up_after_tab_2()
 		finally: #In case it breaks
@@ -387,7 +384,7 @@ def clean_up_after_tab_2():
 				os.remove(full_name)
 				continue
 			#TODO clean up intensity summary if it fails
-			if full_name.ends_with('summary.txt'):
+			if full_name.ends_with('intensity_summary.txt'):
 				os.remove(full_name)
 				continue
 
@@ -395,7 +392,8 @@ def clean_up_after_tab_2():
 	return
 
 
-def check_if_previous_summary_exists(reporter_folder):
+def check_if_previous_summary_exists_and_get_reporter_type(reporter_folder):
+	ion_type = ""
 	for item in os.listdir(reporter_folder):
 		print os.path.splitext(item)[0]
 		if os.path.splitext(item)[0].startswith("IDEAA_summary"):
@@ -403,11 +401,14 @@ def check_if_previous_summary_exists(reporter_folder):
 				with open(reporter_folder+"\intensity_summary.txt","w") as intensity_summary:
 					for line in summary:
 						print line
+						ion_type_search = re.search("reporterIonType - (.*)", line)
+						if ion_type_search:
+							ion_type = ion_type_search.group(1)
 						if "Total Reporter Ion" in line:
 							summary.next()
 							intensity_summary.write(summary.next())
 							intensity_summary.write(summary.next())
-							return True
+							return ion_type
 	return None
 
 def get_detailed_summary(option, value):
