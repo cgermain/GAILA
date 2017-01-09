@@ -40,9 +40,7 @@ my $directory = dirname($write_txt_file_path);
 my $summary_path = $directory."\\intensity_summary.txt";
 my @previous_intensity = ();
 
-print "READ FILE PATH: $read_file_path\n";
-print "WRITE FILE PATH: $write_file_path\n";
-print "SUMMARY PATH: $summary_path\n";
+print "Reading: $read_file_path\n";
 
 my @reporters=();
 if ($type=~/^iTRAQ8$/)
@@ -109,18 +107,15 @@ unless (open (OUT_TABLE,">$write_txt_file_path"))
 
 if (-e "$summary_path")
 {
-	print "Summary already exists.";
+	# Summary already exists
 	open (TEMP_SUMMARY, "$summary_path");
 	<TEMP_SUMMARY>;
 	my $intensity_line = <TEMP_SUMMARY>;
-	print $intensity_line;
 	@previous_intensity = split('\t',$intensity_line);
-	print join(", ",@previous_intensity);
-	print "Summary ingested";
 	close (TEMP_SUMMARY);
 }
 else{
-	print "Summary not found";
+	#Summary not found
 }
 
 open (TOTAL_INTENSITY_TABLE,">$summary_path" );

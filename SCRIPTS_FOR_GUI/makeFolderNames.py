@@ -42,7 +42,6 @@ def construct_selected_mgf_path(form):
 
 
 def construct_reporter_folder_path(form):
-
 	if form['performRecalibration'] == "0":
 		a = "ReportersSelected_Min" + str(form['minReporters']) + str(form['reporterIonType']) + "ions" + \
 			"_MinIntensity" + str(form['minIntensity']) + "_MassError" + str(form['mzError']) + "ppm"
@@ -65,33 +64,27 @@ def construct_reporter_folder_path(form):
 	else:
 		raise Exception("Did not catch anything, must be a bad input")
 
+
 def construct_short_reporter_folder_path(form):
 	timestamp = datetime.now().strftime(TIME_FORMAT)
 	fullpath = join(form['mgfReadDirPath'], "ReporterSelect_"+timestamp , "")
 	return fullpath
 
-def construct_plain_parse_reporter_folder_path(form):
 
-	print "constructing folder path for plain parse"
-	#a = "MGFSpectraSelected_Min" + str(form['minReporters']) + str(form['reporterIonType']) + "ions" + \
-	#	"_MinIntensity" + str(form['minIntensity']) + "_MassError" + str(form['mzError']) + "ppm"
-	#a = a.replace('.','-')
+def construct_plain_parse_reporter_folder_path(form):
 	a = os.path.splitext(os.path.basename(str(form['xmlReadPath'])))[0]+'_plain_parse'
 	full_path = join(form['mgfReadDirPath'], a, '')
 	return full_path
+
 
 def construct_merged_gpm_reporter_filename(form):
 	reporter_path = None
 	if form['mgfOperationToPerform'] == '1':
 		reporter_path = construct_reporter_folder_path(form)
 	reporter_path = form['mgfTxtReadDirPath']
-	print "reporter path is: " + str(reporter_path)
 	parent_xml_basename = os.path.basename(os.path.normpath(form["xmlReadPath"]))
-	print "parent path basename is: " + str(parent_xml_basename)
 	parent_xml_filename = parent_xml_basename.rsplit('.', 1)[0]
-	print "parent path filename is: " + str(parent_xml_filename)
 	outfile_name = join(reporter_path, parent_xml_filename + '-pep-reporter-merged.txt')
-	print "outfile_name: " + str(outfile_name)
 	return outfile_name
 
 
@@ -108,7 +101,7 @@ def rename_folders(form):
 			return
 		#tab 2 - use pre extracted reporters
 		else:
-			# don't rename?
+			# don't rename
 			return
 	else:
 		#tab 1 - select reporters and make mgf

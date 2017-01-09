@@ -33,9 +33,3 @@ def create_inverse(full_path_to_crossover):
 	np.savetxt(new_path, inverse, delimiter='\t')
 	print "inverse matrix: "
 	print inverse
-
-# example:
-# create_inverse('/Users/samlobel/Code/DAD/FINAL_LOBEL_GUI/inverse_creation/tmt6_new.txt')
-
-
-

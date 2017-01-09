@@ -2,21 +2,15 @@ from pandas import Series, DataFrame
 import pandas as pd
 import numpy as np
 import sys, os, shutil
-
 from os.path import join
 
-
-# get THIS directory! All of the initial files have got to be relative to this directory!
-
-
+#all of the initial files have got to be relative to this directory.
 this_dir = os.path.dirname(os.path.realpath(__file__))
 
 def remove_duplicate_lines(filename):
-	print "removing duplicate lines"
 	suffix = '_with_duplicates_removed'
 	lines_seen = set()
 	write_dest = filename + suffix
-	# os.remove(outfile) # there were errors before because it was appending instead of overwriting.
 	outfile = open(write_dest, "w")
 	for line in open(filename, "r"):
 		if line not in lines_seen:
@@ -65,15 +59,12 @@ def transform_firstline_for_n_and_c(firstline):
 	
 
 def add_a_or_b_label_to_sorted_mfg_txt_file(filename):
-	print "adding a and b labels "
 	a = open(filename, "r")
 	temp_filename = filename + "_PLACEHOLDER"
 	temp_file = open(temp_filename, "w")
 
 	first_line = a.readline()
-	# print "first line: " + str(first_line)
 	first_line = transform_firstline_for_n_and_c(first_line)
-	# print "new first line: " + str(first_line)
 
 	temp_file.write(first_line.strip() + "\treplicate_spec_flag\n")
 	first_line_arr = first_line.split('\t')
@@ -112,13 +103,9 @@ def add_a_or_b_label_to_sorted_mfg_txt_file(filename):
 	temp_file.close()
 	os.remove(filename)
 	os.rename(temp_filename,filename)
-	print "a and b labels added"
-
-# REMEMBER TO DO ONE AT THE END TOO!
 
 
 def add_c_labels_to_duplicate_marker_column(filename):
-	print "adding c labels "
 	a = open(filename, "r")
 	temp_filename = filename + "_PLACEHOLDER"
 	temp_file = open(temp_filename, "w")
@@ -143,7 +130,7 @@ def add_c_labels_to_duplicate_marker_column(filename):
 		tup = (curr_filename, curr_scan)
 		if (not first) and (not (most_recent[1] == tup[1])):
 			if len(scan_list) == 0:
-				raise Exception("Something is funky, shouldn't be zero")
+				raise Exception("Shouldn't be zero")
 			elif len(scan_list) == 1:
 				temp_file.write("\t".join(scan_list[0]))
 			else:
@@ -158,7 +145,7 @@ def add_c_labels_to_duplicate_marker_column(filename):
 		most_recent = tup
 		first = False
 	if len(scan_list) == 0:
-		raise Exception("Something is funky, shouldn't be zero")
+		raise Exception("Shouldn't be zero")
 	elif len(scan_list) == 1:
 		temp_file.write("\t".join(scan_list[0]))
 	else:
@@ -172,10 +159,6 @@ def add_c_labels_to_duplicate_marker_column(filename):
 	temp_file.close()
 	os.remove(filename)
 	os.rename(temp_filename,filename)
-
-# REMEMBER TO DO ONE AT THE END TOO!
-
-
 
 
 def take_in_file_sorted_by_filename_scan_output_file_with_duplicate_marker_column(filename):
@@ -200,8 +183,7 @@ def take_in_file_sorted_by_filename_scan_output_file_with_duplicate_marker_colum
 		curr_filename = line_arr[filename_index]
 		tup = (curr_filename, curr_scan)
 		if curr_values == tup:
-			print "dealing with duplicate! Line is as follows:"
-			print line
+			#dealing with duplicates
 			scan_list.append((log_e, line))
 		else:
 			scan_list = sorted(scan_list)
@@ -210,14 +192,10 @@ def take_in_file_sorted_by_filename_scan_output_file_with_duplicate_marker_colum
 				raise Exception("length zero?")
 			elif len(lines) == 1:
 				for i in range(len(lines)):
-					print "yo"
+					#needed?
+					print i
 			else:
-				print "yoda"
-
-
-
-
-
+				print "line length > 1"
 
 
 def remove_log_e_duplicates(filename):
@@ -275,7 +253,6 @@ def remove_log_e_duplicates(filename):
 	os.rename(tempdest, filename)
 
 
-
 def check_for_selected_xmldir_lineup(selected_mgfdir, xmldir):
 	if not os.path.isdir(selected_mgfdir):
 		return False, "Selected mgf directory doesn't exist"
@@ -295,54 +272,30 @@ def combine_plain_parsed_xml_mgf(selected_mgfdir, xmldir):
 		# I should check here to make sure the files line up.
 		linesup, message = check_for_selected_xmldir_lineup(selected_mgfdir, xmldir)
 		if not linesup:
-			print "doesn't line up"
+			print "XML doesn't line up in plain parse"
 			return message
 
-		#not using because no reporter ion type
-		#corr_path = join(this_dir, "inverse_files", reporter_ion_type + "-inv.txt")
-		#if not os.path.isfile(corr_path):
-		#	return "Cannot find inverse file"
-		#print "reading pd table"
-		#corr = pd.read_table(corr_path)
-		#print "pd table read"
-		#corr=corr.drop('Unnamed: 0', axis=1)
-		# xmldir,sep,ext = xmlfile.rpartition('.')
-		print "something dropped"
 		xmldir = join(xmldir,"")
 		parent_xml_filename = os.path.basename(os.path.normpath(xmldir))
-		print "about to loop files"
-		# Problem is that it's an empty folder!
 		for filename in os.listdir(xmldir):
 			if filename.endswith('.reporter'):
+				print "Processing: " + filename
 				xml_filename = join(xmldir, filename)
 				mgf_txt_filename = join(selected_mgfdir, filename)
 				mgf = pd.read_table(mgf_txt_filename, index_col=['filename','scan','charge'])
-				print "read mgf_txt filename"
 				mgf.sort_index()
-				print "did initial work on them"
 				testing_filename = mgf_txt_filename.split('.reporter')[0] + '_duplicate_sorted' + '.reporter'
 				mgf.to_csv(testing_filename, sep='\t')
-				print "wrote one csv"
 				add_a_or_b_label_to_sorted_mfg_txt_file(testing_filename)
-				print "about to read mgf table"
 				mgf = pd.read_table(testing_filename, index_col=['filename','scan','charge'])
-				print "mgf table read."
 				xml = pd.read_table(xml_filename, index_col=['filename','scan','charge'])
-				#print xml
-				print "read xml filename"
-				print "about to merge"
 				dfc=pd.merge(mgf,xml, left_index=True, right_index=True)
-				print "merged. about to dropna"
 				dfc_=dfc.dropna()
 				dfc_=dfc_.drop("labeling",1)
 				csv_filename = join(xmldir, filename + '_nocal_table.txt')
-				print "Writing to " + str(csv_filename)
 				dfc_.to_csv(csv_filename,sep='\t')
-				print "written to csv"
-
 				os.remove(testing_filename)
 				data = pd.read_table(csv_filename)
-				#this should be able to be combined with naming above
 				this_filename = join(xmldir, filename + '_nocal_table_corrected.txt')
 				data.to_csv(this_filename,sep='\t',index=False)
 
@@ -357,19 +310,16 @@ def combine_plain_parsed_xml_mgf(selected_mgfdir, xmldir):
 							if (not 'other proteins' in line) or (first==1):
 								first = 0
 								outfile.write(line)
-		print outfile_name
 		add_c_labels_to_duplicate_marker_column(outfile_name)
-		print "Done!"
 		return
 	except Exception as err:
-		print "error"
 		print err
-		return "Error combining xml and mgf"
+		return "Error combining xml and mgf in plain parse"
 
 def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize_intensities):
 	try:
 		this_dir = os.path.dirname(os.path.realpath(__file__))
-		print "checking reporter ion type"
+		#checking reporter ion type
 		if reporter_ion_type=='iTRAQ4':
 			start_col=reporter_ion_type+'-114'
 			end_col=reporter_ion_type+'-117'
@@ -401,76 +351,49 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 		else:
 			print "bad reporter ion type"
 			return "BAD REPORTER ION TYPE"
-		print "good reporter ion type"
 
 		# I should check here to make sure the files line up.
 		linesup, message = check_for_selected_xmldir_lineup(selected_mgfdir, xmldir)
 		if not linesup:
-			print "doesn't line up"
+			print "XML doesn't line up"
 			return message
 
 		corr_path = join(this_dir, "inverse_files", reporter_ion_type + "-inv.txt")
 		if not os.path.isfile(corr_path):
 			return "Cannot find inverse file"
-		print "reading pd table"
 		corr = pd.read_table(corr_path)
-		print "pd table read"
 		corr=corr.drop('Unnamed: 0', axis=1)
-		# xmldir,sep,ext = xmlfile.rpartition('.')
-		print "something dropped"
 		xmldir = join(xmldir,"")
 		parent_xml_filename = os.path.basename(os.path.normpath(xmldir))
-		print "parent xml filename " + parent_xml_filename
-		# if first run through
+		# if first loop through
 		summary_file = selected_mgfdir+"\intensity_summary.txt"
-		print "Summary file location: " + summary_file
-		
 
 		normalized_intensities = read_intensities_from_summary_and_normalize(summary_file)
 		dot_normalized_intensities = np.dot(normalized_intensities, corr.values)
 
-		print "about to loop files"
 		# Problem is that it's an empty folder!
 		for filename in os.listdir(xmldir):
 			if filename.endswith('.reporter'):
-				print filename
+				print "Processing: " + filename
 				xml_filename = join(xmldir, filename)
-				print xml_filename
 				mgf_txt_filename = join(selected_mgfdir, filename)
-				print mgf_txt_filename
 				mgf = pd.read_table(mgf_txt_filename, index_col=['filename','scan','charge'])
-				print "read mgf_txt filename"
 				mgf.sort_index()
-				print "did initial work on them"
 				testing_filename = mgf_txt_filename.split('.reporter')[0] + '_duplicate_sorted' + '.reporter'
 				mgf.to_csv(testing_filename, sep='\t')
-				print "wrote one csv"
 				add_a_or_b_label_to_sorted_mfg_txt_file(testing_filename)
-				print "about to read mgf table"
+				#read mgf table
 				mgf = pd.read_table(testing_filename, index_col=['filename','scan','charge'])
-				print "mgf table read."
 				xml = pd.read_table(xml_filename, index_col=['filename','scan','charge'])
-				#print xml
-				print "read xml filename"
-				print "about to merge"
 				dfc=pd.merge(mgf,xml, left_index=True, right_index=True)
-				print "merged. about to dropna"
 				dfc_=dfc.dropna()
 				csv_filename = join(xmldir, filename + '_nocal_table.txt')
-				print "Writing to " + str(csv_filename)
+				#writing to csv
 				dfc_.to_csv(csv_filename,sep='\t')
-				print "written to csv"
-
 				os.remove(testing_filename)
-				print "1"
 				data = pd.read_table(csv_filename)
-				print "2"
 
-				#check to see if we've added the normalized columns yet
-				if normalize_intensities[0] == "0":
-					print "We are adding normalization"
 				labels = list(data.columns.values)
-				print labels
 				if normalize_intensities[0] == "0":
 					norm_start = labels.index(start_col)
 					norm_end = labels.index(end_col) + 1
@@ -479,17 +402,9 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 						data[ion_type+"_norm_total"] = ""
 
 				for k in range(len(data)):
-					#print k,len(data),start_col,end_col,data
-					#print data.ix[k,start_col:end_col]
-					
 					# this next line gets the kth row, and the start_col to end_col columns, which are strings like iTRAQ-115.
-					#print start_col
-					#print end_col
-					#print data
+	
 					temp=np.dot(data.ix[k,start_col:end_col].values,corr.values)
-					#print "data: " + str(data.ix[k,start_col:end_col].values)
-					#print "temp: " + str(temp)
-					#print "corr: " + str(corr.values)
 					temp=temp.astype(float)
 					temp[temp<0]=0
 					temp/=sum(temp)
@@ -497,14 +412,9 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 					if normalize_intensities[0] == "0":
 						temp_intensities = [float(intensity)/norm for intensity, norm in zip(temp, dot_normalized_intensities)]
 						normalized_temp_intensities = [float(intensity)/sum(temp_intensities) for intensity in temp_intensities]
-						# print normalized_temp_intensities
 						data.ix[k,start_col+"_norm_total":end_col+"_norm_total"] = normalized_temp_intensities
-
-				print "3"
 				this_filename = join(xmldir, filename + '_nocal_table_corrected.txt')
-				print "4"
 				data.to_csv(this_filename,sep='\t',index=False)
-				print "5"
 
 		first=1
 		outfile_name = join(selected_mgfdir, parent_xml_filename + '-pep-reporter-merged.txt')
@@ -516,28 +426,14 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 							if (not 'other proteins' in line) or (first==1):
 								first = 0
 								outfile.write(line)
-		print outfile_name
 		add_c_labels_to_duplicate_marker_column(outfile_name)
-		print "Done!"
 		return
 	except Exception as err:
-		print "error"
 		print err
 		return "Error combining xml and mgf"
 
 
-
-
-
-
-
-	# I'm trying to make this function only do one thing, if I want more I can chain them with
-	# async calls. So, I don't need a lot of this stuff.
-	# mgf already selected from, xml is already processed. Just combine them here.
-
-
 def read_intensities_from_summary_and_normalize(filename):
-	#TODO check if summary types match current run
 	try:
 		summary = open(filename, "r")
 		summary.readline() #skip the header

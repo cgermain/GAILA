@@ -39,7 +39,7 @@ my @previous_intensity = ();
 print "PARSED FILENAME: $parsed_filename\n";
 print "READ FILE PATH: $read_file_path\n";
 print "WRITE FILE PATH: $write_file_path\n";
-print "SUMMARY PATH: $summary_path\n";
+#print "SUMMARY PATH: $summary_path\n";
 
 my @reporters=();
 if ($type=~/^iTRAQ8$/)
@@ -100,17 +100,15 @@ if (open (IN, "$read_file_path"))
 		open (OUT_TABLE,">$write_txt_file_path");
 		if (-e "$summary_path")
 		{
-			print "Summary found.  Appending intensities.";
+			#Summary found.  Appending intensities
 			open (TEMP_SUMMARY, "$summary_path");
 			<TEMP_SUMMARY>;
 			my $intensity_line = <TEMP_SUMMARY>;
-			print $intensity_line;
 			@previous_intensity = split('\t',$intensity_line);
-			print join(", ",@previous_intensity);
 			close (TEMP_SUMMARY);
 		}
 		else{
-			print "Summary not found";
+			#Summary not found
 		}
 		open (TOTAL_INTENSITY_TABLE,">$summary_path" );
 		print OUT_TABLE qq!filename\tscan\tcharge\trt\tMS1_intensity!;

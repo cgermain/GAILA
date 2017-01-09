@@ -9,7 +9,6 @@ debug = False
 # debug = True
 
 def select_only_one(mgf_read_path, mgf_write_path, mgf_txt_write_path, mz_error, reporter_type, min_intensity, min_reporters, should_select):
-	print "Selecting only one, not precompiled"
 	perl_file = 'mgf_select_only_one.pl'
 
 	if os.path.isfile(mgf_txt_write_path):
@@ -23,7 +22,6 @@ def select_only_one(mgf_read_path, mgf_write_path, mgf_txt_write_path, mz_error,
 		mgf_write_path, mgf_txt_write_path, str(mz_error), reporter_type, \
 		str(min_intensity), str(min_reporters), str(should_select)]
 
-	print "Debug: " + str(debug)
 	if debug:
 		output = subprocess.check_output(perl_array)
 		print output
@@ -34,6 +32,7 @@ def select_only_one(mgf_read_path, mgf_write_path, mgf_txt_write_path, mz_error,
 			return "Error selecting from mgf (no recalibration)"
 		else:
 			return 0
+
 
 def select_only_one_recalibrate(mgf_read_path, mgf_write_path, mgf_txt_write_path, mz_error, reporter_type, min_intensity, min_reporters, should_select, recal_mz_error):
 	this_dir = os.path.dirname(os.path.realpath(__file__))
@@ -48,9 +47,7 @@ def select_only_one_recalibrate(mgf_read_path, mgf_write_path, mgf_txt_write_pat
 	perl_array = ['perl', join(this_dir, perl_file), mgf_read_path, mgf_write_path, \
 		mgf_txt_write_path, str(mz_error), reporter_type, str(min_intensity), \
 		str(min_reporters), str(should_select), str(recal_mz_error)]
-	print perl_array
 
-	print "Debug: " + str(debug)
 	if debug:
 		output = subprocess.check_output(perl_array)
 		print output
@@ -61,6 +58,7 @@ def select_only_one_recalibrate(mgf_read_path, mgf_write_path, mgf_txt_write_pat
 			return "Error selecting from mgf (with recalibration)"
 		else:
 			return 0
+
 
 def plain_parse(mgf_read_path, mgf_txt_write_path):
 	this_dir = os.path.dirname(os.path.realpath(__file__))
@@ -78,8 +76,3 @@ def plain_parse(mgf_read_path, mgf_txt_write_path):
 				rt = spectrum['params']['rtinseconds']
 				ms1_intensity = spectrum['params']['pepmass'][1]
 				csv_writer.writerow([os.path.basename(mgf_read_path), scans, charge, rt, ms1_intensity])
-
-
-def test_drive():
-	print "GREAT JOB SUCCESS NOW"
-	return "Good job very nice"

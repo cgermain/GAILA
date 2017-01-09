@@ -1,4 +1,6 @@
 import shutil
+from os import listdir
+from os.path import isfile, join
 
 def concat_mgf_files(output_filename, input_filename_array):
 	with open(output_filename,'wb') as wfd:
@@ -7,10 +9,6 @@ def concat_mgf_files(output_filename, input_filename_array):
 				shutil.copyfileobj(fd, wfd, 1024*1024*10)
 				#10MB per writing chunk to avoid reading big file into memory.
 	print "Concatenated"
-
-
-from os import listdir
-from os.path import isfile, join
 
 
 def concat_mgf_txt_files(output_filename, input_filename_array):
@@ -31,6 +29,7 @@ def concat_mgf_txt_files(output_filename, input_filename_array):
 					wf.write(line)
 					line = rf.readline()
 
+
 def concat_mgf_files_given_dirname(output_filename, input_directory_name):
 	try:
 		filenames = [join(input_directory_name,f) for f in listdir(input_directory_name) if isfile(join(input_directory_name, f))]
@@ -39,7 +38,7 @@ def concat_mgf_files_given_dirname(output_filename, input_directory_name):
 		concat_mgf_files(output_filename, filenames)
 	except:
 		return "Error concatting mgf files files in this directory"
-	print "Concatted"
+	print "Concatenated"
 	return
 
 
@@ -50,7 +49,7 @@ def concat_mgf_txt_files_given_dirname(output_filename, input_directory_name):
 		concat_mgf_txt_files(output_filename, filenames)
 	except:
 		return "Error concatting mgf_txt files in this directory"
-	print "Concatted"
+	print "Concatenated"
 	return
 
 

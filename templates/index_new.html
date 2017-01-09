@@ -155,9 +155,6 @@
 
 	  function writeSummaryToFile(rightSide, serializedForm, callbackOuter) {
 	    var summary = JSON.parse(JSON.stringify(serializedForm));
-	    //console.log("In writeSummaryToFile");
-	    //console.log(summary);
-
 	    $.ajax({
 	      type: "POST",
 	      url: "writeSummary",

@@ -18,8 +18,16 @@ import shutil
 from datetime import datetime
 import pandas as pd
 import re
+import logging
 
 TIME_FORMAT =  "%m-%d-%Y_%H-%M-%S"
+
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
+
+print "Welcome to IDEAA"
+print "Currently running at http://127.0.0.1:5000/"
+print "Press Ctrl+C to quit"
 
 def nocache(f):
 	def new_func(*args, **kwargs):
@@ -43,7 +51,6 @@ def main():
 @nocache
 def tab():
 	file_name = str(request.args.get('name')) + '.html'
-	print "fetched " + str(file_name)
 	gene_files = utility.get_gene_files_array()
 	inverse_files = utility.get_inverse_files_array()
 	return render_template(file_name, gene_files=gene_files,\
@@ -64,7 +71,9 @@ def tab_4_helper_function():
 	try:
 		os.makedirs(mgf_txt_write_dir_path)
 	except:
-		print "mgf.txt directory probably already there"
+		#mgf.txt directory probably already there
+		pass
+		
 	if not os.path.isdir(mgf_txt_write_dir_path):
 		return "selected_mgf_txt directory could not be created", 500
 	
@@ -165,14 +174,13 @@ def tab_1_helper_function():
 		mgf_write_path = "invalid"
 	mgf_txt_write_dir_path = makeFolderNames.construct_reporter_folder_path(request.form)
 	mgf_txt_write_path = join(mgf_txt_write_dir_path, mgf_file_name.split('.mgf')[0] + '.reporter')
-
-
 	mgf_read_path = join(mgf_read_dir_path, mgf_file_name)
 
 	try:
 		os.makedirs(mgf_txt_write_dir_path)
 	except:
-		print "mgf.txt directory probably already there"
+		# selected_mgf_txt directory probably already there"
+		pass
 	if not os.path.isdir(mgf_txt_write_dir_path):
 		return "selected_mgf_txt directory could not be created", 500
 
@@ -180,12 +188,12 @@ def tab_1_helper_function():
 		try:
 			os.makedirs(mgf_write_dir_path)
 		except:
-			print "mgf directory probably already there"
+			#MGF direcotry already found
+			pass
 		if not os.path.isdir(mgf_write_dir_path):
 			return "selected_mgf directory could not be created", 500	
 
 	if perform_recalibration == '1':
-		print "calling perform_recalibration from 1"
 		error = mgf_select_one.select_only_one_recalibrate(mgf_read_path, \
 			mgf_write_path, mgf_txt_write_path, mz_error_initial_run,\
 			reporter_type, min_intensity, min_reporters, should_select, \
@@ -197,7 +205,6 @@ def tab_1_helper_function():
 			return "mgf_select run with recalibration"
 
 	else:
-		print "calling mgf_select_no_recalibrate from 1"
 		# Can do this because both were validated
 		error = mgf_select_one.select_only_one(mgf_read_path, \
 			mgf_write_path, mgf_txt_write_path, mz_error, reporter_type, \
@@ -210,14 +217,13 @@ def tab_1_helper_function():
 
 @app.route("/check_if_gpm_merge_already_exists", methods=["POST"])
 def check_if_gpm_merge_already_exists():
-	print "checking if gpm merge already exists"
 	valid, validation_error = validation.validate_check_for_final_product(request.form)
 	if not valid:
 		return validation_error, 500
 
 	try:
 		if request.form["mgfOperationToPerform"] == "1":
-			print "if we need to create the .reporter folder, it can't already exist"
+			#if we need to create the .reporter folder, it can't already exist
 			return {existsAlready : False}
 
 		write_destination_filename = makeFolderNames.construct_merged_gpm_reporter_filename(request.form)
@@ -230,7 +236,7 @@ def check_if_gpm_merge_already_exists():
 			return "Does not already exist." #That means true
 
 	except:
-		print "error creating the foldername. At least that means it doesn't exist"
+		#error creating the foldername. At least that means it doesn't exist
 		return "Does not exist already" #That means true
 
 @app.route("/getMGFFiles", methods=['POST'])
@@ -248,12 +254,9 @@ def getMGFFiles():
 @app.route("/createInverseFiles", methods=['POST'])
 @nocache
 def createInverseFiles():
-	print "createInverseFile called"
 	post_obj = request.get_json()
 	reporter_type = post_obj['reporterType']
 	inverse_string = handle_inverse_posts.create_inverse_file(post_obj)
-	print 'inverse_string'
-	print inverse_string
 	return inverse_string
 
 @app.route("/writeSummary", methods=['POST'])
@@ -292,11 +295,10 @@ def writeSummary():
 			os.remove(mgf_txt_write_dir_path+'intensity_summary.txt')
 
 	makeFolderNames.rename_folders(request.form)
-	print "Summary compelete."
 	return "Summary complete."
 
 def clean_up_after_tab_2():
-	print "cleaning up possible leaked files, if there was an error somewhere."
+	print "cleaning up possible leaked files if there was an error."
 	# tempdest = filename + "_with_duplicates_deleted" is a line in combine_xml_mgf where
 	# we make temporary files.
 	# testing_filename = mgf_txt_filename.split('.reporter')[0] + '_duplicate_sorted' + '.reporter'
@@ -317,12 +319,12 @@ def clean_up_after_tab_2():
 
 	mgf_txt_foldername = None
 	if request.form['mgfOperationToPerform'] == '1':
-		print "Recalculating MGF folder name"
+		#Recalculating MGF folder name
 		mgf_txt_foldername = makeFolderNames.construct_reporter_folder_path(request.form)
 	else:
 		mgf_txt_foldername = request.form["mgfTxtReadDirPath"]
 	if not mgf_txt_foldername:
-		print "MGF txt folder missing.  Nothing to delete."
+		#MGF txt folder missing.  Nothing to delete.
 		return
 
 	for item in os.listdir(mgf_txt_foldername):
@@ -419,5 +421,5 @@ def multiple_select_to_two_arrays(unacceptable_mods):
 	return mass_val_arr, mod_val_arr 
 
 if __name__ == "__main__":
-	app.debug = True
+	app.debug = False
 	app.run()
