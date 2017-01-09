@@ -1,4 +1,4 @@
-# LOBEL_GUI_FINAL
+# IDEAA - Isobaric Data Extractor and Annotator Assistant
 
 
 ## FOR WINDOWS
@@ -21,7 +21,7 @@ Then run the .msi installer to install
 ### INSTALLATION
 Once the prerequisites are downloaded, download this folder by clicking the "download ZIP" button near the top-right of this page. Unzip this zip file, and move the created folder to a location of your choice. 
 
-After unzipping, you should be able to set up the project by clicking on install.bat, located in the INSTALLATION folder. This file automatically downloads dependencies, including pip (a python package manager), virtualEnv (a python dependency), as well as various python packages (flask, numpy, pandas).
+After unzipping, you should be able to set up the project by clicking on install.bat, located in the INSTALLATION folder. This file automatically downloads dependencies, including pip (a python package manager), virtualEnv (a python dependency), as well as various python packages (flask, numpy, pandas, pyteomics).
 
 
 ### TO RUN
@@ -29,7 +29,9 @@ The installation creates a file called startup.bat. Double click this file to ru
 
 To use the interface, open your web browser (firefox or chrome) and type localhost:5000 into the URL bar. If the server is running correctly, you should see the User Interface for our GPM and MGF-parsing scripts.
 
-## FOR MAC
-Unfortunately, an installation script hasn't been written for macs yet, but one is coming soon.
+###Please keep the summary file created after each run in the folder with the output files.  This will save time calculating total intensitites for future runs.
 
-### If the installation doesn't work, or you have any questions about how to use the interface, you can contact me at samuel.lobel@gmail.com for help.
+## FOR MAC / LINUX
+Currently a work in progress.
+
+### If there are any issues with installation, the web interface, or the scripts themselves, please email germain@cabm.rutgers.edu.
