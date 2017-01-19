@@ -36,9 +36,9 @@ my $directory = dirname($write_txt_file_path);
 my $summary_path = $directory."\\intensity_summary.txt";
 my @previous_intensity = ();
 
-print "PARSED FILENAME: $parsed_filename\n";
-print "READ FILE PATH: $read_file_path\n";
-print "WRITE FILE PATH: $write_file_path\n";
+#print "PARSED FILENAME: $parsed_filename\n";
+#print "READ FILE PATH: $read_file_path\n";
+#print "WRITE FILE PATH: $write_file_path\n";
 #print "SUMMARY PATH: $summary_path\n";
 
 my @reporters=();
