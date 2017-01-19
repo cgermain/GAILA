@@ -270,7 +270,11 @@ if (open (IN, "$read_file_path"))
 						print OUT_TABLE qq!$parsed_filename\t$scans\t$charge\t$rt\t$ms1_intensity!;
 						for(my $k=0;$k<$reporter_count;$k++)
 						{
-							my $sum_=$sum[$k]/(1.0*$sum);
+							my $sum_ = 0;
+							if ($sum != 0){
+								$sum_=$sum[$k]/(1.0*$sum);
+							}
+
 							print OUT_TABLE qq!\t$sum_!;
 							$total_intensity[$k]+=$sum[$k];
 						}

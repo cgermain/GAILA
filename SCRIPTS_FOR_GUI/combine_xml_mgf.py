@@ -82,7 +82,9 @@ def add_a_or_b_label_to_sorted_mfg_txt_file(filename):
 		tup = (curr_filename, curr_scan)
 		if (not first) and (not (most_recent[1] == tup[1])):
 			if len(scan_list) == 0:
-				raise Exception("Something is funky, shouldn't be zero")
+				# continue even if the scan list is empty 
+				pass
+				# raise Exception("In add a or b, shouldn't be zero")
 			elif len(scan_list) == 1:
 				temp_file.write(scan_list[0].strip() + "\tA\n")
 			else:
@@ -93,7 +95,9 @@ def add_a_or_b_label_to_sorted_mfg_txt_file(filename):
 		most_recent = tup
 		first = False
 	if len(scan_list) == 0:
-		raise Exception("Something is funky, shouldn't be zero - 2")
+		# continue even if the scan list is empty 
+		pass
+		# raise Exception("In add a or b, shouldn't be zero - 2")
 	elif len(scan_list) == 1:
 		temp_file.write(scan_list[0].strip() + "\tA\n")
 	else:
@@ -130,7 +134,9 @@ def add_c_labels_to_duplicate_marker_column(filename):
 		tup = (curr_filename, curr_scan)
 		if (not first) and (not (most_recent[1] == tup[1])):
 			if len(scan_list) == 0:
-				raise Exception("Shouldn't be zero")
+				# continue even if the scan list is empty
+				pass 
+				# raise Exception("Shouldn't be zero")
 			elif len(scan_list) == 1:
 				temp_file.write("\t".join(scan_list[0]))
 			else:
@@ -145,7 +151,9 @@ def add_c_labels_to_duplicate_marker_column(filename):
 		most_recent = tup
 		first = False
 	if len(scan_list) == 0:
-		raise Exception("Shouldn't be zero")
+		# continue even if the scan list is empty
+		pass
+		# raise Exception("Shouldn't be zero")
 	elif len(scan_list) == 1:
 		temp_file.write("\t".join(scan_list[0]))
 	else:
@@ -407,7 +415,8 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 					temp=np.dot(data.ix[k,start_col:end_col].values,corr.values)
 					temp=temp.astype(float)
 					temp[temp<0]=0
-					temp/=sum(temp)
+					if sum(temp) != 0:
+						temp/=sum(temp)
 					data.ix[k,start_col:end_col]=temp
 					if normalize_intensities[0] == "0":
 						temp_intensities = [float(intensity)/norm for intensity, norm in zip(temp, dot_normalized_intensities)]
@@ -438,8 +447,11 @@ def read_intensities_from_summary_and_normalize(filename):
 		summary = open(filename, "r")
 		summary.readline() #skip the header
 		intensities = [float(intensity) for intensity in summary.readline().split("\t")]
-		normalized_intensities = [intensity/max(intensities) for intensity in intensities]
-		return normalized_intensities
+		max_int = max(intensities)
+		if max_int != 0:
+			return [intensity/max(intensities) for intensity in intensities]
+		else:
+			return intensities
 	except Exception as err:
 		print "Error reading from intensity file"
 		print err
