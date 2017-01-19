@@ -208,12 +208,10 @@ def validate_tab_2(form):
 
 
 def validate_tab_4(form):
-	print "validating tab_4"
 	if form_contains_dropbox_path(form):
 		return False, "A path you entered appears to be a Dropbox folder. Dropbox has been know to create problems with these scripts. Please move your data to a non-synced folder and try again"
 
 	try:
-		print form
 		xml_read_path = form['xmlReadPath']
 		log_error_threshold = form['logErrorThreshold']
 		geneFile = form['geneFile']
