@@ -243,6 +243,7 @@ while($line=<IN>)
 				}
 				# points come in sorted order, that means we can stop reading when
 				# we get past the biggest we care about
+				$reporter_count++;
 			}
 			if (0<$max)
 			{
@@ -310,6 +311,34 @@ while($line=<IN>)
 					}
 					print OUT_TABLE qq!\t$recal_sum\n!;
 				}
+			}
+
+			else #max = 0
+			{
+				if ($min_intensity == 0 or $min_reporters == 0)
+				{
+					if ($should_select)
+					{
+						print OUT $header;
+						for(my $i=0;$i<$points;$i++)
+						{
+							#Space vs. tab?
+							print OUT "$mz[$i] $intensity[$i]\n"; 
+						}
+						print OUT $footer;	
+					}
+
+					#if a max wasn't found and we still want to display all the rows
+					print OUT_TABLE qq!$parsed_filename\t$scans\t$charge\t$rt\t$ms1_intensity!;
+					for(my $k=0;$k<$reporter_count;$k++)
+					{
+						# It used to divide by recal_sum_max
+						my $sum_ = 0;
+						print OUT_TABLE qq!\t$sum_!;
+					}
+					print OUT_TABLE qq!\t$sum\n!;
+				}
+
 			}
 			$pepmass="";
 			$title="";
