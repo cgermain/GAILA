@@ -41,8 +41,10 @@ def validate_error_input(error_input):
 	strnum = str(error_input)
 	re_1 = '^\d+\.?\d*$'
 	re_2 = '^\d+\.?\d*[eE]\-\d+'
-	return (re.match(re_1, strnum) or re.match(re_2, strnum))
-
+	if (re.match(re_1, strnum) or re.match(re_2, strnum)):
+		return float(error_input)>0 and float(error_input)<1
+	else:
+		return False
 
 def multiple_select_to_two_arrays(unacceptable_mods):
 	long_string = ','.join(unacceptable_mods)
