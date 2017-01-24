@@ -391,10 +391,10 @@ if ($error==0)
         if ($modifications!~/\w/) { $modifications="N"; }
         if ($protein_other!~/\w/) { $protein_other="N"; }
         my $gene=$genes{$protein_};
-        if ($gene!~/\w/) { $gene="None"; }
+        if ($gene!~/\w/) { $gene="None - ".$protein_; }
         if ($other_genes!~/\w/) { $other_genes="None"; }
         my $gene_id=$gene_ids{$protein_};
-        if ($gene_id!~/\w/) { $gene_id="None"; }
+        if ($gene_id!~/\w/) { $gene_id="None - ".$protein_; }
         if ($other_gene_ids!~/\w/) { $other_gene_ids="None"; }
         my $protein_description=$protein_descriptions{$protein_};
         if ($protein_description!~/\w/) { $protein_description="None"; }
