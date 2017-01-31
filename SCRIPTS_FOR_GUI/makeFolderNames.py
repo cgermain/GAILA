@@ -2,7 +2,7 @@ from os.path import join
 import os
 from datetime import datetime
 
-TIME_FORMAT =  "%m-%d-%Y_%H-%M-%S"
+TIME_FORMAT =  "%Y-%m-%d_%H-%M-%S"
 
 """
 SelectedMGFSpectra_Min(Field1)(Field2)ions_MinIntensity(Field3)_MassError(Field4)ppm

@@ -20,7 +20,7 @@ import pandas as pd
 import re
 import logging
 
-TIME_FORMAT =  "%m-%d-%Y_%H-%M-%S"
+TIME_FORMAT =  "%Y-%m-%d_%H-%M-%S"
 
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
