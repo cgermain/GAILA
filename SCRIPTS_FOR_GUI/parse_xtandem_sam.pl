@@ -1,6 +1,7 @@
 #!c:/perl/bin/perl.exe
 #
 use strict;
+use File::Basename;
 
 my $error=0;
 my $xmlfile=0;
@@ -43,6 +44,8 @@ unless ($length_of_unacceptable_mass == $length_of_unacceptable_mod)
 
 if ($error==0)
 {
+  my $short_filename = basename($xmlfile);
+  print "Processing: $short_filename\n";
   my $line="";
   my %genes=();
   my %gene_ids=();
@@ -432,5 +435,6 @@ if ($error==0)
     }
   } 
   close(IN);
-  close(OUT); 
+  close(OUT);
+  print "Processing Complete: $short_filename\n";
 }

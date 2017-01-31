@@ -160,6 +160,7 @@
       },
       function plainParseXMLandCombineWithMGF(callback){
         rightSide.append("<div>Parsing XML file with MGF files</div>");
+        rightSide.append('<div style="color:blue">Please be patient as this may take a while.  Progress can be viewed in the command line window.</div>');
         $.ajax({
           type:"POST",
           url:"plain_parse_xtandem_combine_with_mgf",

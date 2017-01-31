@@ -40,7 +40,8 @@ my $directory = dirname($write_txt_file_path);
 my $summary_path = $directory."\\intensity_summary.txt";
 my @previous_intensity = ();
 
-print "Reading: $read_file_path\n";
+my $short_filename = basename($read_file_path);
+print "Reading: $short_filename\n";
 
 my @reporters=();
 if ($type=~/^iTRAQ8$/)

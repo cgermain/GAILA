@@ -41,6 +41,9 @@ my @previous_intensity = ();
 #print "WRITE FILE PATH: $write_file_path\n";
 #print "SUMMARY PATH: $summary_path\n";
 
+my $short_filename = basename($read_file_path);
+print "Reading: $short_filename\n";
+
 my @reporters=();
 if ($type=~/^iTRAQ8$/)
 {
