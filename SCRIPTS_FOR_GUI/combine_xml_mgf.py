@@ -3,6 +3,9 @@ import pandas as pd
 import numpy as np
 import sys, os, shutil
 from os.path import join
+from datetime import datetime
+
+TIME_FORMAT =  "%Y-%m-%d_%H-%M-%S"
 
 #all of the initial files have got to be relative to this directory.
 this_dir = os.path.dirname(os.path.realpath(__file__))
@@ -308,10 +311,10 @@ def combine_plain_parsed_xml_mgf(selected_mgfdir, xmldir):
 				data.to_csv(this_filename,sep='\t',index=False)
 
 		first=1
-		outfile_name = join(selected_mgfdir, parent_xml_filename + '-pep-merged.txt')
+		timestamp = datetime.now().strftime(TIME_FORMAT)
+		outfile_name = join(selected_mgfdir, parent_xml_filename + '_' + timestamp + '.txt')
 		with open(outfile_name, 'w') as outfile:
 			for filename in os.listdir(xmldir):
-
 				if filename.endswith('_nocal_table_corrected.txt'):
 					with open(join(xmldir, filename)) as infile:
 						for line in infile:
