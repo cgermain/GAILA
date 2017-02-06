@@ -286,6 +286,8 @@ def writeSummary():
 				continue
 			elif option.startswith("mgfTxtReadDirPath") and request.form["mgfOperationToPerform"] == "1":
 				continue
+			elif option.startswith("mzErrorRecalibration") and request.form["performRecalibration"] == "0":
+				continue
 			else:
 				out_file.write(get_detailed_summary(option, value))
 		if os.path.isfile(mgf_txt_write_dir_path+'intensity_summary.txt'):
