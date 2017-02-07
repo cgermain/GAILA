@@ -427,7 +427,10 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 							normalized_temp_intensities = temp_intensities
 						else:
 							normalized_temp_intensities = [float(intensity)/sum(temp_intensities) for intensity in temp_intensities]
-						data.ix[k,start_col+"_norm_total":end_col+"_norm_total"] = normalized_temp_intensities
+						if len(normalized_temp_intensities) == 1:
+							data.ix[k,start_col+"_norm_total":end_col+"_norm_total"] = normalized_temp_intensities[0]
+						else:
+							data.ix[k,start_col+"_norm_total":end_col+"_norm_total"] = normalized_temp_intensities
 				this_filename = join(xmldir, filename + '_nocal_table_corrected.txt')
 				data.to_csv(this_filename,sep='\t',index=False)
 
