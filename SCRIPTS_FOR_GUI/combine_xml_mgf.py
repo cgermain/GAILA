@@ -432,7 +432,8 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 				data.to_csv(this_filename,sep='\t',index=False)
 
 		first=1
-		outfile_name = join(selected_mgfdir, parent_xml_filename + '-pep-reporter-merged.txt')
+		timestamp = datetime.now().strftime(TIME_FORMAT)
+		outfile_name = join(selected_mgfdir, parent_xml_filename + '_' + timestamp + '.txt')
 		with open(outfile_name, 'w') as outfile:
 			for filename in os.listdir(xmldir):
 				if filename.endswith('_nocal_table_corrected.txt'):
