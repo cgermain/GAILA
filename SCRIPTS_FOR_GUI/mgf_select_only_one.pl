@@ -258,7 +258,7 @@ if (open (IN, "$read_file_path"))
 						$reporter_count++;
 					}
 
-					if ($reporters_found>=$min_reporters)
+					if ($reporters_found>=$min_reporters or $min_intensity == 0 or $min_reporters == 0)
 					{
 						if ($should_select)
 						{

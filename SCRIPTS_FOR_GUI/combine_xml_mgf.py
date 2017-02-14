@@ -270,10 +270,10 @@ def check_for_selected_xmldir_lineup(selected_mgfdir, xmldir):
 	if not os.path.isdir(xmldir):
 		return False, "xmldir doesn't exist"
 	for filename in os.listdir(xmldir):
-			if filename.endswith('.reporter'):
-				reporter_filename = join(selected_mgfdir, filename)
-				if not os.path.isfile(reporter_filename):
-					return False, str(filename) + " does not exist in the selected mgfdir"
+		if filename.endswith('.reporter'):
+			reporter_filename = join(selected_mgfdir, filename)
+			if not os.path.isfile(reporter_filename):
+				return False, str(filename) + " does not exist in the selected mgfdir"
 	return True, None
 
 def combine_plain_parsed_xml_mgf(selected_mgfdir, xmldir):
