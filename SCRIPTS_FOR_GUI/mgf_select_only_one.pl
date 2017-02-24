@@ -152,6 +152,7 @@ if (open (IN, "$read_file_path"))
 		my @all_count=();
 		my $all_count_max=0;
 		my @total_intensity=();
+		my $total_ms1=0;
 
 		while($line=<IN>)
 		{
@@ -278,6 +279,9 @@ if (open (IN, "$read_file_path"))
 						}
 						
 						print OUT_TABLE qq!$parsed_filename\t$scans\t$charge\t$rt\t$ms1_intensity!;
+						print qq!$ms1_intensity\n!;
+						$total_ms1+=$ms1_intensity;
+
 						for(my $k=0;$k<$reporter_count;$k++)
 						{
 							my $sum_ = 0;
@@ -311,7 +315,8 @@ if (open (IN, "$read_file_path"))
 
 		my @combined_intensity = pairwise { $a + $b } @total_intensity, @previous_intensity;
 		print TOTAL_INTENSITY_TABLE "\n",  join( "\t", @combined_intensity ), "\n";
-		print MGF_TABLE "\n",  join( "\t", @total_intensity ), "\n\n";
+		print MGF_TABLE "\n",  join( "\t", @total_intensity ), "\n";
+		print MGF_TABLE qq!MS1 intensity: $total_ms1\n\n!;
 		close(OUT_TABLE);
 		close(TOTAL_INTENSITY_TABLE);
 		close(MGF_TABLE);
