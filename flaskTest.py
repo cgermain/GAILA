@@ -295,6 +295,11 @@ def writeSummary():
 			with open (mgf_txt_write_dir_path+'intensity_summary.txt') as summary_file:
 				out_file.write(summary_file.read().strip())
 			os.remove(mgf_txt_write_dir_path+'intensity_summary.txt')
+		if os.path.isfile(mgf_txt_write_dir_path+'mgf_summary.txt'):
+			out_file.write("\n\nTotal Reporter Ion Intensities per MGF file\n----------\n")
+			with open (mgf_txt_write_dir_path+'mgf_summary.txt') as mgf_summary_file:
+				out_file.write(mgf_summary_file.read().strip())
+			os.remove(mgf_txt_write_dir_path+'mgf_summary.txt')
 
 	makeFolderNames.rename_folders(request.form)
 	return "Summary complete."
