@@ -279,7 +279,6 @@ if (open (IN, "$read_file_path"))
 						}
 						
 						print OUT_TABLE qq!$parsed_filename\t$scans\t$charge\t$rt\t$ms1_intensity!;
-						print qq!$ms1_intensity\n!;
 						$total_ms1+=$ms1_intensity;
 
 						for(my $k=0;$k<$reporter_count;$k++)
