@@ -354,20 +354,31 @@ def clean_up_after_tab_2():
 
 def check_if_previous_summary_exists_and_get_reporter_type(reporter_folder):
 	ion_type = ""
+	mgf_line_found = False
+	start_writing_out = False
 	for item in os.listdir(reporter_folder):
 		print os.path.splitext(item)[0]
 		if os.path.splitext(item)[0].startswith("IDEAA_summary"):
 			with open(reporter_folder+"\\"+item, "r") as summary:
-				with open(reporter_folder+"\intensity_summary.txt","w") as intensity_summary:
-					for line in summary:
+				summary_lines = summary.readlines()
+				with open(reporter_folder+"\intensity_summary.txt","w") as intensity_summary, \
+					open(reporter_folder+"\mgf_summary.txt","w") as mgf_summary:
+					for count, line in enumerate(summary_lines):
 						ion_type_search = re.search("reporterIonType - (.*)", line)
-						if ion_type_search:
+						if start_writing_out:
+							mgf_summary.write(line)
+						elif "per MGF file" in line:
+							mgf_line_found = True
+						elif mgf_line_found and "----------" in line:
+							start_writing_out = True
+						elif "Total Reporter Ion" in line:
+							intensity_summary.write(summary_lines[count+2])
+							intensity_summary.write(summary_lines[count+3])
+						elif ion_type_search:
 							ion_type = ion_type_search.group(1)
-						if "Total Reporter Ion" in line:
-							summary.next()
-							intensity_summary.write(summary.next())
-							intensity_summary.write(summary.next())
-							return ion_type
+						else:
+							continue
+				return ion_type
 	return None
 
 def get_detailed_summary(option, value):
