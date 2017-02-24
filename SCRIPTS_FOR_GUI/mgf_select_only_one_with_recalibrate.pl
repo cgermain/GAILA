@@ -2,6 +2,7 @@
 
 use strict;
 use File::Basename;
+use List::MoreUtils 'pairwise';
 
 # THE FIRST PARAMETER IS PATH TO FILE
 # THE SECOND IS PATH TO WHERE I SHOULD WRITE
@@ -38,6 +39,7 @@ if ($ARGV[8]=~/\w/) { $recal_mz_error=$ARGV[8];} else { exit 1;}
 $parsed_filename=basename($read_file_path);
 my $directory = dirname($write_txt_file_path);
 my $summary_path = $directory."\\intensity_summary.txt";
+my $mgf_path = $directory."\\mgf_summary.txt";
 my @previous_intensity = ();
 
 my $short_filename = basename($read_file_path);
@@ -120,7 +122,10 @@ else{
 }
 
 open (TOTAL_INTENSITY_TABLE,">$summary_path" );
+open (MGF_TABLE, ">>$mgf_path");
+
 print OUT_TABLE qq!filename\tscan\tcharge\trt\tMS1_intensity!;
+print MGF_TABLE qq!$parsed_filename\n!;
 
 foreach my $reporter (@reporters)
 {
@@ -130,6 +135,7 @@ foreach my $reporter (@reporters)
 	##########################################################
 	print OUT_TABLE qq!\t$type-$reporter_!;
 	print TOTAL_INTENSITY_TABLE qq!\t$type-$reporter_!;
+	print MGF_TABLE qq!$type-$reporter_\t!;
 }
 print OUT_TABLE qq!\t$type-sum\n!;
 
@@ -148,7 +154,8 @@ my $done_reading_fragments=0;
 my $points=0;
 my $line="";
 
-my @total_intensity=@previous_intensity;
+my @total_intensity=();
+my $total_ms1=0;
 
 while($line=<IN>)
 {
@@ -311,6 +318,7 @@ while($line=<IN>)
 						$total_intensity[$k]+=$recal_sum[$k];
 					}
 					print OUT_TABLE qq!\t$recal_sum\n!;
+					$total_ms1+=$ms1_intensity;
 				}
 			}
 
@@ -338,6 +346,7 @@ while($line=<IN>)
 						print OUT_TABLE qq!\t$sum_!;
 					}
 					print OUT_TABLE qq!\t$sum\n!;
+					$total_ms1+=$ms1_intensity;
 				}
 
 			}
@@ -359,9 +368,12 @@ if ($should_select)
 {
 	close(OUT);
 }
-print TOTAL_INTENSITY_TABLE "\n",  join( "\t", @total_intensity ), "\n";
 
+my @combined_intensity = pairwise { $a + $b } @total_intensity, @previous_intensity;
+print TOTAL_INTENSITY_TABLE "\n",  join( "\t", @combined_intensity ), "\n";
+print MGF_TABLE "\n",  join( "\t", @total_intensity ), "\n";
+print MGF_TABLE qq!MS1 intensity: $total_ms1\n\n!;
 close(OUT);
 close(TOTAL_INTENSITY_TABLE);
-
+close(MGF_TABLE);
 exit 0;
