@@ -19,6 +19,7 @@ from datetime import datetime
 import pandas as pd
 import re
 import logging
+from decimal import Decimal
 
 TIME_FORMAT =  "%Y-%m-%d_%H-%M-%S"
 
@@ -263,6 +264,8 @@ def createInverseFiles():
 @nocache
 def writeSummary():
 	timestamp = datetime.now().strftime(TIME_FORMAT)
+	mgf_intensity_regex = re.compile("MS1 intensity: (.+)")
+
 	if request.form['mgfOperationToPerform'] == '1':
 		if 'plain_parse' in request.form and request.form['plain_parse'] == "1":
 			mgf_txt_write_dir_path = makeFolderNames.construct_plain_parse_reporter_folder_path(request.form)
@@ -288,6 +291,10 @@ def writeSummary():
 				continue
 			elif option.startswith("mzErrorRecalibration") and request.form["performRecalibration"] == "0":
 				continue
+			elif option.startswith("mzErrorInitialRun") and request.form["performRecalibration"] == "0":
+				continue
+			elif option == "mzError" and request.form["performRecalibration"] == "1":
+				continue
 			else:
 				out_file.write(get_detailed_summary(option, value))
 		if os.path.isfile(mgf_txt_write_dir_path+'intensity_summary.txt'):
@@ -296,9 +303,14 @@ def writeSummary():
 				out_file.write(summary_file.read().strip())
 			os.remove(mgf_txt_write_dir_path+'intensity_summary.txt')
 		if os.path.isfile(mgf_txt_write_dir_path+'mgf_summary.txt'):
-			out_file.write("\n\nTotal Reporter Ion Intensities per MGF file\n----------\n")
+			out_file.write("\n\nTotal Reporter Ion and MS1 Intensities per MGF file\n----------\n")
 			with open (mgf_txt_write_dir_path+'mgf_summary.txt') as mgf_summary_file:
-				out_file.write(mgf_summary_file.read().strip())
+				for mgf_line in mgf_summary_file:
+					ms1_intensity = re.search(mgf_intensity_regex, mgf_line)
+					if ms1_intensity:
+						out_file.write("MS1 Intensity: " + "%.2E"%Decimal(ms1_intensity.group(1)) + "\n")
+					else:
+						out_file.write(mgf_line)
 			os.remove(mgf_txt_write_dir_path+'mgf_summary.txt')
 
 	makeFolderNames.rename_folders(request.form)
