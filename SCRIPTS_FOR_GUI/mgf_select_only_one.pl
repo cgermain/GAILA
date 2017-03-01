@@ -119,14 +119,12 @@ if (open (IN, "$read_file_path"))
 		open (MGF_TABLE, ">>$mgf_path");
 		
 		print OUT_TABLE qq!filename\tscan\tcharge\trt\tMS1_intensity!;
-		print MGF_TABLE qq!$parsed_filename\n!;
 		
 		foreach my $reporter (@reporters)
 		{
 			my $reporter_=int($reporter);
 			print OUT_TABLE qq!\t$type-$reporter_!;
 			print TOTAL_INTENSITY_TABLE qq!\t$type-$reporter_!;
-			print MGF_TABLE qq!$type-$reporter_\t!;
 		}
 		print OUT_TABLE qq!\t$type-sum\n!;
 
@@ -312,10 +310,12 @@ if (open (IN, "$read_file_path"))
 			close(OUT);
 		}
 
-		my @combined_intensity = pairwise { $a + $b } @total_intensity, @previous_intensity;
-		print TOTAL_INTENSITY_TABLE "\n",  join( "\t", @combined_intensity ), "\n";
-		print MGF_TABLE "\n",  join( "\t", @total_intensity ), "\n";
-		print MGF_TABLE qq!MS1 intensity: $total_ms1\n\n!;
+		my @combined_intensity = pairwise {$a + $b} @total_intensity, @previous_intensity;
+		my @rounded_combined_intensity = map{int($_ + 0.5)} @combined_intensity;
+		my @rounded_total_intensity = map{int($_ + 0.5)} @total_intensity;
+
+		print TOTAL_INTENSITY_TABLE "\n",  join("\t", @rounded_combined_intensity);
+		print MGF_TABLE "\n", $parsed_filename, "\t", int($total_ms1 + 0.5), "\t", join("\t", @rounded_total_intensity);
 		close(OUT_TABLE);
 		close(TOTAL_INTENSITY_TABLE);
 		close(MGF_TABLE);

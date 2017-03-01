@@ -265,6 +265,7 @@ def createInverseFiles():
 def writeSummary():
 	timestamp = datetime.now().strftime(TIME_FORMAT)
 	mgf_intensity_regex = re.compile("MS1 intensity: (.+)")
+	mgf_filename_regex = re.compile("(.+.mgf)")
 
 	if request.form['mgfOperationToPerform'] == '1':
 		if 'plain_parse' in request.form and request.form['plain_parse'] == "1":
@@ -297,20 +298,27 @@ def writeSummary():
 				continue
 			else:
 				out_file.write(get_detailed_summary(option, value))
+
+		reporters = ""
 		if os.path.isfile(mgf_txt_write_dir_path+'intensity_summary.txt'):
 			out_file.write("\nTotal Reporter Ion Intensities\n----------\n")
+			line_found = False	
 			with open (mgf_txt_write_dir_path+'intensity_summary.txt') as summary_file:
-				out_file.write(summary_file.read().strip())
+				for summary_line in summary_file:
+					if not line_found:
+						line_found = True
+						summary_line = summary_line.lstrip()
+						reporters = summary_line
+					out_file.write(summary_line)
 			os.remove(mgf_txt_write_dir_path+'intensity_summary.txt')
+		
 		if os.path.isfile(mgf_txt_write_dir_path+'mgf_summary.txt'):
 			out_file.write("\n\nTotal Reporter Ion and MS1 Intensities per MGF file\n----------\n")
+			out_file.write("MGF File\tMS1 Intensity\t"+reporters.rstrip())
 			with open (mgf_txt_write_dir_path+'mgf_summary.txt') as mgf_summary_file:
 				for mgf_line in mgf_summary_file:
-					ms1_intensity = re.search(mgf_intensity_regex, mgf_line)
-					if ms1_intensity:
-						out_file.write("MS1 Intensity: " + "%.2E"%Decimal(ms1_intensity.group(1)) + "\n")
-					else:
-						out_file.write(mgf_line)
+					out_file.write(mgf_line)
+
 			os.remove(mgf_txt_write_dir_path+'mgf_summary.txt')
 
 	makeFolderNames.rename_folders(request.form)
