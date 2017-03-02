@@ -2,7 +2,6 @@
 
 use strict;
 use File::Basename;
-use List::MoreUtils 'pairwise';
 
 # THE FIRST PARAMETER IS PATH TO FILE
 # THE SECOND IS PATH TO WHERE I SHOULD WRITE
@@ -367,7 +366,11 @@ if ($should_select)
 	close(OUT);
 }
 
-my @combined_intensity = pairwise { $a + $b } @total_intensity, @previous_intensity;
+my @combined_intensity = ();
+for (my $i=0; $i < scalar @total_intensity; $i++){
+	@combined_intensity[$i] = @total_intensity[$i] + @previous_intensity[$i];
+}
+
 my @rounded_combined_intensity = map{int($_ + 0.5)} @combined_intensity;
 my @rounded_total_intensity = map{int($_ + 0.5)} @total_intensity;
 
