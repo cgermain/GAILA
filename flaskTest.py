@@ -233,7 +233,6 @@ def check_if_gpm_merge_already_exists():
 			print "There is an existing merged GPM-reporter ion file.  Please delete or rename existing file in selected reporter ion folder and run again."
 			return "There is an existing merged GPM-reporter ion file.  Please delete or rename existing file in selected reporter ion folder and run again.", 500 
 		else:
-			print "file does not already exist."
 			return "Does not already exist." #That means true
 
 	except:
@@ -290,9 +289,25 @@ def writeSummary():
 				continue
 			elif option.startswith("mgfTxtReadDirPath") and request.form["mgfOperationToPerform"] == "1":
 				continue
+			elif option.startswith("minIntensity") and request.form["mgfOperationToPerform"] == "0" and request.form["mgfTxtReadDirPath"] != "":
+				continue
+			elif option.startswith("minReporters") and request.form["mgfOperationToPerform"] == "0" and request.form["mgfTxtReadDirPath"] != "":	
+				continue
+			elif option == "mzError" and request.form["mgfOperationToPerform"] == "0" and request.form["mgfTxtReadDirPath"] != "":	
+				continue
+			elif option.startswith("mzErrorRecalibration") and request.form["mgfOperationToPerform"] == "0" and request.form["mgfTxtReadDirPath"] != "":	
+				continue
+			elif option.startswith("mzErrorInitialRun") and request.form["mgfOperationToPerform"] == "0" and request.form["mgfTxtReadDirPath"] != "":	
+				continue
+			elif option.startswith("performRecalibration") and request.form["mgfOperationToPerform"] == "0" and request.form["mgfTxtReadDirPath"] != "":	
+				continue
+			elif option.startswith("mgfReadDirPath") and request.form["mgfOperationToPerform"] == "0" and request.form["mgfTxtReadDirPath"] != "":	
+				continue
 			elif option.startswith("mzErrorRecalibration") and request.form["performRecalibration"] == "0":
 				continue
 			elif option.startswith("mzErrorInitialRun") and request.form["performRecalibration"] == "0":
+				continue
+			elif option.startswith("mgfTxtReadDirPath") and request.form["mgfOperationToPerform"] == "1":
 				continue
 			elif option == "mzError" and request.form["performRecalibration"] == "1":
 				continue
@@ -309,15 +324,17 @@ def writeSummary():
 						line_found = True
 						summary_line = summary_line.lstrip()
 						reporters = summary_line
-					out_file.write(summary_line)
+					if summary_line != "" or summary_line != "\n":
+						out_file.write(summary_line)
 			os.remove(mgf_txt_write_dir_path+'intensity_summary.txt')
 		
 		if os.path.isfile(mgf_txt_write_dir_path+'mgf_summary.txt'):
 			out_file.write("\n\nTotal Reporter Ion and MS1 Intensities per MGF file\n----------\n")
-			out_file.write("MGF File\tMS1 Intensity\t"+reporters.rstrip())
+			out_file.write("MGF File\tMS1 Intensity\t"+reporters)
 			with open (mgf_txt_write_dir_path+'mgf_summary.txt') as mgf_summary_file:
 				for mgf_line in mgf_summary_file:
-					out_file.write(mgf_line)
+					if mgf_line != "" or mgf_line != "\n":
+						out_file.write(mgf_line)
 
 			os.remove(mgf_txt_write_dir_path+'mgf_summary.txt')
 
@@ -377,7 +394,6 @@ def check_if_previous_summary_exists_and_get_reporter_type(reporter_folder):
 	mgf_line_found = False
 	start_writing_out = False
 	for item in os.listdir(reporter_folder):
-		print os.path.splitext(item)[0]
 		if os.path.splitext(item)[0].startswith("IDEAA_summary"):
 			with open(reporter_folder+"\\"+item, "r") as summary:
 				summary_lines = summary.readlines()
@@ -385,15 +401,15 @@ def check_if_previous_summary_exists_and_get_reporter_type(reporter_folder):
 					open(reporter_folder+"\mgf_summary.txt","w") as mgf_summary:
 					for count, line in enumerate(summary_lines):
 						ion_type_search = re.search("reporterIonType - (.*)", line)
-						if start_writing_out:
+						if start_writing_out and line.strip():
 							mgf_summary.write(line)
-						elif "per MGF file" in line:
+						elif "--------" in line:
 							mgf_line_found = True
-						elif mgf_line_found and "----------" in line:
+						elif mgf_line_found and "MGF File" in line:
 							start_writing_out = True
-						elif "Total Reporter Ion" in line:
+						elif "Total Reporter Ion Intensities" in line:
 							intensity_summary.write(summary_lines[count+2])
-							intensity_summary.write(summary_lines[count+3])
+							intensity_summary.write(summary_lines[count+3].strip())
 						elif ion_type_search:
 							ion_type = ion_type_search.group(1)
 						else:

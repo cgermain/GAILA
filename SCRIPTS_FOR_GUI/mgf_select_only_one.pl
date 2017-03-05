@@ -36,6 +36,7 @@ my $directory = dirname($write_txt_file_path);
 my $summary_path = $directory."\\intensity_summary.txt";
 my $mgf_path = $directory."\\mgf_summary.txt";
 my @previous_intensity = ();
+my $previous_summary_exists = 0;
 
 #print "PARSED FILENAME: $parsed_filename\n";
 #print "READ FILE PATH: $read_file_path\n";
@@ -105,6 +106,7 @@ if (open (IN, "$read_file_path"))
 		if (-e "$summary_path")
 		{
 			#Summary found.  Appending intensities
+			$previous_summary_exists = 1;
 			open (TEMP_SUMMARY, "$summary_path");
 			<TEMP_SUMMARY>;
 			my $intensity_line = <TEMP_SUMMARY>;
@@ -309,7 +311,6 @@ if (open (IN, "$read_file_path"))
 			close(OUT);
 		}
 
-		#my @combined_intensity = pairwise {$a + $b} @total_intensity, @previous_intensity;
 		my @combined_intensity = ();
 		for (my $i=0; $i < scalar @total_intensity; $i++){
 			@combined_intensity[$i] = @total_intensity[$i] + @previous_intensity[$i];
@@ -319,7 +320,10 @@ if (open (IN, "$read_file_path"))
 		my @rounded_total_intensity = map{int($_ + 0.5)} @total_intensity;
 
 		print TOTAL_INTENSITY_TABLE "\n",  join("\t", @rounded_combined_intensity);
-		print MGF_TABLE "\n", $parsed_filename, "\t", int($total_ms1 + 0.5), "\t", join("\t", @rounded_total_intensity);
+		if ($previous_summary_exists){
+			print MGF_TABLE "\n";
+		}
+		print MGF_TABLE $parsed_filename, "\t", int($total_ms1 + 0.5), "\t", join("\t", @rounded_total_intensity);
 		close(OUT_TABLE);
 		close(TOTAL_INTENSITY_TABLE);
 		close(MGF_TABLE);
