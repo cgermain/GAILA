@@ -289,19 +289,19 @@ def writeSummary():
 				continue
 			elif option.startswith("mgfTxtReadDirPath") and request.form["mgfOperationToPerform"] == "1":
 				continue
-			elif option.startswith("minIntensity") and request.form["mgfOperationToPerform"] == "0" and request.form["mgfTxtReadDirPath"] != "":
+			elif "mgfTxtReadDirPath" in request.form and option.startswith("minIntensity") and request.form["mgfOperationToPerform"] == "0" and request.form["mgfTxtReadDirPath"] != "":
 				continue
-			elif option.startswith("minReporters") and request.form["mgfOperationToPerform"] == "0" and request.form["mgfTxtReadDirPath"] != "":	
+			elif "mgfTxtReadDirPath" in request.form and option.startswith("minReporters") and request.form["mgfOperationToPerform"] == "0" and request.form["mgfTxtReadDirPath"] != "":	
 				continue
-			elif option == "mzError" and request.form["mgfOperationToPerform"] == "0" and request.form["mgfTxtReadDirPath"] != "":	
+			elif "mgfTxtReadDirPath" in request.form and option == "mzError" and request.form["mgfOperationToPerform"] == "0" and request.form["mgfTxtReadDirPath"] != "":	
 				continue
-			elif option.startswith("mzErrorRecalibration") and request.form["mgfOperationToPerform"] == "0" and request.form["mgfTxtReadDirPath"] != "":	
+			elif "mgfTxtReadDirPath" in request.form and option.startswith("mzErrorRecalibration") and request.form["mgfOperationToPerform"] == "0" and request.form["mgfTxtReadDirPath"] != "":	
 				continue
-			elif option.startswith("mzErrorInitialRun") and request.form["mgfOperationToPerform"] == "0" and request.form["mgfTxtReadDirPath"] != "":	
+			elif "mgfTxtReadDirPath" in request.form and option.startswith("mzErrorInitialRun") and request.form["mgfOperationToPerform"] == "0" and request.form["mgfTxtReadDirPath"] != "":	
 				continue
-			elif option.startswith("performRecalibration") and request.form["mgfOperationToPerform"] == "0" and request.form["mgfTxtReadDirPath"] != "":	
+			elif "mgfTxtReadDirPath" in request.form and option.startswith("performRecalibration") and request.form["mgfOperationToPerform"] == "0" and request.form["mgfTxtReadDirPath"] != "":	
 				continue
-			elif option.startswith("mgfReadDirPath") and request.form["mgfOperationToPerform"] == "0" and request.form["mgfTxtReadDirPath"] != "":	
+			elif "mgfTxtReadDirPath" in request.form and option.startswith("mgfReadDirPath") and request.form["mgfOperationToPerform"] == "0" and request.form["mgfTxtReadDirPath"] != "":	
 				continue
 			elif option.startswith("mzErrorRecalibration") and request.form["performRecalibration"] == "0":
 				continue
