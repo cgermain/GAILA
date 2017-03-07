@@ -31,6 +31,20 @@ To use the interface, open your web browser (firefox or chrome) and type localho
 
 ###Please keep the summary file created after each run in the folder with the output files.  This will save time calculating total intensitites for future runs.
 
+### PLAINCOUNT
+
+This script counts proteins in MGF files that have been "plain parsed" using [IDEAA](https://github.com/cgermain/IDEAA).
+
+## Installation on Windows
+
+The /plaincount/plaincount.exe executable file was created with py2exe.  Microsoft's [Visual C++ runtime components](https://www.microsoft.com/en-us/download/details.aspx?id=29) might be required to use the application.
+
+## Usage
+
+GUI: Drag and drop a plain parsed file onto the plaincount.exe application icon.  Make sure to drag the file onto the icon itself and not in the command line window.
+
+Command Line: python plaincount.py plain_parse_filename
+
 ## FOR MAC / LINUX
 Currently a work in progress.
 
