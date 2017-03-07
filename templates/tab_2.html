@@ -187,7 +187,6 @@
   <script type="text/javascript">
   $('div[id="tab_2"]').find("#performRecalibration").change(function(e){
     // console.log($(this))
-    console.log("Yippie");
     console.log(e.target.value);
     var value = e.target.value;
     if (value == '1'){
@@ -201,7 +200,7 @@
       $('div[id="tab_2"]').find("#options_if_not_recalibrating").show();
     }
     else{
-      alert("Something is funky, ask Sam Lobel whats going on");
+      alert("Issue with calibration options");
     }
   });
   </script>
