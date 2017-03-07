@@ -283,8 +283,11 @@ def writeSummary():
 		out_file.write(timestamp+"\n\n")
 		for option, value in request.form.items():
 			if option.startswith("unacceptableMods"):
-				list_of_mods = request.form.getlist('unacceptableMods[]')
-				out_file.write(get_detailed_summary(option, list_of_mods))
+				if "assignUnacceptableModifications" in request.form and request.form["assignUnacceptableModifications"] == "1":
+					continue
+				else:
+					list_of_mods = request.form.getlist('unacceptableMods[]')
+					out_file.write(get_detailed_summary(option, list_of_mods))
 			elif option.startswith("mgfOperationToPerform") and "plain_parse" in request.form:
 				continue
 			elif option.startswith("mgfTxtReadDirPath") and request.form["mgfOperationToPerform"] == "1":
