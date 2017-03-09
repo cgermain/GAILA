@@ -150,7 +150,9 @@ if (open (IN, "$read_file_path"))
 		my @all_int=();
 		my @all_count=();
 		my $all_count_max=0;
-		my @total_intensity=();
+		#initialize to all zeros based on the number of reporters
+		#makes summary output includes zeros and not just empty values
+		my @total_intensity=(0) x scalar @reporters;
 		my $total_ms1=0;
 
 		while($line=<IN>)

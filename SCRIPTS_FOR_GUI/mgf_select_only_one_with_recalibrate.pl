@@ -152,8 +152,9 @@ my $started_reading_fragments=0;
 my $done_reading_fragments=0;
 my $points=0;
 my $line="";
-
-my @total_intensity=();
+#initialize to all zeros based on the number of reporters
+#makes summary output includes zeros and not just empty values
+my @total_intensity=(0) x scalar @reporters;	
 my $total_ms1=0;
 
 while($line=<IN>)
