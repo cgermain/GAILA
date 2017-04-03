@@ -165,6 +165,25 @@ IF %ERRORLEVEL% NEQ 0 (
 	exit 1
 )
 
+echo .
+echo .
+echo .
+echo .
+
+
+echo installing MatrixReal
+perl -MCPAN -e "CPAN::Shell->notest('install', 'Math::MatrixReal')"
+IF %ERRORLEVEL% NEQ 0 (
+	echo error installing MatrixReal. Installation failed.
+	echo exiting . . .
+	pause
+	exit 1
+)
+
+echo .
+echo .
+echo .
+echo .
 
 echo everything should be installed
 

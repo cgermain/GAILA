@@ -380,7 +380,6 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 		summary_file = selected_mgfdir+"\intensity_summary.txt"
 
 		normalized_intensities = read_intensities_from_summary_and_normalize(summary_file)
-		dot_normalized_intensities = np.dot(normalized_intensities, corr.values)
 
 		# Problem is that it's an empty folder!
 		for filename in os.listdir(xmldir):
@@ -412,17 +411,13 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 					for ion_type in labels[norm_start:norm_end]:
 						data[ion_type+"_norm_total"] = ""
 
-				for k in range(len(data)):
-					# this next line gets the kth row, and the start_col to end_col columns, which are strings like iTRAQ-115.
-	
-					temp=np.dot(data.ix[k,start_col:end_col].values,corr.values)
-					temp=temp.astype(float)
-					temp[temp<0]=0
-					if sum(temp) != 0:
-						temp/=sum(temp)
-					data.ix[k,start_col:end_col]=temp
-					if normalize_intensities[0] == "0":
-						temp_intensities = [float(intensity)/norm for intensity, norm in zip(temp, dot_normalized_intensities)]
+				if normalize_intensities[0] == "0":
+					# crossover correction now happens during selection
+					# only need to loop through for normalizing total intensities
+					for k in range(len(data)):
+						# this next line gets the kth row, and the start_col to end_col columns, which are strings like iTRAQ-115.
+						temp = data.ix[k,start_col:end_col]
+						temp_intensities = [float(intensity)/norm for intensity, norm in zip(temp, normalized_intensities)]
 						if sum(temp_intensities) == 0:
 							normalized_temp_intensities = temp_intensities
 						else:
@@ -431,6 +426,7 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 							data.ix[k,start_col+"_norm_total":end_col+"_norm_total"] = normalized_temp_intensities[0]
 						else:
 							data.ix[k,start_col+"_norm_total":end_col+"_norm_total"] = normalized_temp_intensities
+				
 				this_filename = join(xmldir, filename + '_nocal_table_corrected.txt')
 				data.to_csv(this_filename,sep='\t',index=False)
 
@@ -457,9 +453,9 @@ def read_intensities_from_summary_and_normalize(filename):
 		summary = open(filename, "r")
 		summary.readline() #skip the header
 		intensities = [float(intensity) for intensity in summary.readline().split("\t")]
-		max_int = max(intensities)
-		if max_int != 0:
-			return [intensity/max(intensities) for intensity in intensities]
+		sum_int = sum(intensities)
+		if sum_int != 0:
+			return [intensity/sum_int for intensity in intensities]
 		else:
 			return intensities
 	except Exception as err:

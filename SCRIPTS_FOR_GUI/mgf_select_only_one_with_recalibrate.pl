@@ -2,6 +2,7 @@
 
 use strict;
 use File::Basename;
+use Math::MatrixReal;
 
 # THE FIRST PARAMETER IS PATH TO FILE
 # THE SECOND IS PATH TO WHERE I SHOULD WRITE
@@ -20,10 +21,10 @@ my $min_intensity="";
 my $min_reporters="";
 my $should_select="0";
 my $recal_mz_error="";
+my $inverse_string="";
 
 my $reporter_largest="0";
 my $scaled_reporter_largest="0";
-
 
 if ($ARGV[0]=~/\w/) { $read_file_path=$ARGV[0];} else { exit 1;}
 if ($ARGV[1]=~/\w/) { $write_file_path=$ARGV[1];} else { exit 1;}
@@ -34,6 +35,7 @@ if ($ARGV[5]=~/\w/) { $min_intensity=$ARGV[5];} else { exit 1;}
 if ($ARGV[6]=~/\w/) { $min_reporters=$ARGV[6];} else { exit 1;}
 if ($ARGV[7]=~/\w/) { $should_select=$ARGV[7];} else { exit 1;}
 if ($ARGV[8]=~/\w/) { $recal_mz_error=$ARGV[8];} else { exit 1;}
+if ($ARGV[9]=~/\w/) { $inverse_string=$ARGV[9];} else { exit 1;}
 
 $parsed_filename=basename($read_file_path);
 my $directory = dirname($write_txt_file_path);
@@ -41,6 +43,8 @@ my $summary_path = $directory."\\intensity_summary.txt";
 my $mgf_path = $directory."\\mgf_summary.txt";
 my @previous_intensity = ();
 my $previous_summary_exists = 0;
+
+my $inverse_matrix = Math::MatrixReal->new_from_string($inverse_string);
 
 my $short_filename = basename($read_file_path);
 print "Reading: $short_filename\n";
@@ -297,6 +301,32 @@ while($line=<IN>)
 					}
 					$recal_reporter_count++;
 				}
+
+				#create a matrixreal from the intensities
+				my $intensity_matrix_string = "[ " . join(" ",@recal_sum) . " ]\n";
+				my $intensity_matrix = Math::MatrixReal->new_from_string($intensity_matrix_string);
+
+				#crossover correct the intensities with the inverse matrix
+				my $product_matrix = $intensity_matrix->multiply($inverse_matrix);
+
+				my @product_array = $product_matrix->as_list;
+
+				#get the sum of intensities after crossover correction
+				#TODO Remove this since not used
+				my $product_array_sum = 0;
+				for (@product_array) {
+				 	$product_array_sum += $_;
+				}
+
+				#force any negative intensities to be zero
+				my @zero_product_array = map{$_<0 ? 0:$_} @product_array;
+
+				#get the sum of intensities after crossover correction and after forcing negatives to zero
+				my $zero_product_array_sum = 0;
+				for (@zero_product_array) {
+					$zero_product_array_sum += $_;
+				}
+
 				if ($recal_reporters_found >= $min_reporters)
 				{
 					if ($should_select)
@@ -310,14 +340,20 @@ while($line=<IN>)
 						print OUT $footer;	
 					}
 					print OUT_TABLE qq!$parsed_filename\t$scans\t$charge\t$rt\t$ms1_intensity!;
+					
+					#normalize the intensities
 					for(my $k=0;$k<$recal_reporter_count;$k++)
 					{
 						# It used to divide by recal_sum_max
-						my $sum_=$recal_sum[$k]/(1.0*$recal_sum);
+						my $sum_ = 0;
+						if ($zero_product_array_sum != 0){
+							$sum_=$zero_product_array[$k]/(1.0*$zero_product_array_sum);
+						}
+
 						print OUT_TABLE qq!\t$sum_!;
-						$total_intensity[$k]+=$recal_sum[$k];
+						$total_intensity[$k]+=$zero_product_array[$k];
 					}
-					print OUT_TABLE qq!\t$recal_sum\n!;
+					print OUT_TABLE qq!\t$zero_product_array_sum\n!;
 					$total_ms1+=$ms1_intensity;
 				}
 			}
@@ -341,7 +377,7 @@ while($line=<IN>)
 					print OUT_TABLE qq!$parsed_filename\t$scans\t$charge\t$rt\t$ms1_intensity!;
 					for(my $k=0;$k<$reporter_count;$k++)
 					{
-						# It used to divide by recal_sum_max
+						#since max=0, just output 0 for everything
 						my $sum_ = 0;
 						print OUT_TABLE qq!\t$sum_!;
 					}

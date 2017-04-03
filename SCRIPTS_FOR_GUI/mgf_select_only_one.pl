@@ -2,6 +2,7 @@
 
 use strict;
 use File::Basename;
+use Math::MatrixReal;
 
 # THE FIRST PARAMETER IS PATH TO FILE
 # THE SECOND IS PATH TO WHERE I SHOULD WRITE
@@ -19,6 +20,7 @@ my $parsed_filename="";
 my $min_intensity="";
 my $min_reporters="";
 my $should_select="0";
+my $inverse_string="";
 
 my $reporter_largest="0";
 
@@ -30,6 +32,7 @@ if ($ARGV[4]=~/\w/) { $type=$ARGV[4];} else { exit 1;}
 if ($ARGV[5]=~/\w/) { $min_intensity=$ARGV[5];} else { exit 1;}
 if ($ARGV[6]=~/\w/) { $min_reporters=$ARGV[6];} else { exit 1;}
 if ($ARGV[7]=~/\w/) { $should_select=$ARGV[7];} else { exit 1;}
+if ($ARGV[8]=~/\w/) { $inverse_string=$ARGV[8];} else { exit 1;}
 
 $parsed_filename=basename($read_file_path);
 my $directory = dirname($write_txt_file_path);
@@ -37,6 +40,8 @@ my $summary_path = $directory."\\intensity_summary.txt";
 my $mgf_path = $directory."\\mgf_summary.txt";
 my @previous_intensity = ();
 my $previous_summary_exists = 0;
+
+my $inverse_matrix = Math::MatrixReal->new_from_string($inverse_string);
 
 #print "PARSED FILENAME: $parsed_filename\n";
 #print "READ FILE PATH: $read_file_path\n";
@@ -267,6 +272,30 @@ if (open (IN, "$read_file_path"))
 						$reporter_count++;
 					}
 
+					#create a matrixreal from the intensities
+					my $intensity_matrix_string = "[ " . join(" ",@sum) . " ]\n";
+					my $intensity_matrix = Math::MatrixReal->new_from_string($intensity_matrix_string);
+					
+					#crossover correct the intensities with the inverse matrix
+					my $product_matrix = $intensity_matrix->multiply($inverse_matrix);
+					my @product_array = $product_matrix->as_list;
+
+					#get the sum of intensities after crossover correction
+					#TODO Remove, unused
+					my $product_array_sum = 0;
+					for (@product_array) {
+					    $product_array_sum += $_;
+					}
+
+					#force any negative intensities to be zero
+					my @zero_product_array = map{$_<0 ? 0:$_} @product_array;
+
+					#get the sum of intensities after crossover correction and after forcing negatives to zero
+					my $zero_product_array_sum = 0;
+					for (@zero_product_array) {
+					    $zero_product_array_sum += $_;
+					}
+
 					if ($reporters_found>=$min_reporters or $min_intensity == 0 or $min_reporters == 0)
 					{
 						if ($should_select)
@@ -282,17 +311,18 @@ if (open (IN, "$read_file_path"))
 						print OUT_TABLE qq!$parsed_filename\t$scans\t$charge\t$rt\t$ms1_intensity!;
 						$total_ms1+=$ms1_intensity;
 
+						#normalize the intensities
 						for(my $k=0;$k<$reporter_count;$k++)
 						{
 							my $sum_ = 0;
-							if ($sum != 0){
-								$sum_=$sum[$k]/(1.0*$sum);
+							if ($zero_product_array_sum != 0){
+								$sum_=$zero_product_array[$k]/(1.0*$zero_product_array_sum);
 							}
 
 							print OUT_TABLE qq!\t$sum_!;
-							$total_intensity[$k]+=$sum[$k];
+							$total_intensity[$k]+=$zero_product_array[$k];
 						}
-						print OUT_TABLE qq!\t$sum\n!;
+						print OUT_TABLE qq!\t$zero_product_array_sum\n!;
 					}
 					
 					$pepmass="";

@@ -215,6 +215,12 @@ def xml_dirname_from_filename_plain_parse(full_path_to_xml):
 	xml_dir_name = os.path.join(almost_xml_dir_name,'')
 	return xml_dir_name
 
+def get_matrixreal_string_from_dataframe(df):
+	rows = df.to_string(header=False, index=False, index_names=False).split('\n')
+	# takes the dataframe and converts it into the proper formatting for Math::MatrixReal
+	rows_with_spaces = ["[ " + " ".join(row.split()) + " ]\n" for row in rows]
+	rows_as_string = "".join(rows_with_spaces)
+	return rows_as_string
 
 def tests():
 	assert validate_float('-0.5')
