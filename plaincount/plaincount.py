@@ -36,14 +36,14 @@ def main(plain_parse_file):
 				sys.stdout.flush()
 
 	timestamp = datetime.now().strftime(TIME_FORMAT)
-	out_filename = os.path.join(base_directory, gpm_filename+"_count_"+timestamp+".csv")
+	out_filename = os.path.join(base_directory, gpm_filename+"_count_"+timestamp+".txt")
 	print "\n"
 	print "Writing",
 	with open(out_filename, 'wb') as out_file:
 		previous_percentage_complete = 0
 		current_line_count = 0
 		total_line_count = len(file_tree.keys())
-		csvwriter = csv.writer(out_file)
+		csvwriter = csv.writer(out_file, delimiter='\t')
 		csvwriter.writerow(HEADER)
 		for line in [(filename, protein, gene_name, file_tree[filename][protein][gene_name]) \
 					for filename in file_tree \
