@@ -172,7 +172,7 @@ echo .
 
 
 echo installing MatrixReal
-perl -MCPAN -e "CPAN::Shell->notest('install', 'Math::MatrixReal')"
+call ppm install Math::MatrixReal
 IF %ERRORLEVEL% NEQ 0 (
 	echo error installing MatrixReal. Installation failed.
 	echo exiting . . .
