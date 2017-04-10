@@ -9,7 +9,7 @@ https://www.python.org/downloads/release/python-2710/
 (Click "Windows x86-64 MSI installer" if you have 64 bit windows, and "Windows x86 MSI installer" if you have 32 bit windows (all newer computers run 64 bit windows))
 Then follow installation instructions
 
-#### Make sure Perl is installed:
+#### Make sure Perl is installed (min v5.12):
 http://www.activestate.com/activeperl/downloads
 (Click "Download ActivePerl for Windows (64-bit, x64)" if you have 64 bit windows, and "Download ActivePerl for Windows (x86)" if you have 32 bit windows (all newer computers run 64 bit windows))
 
@@ -29,7 +29,7 @@ The installation creates a file called startup.bat. Double click this file to ru
 
 To use the interface, open your web browser (firefox or chrome) and type localhost:5000 into the URL bar. If the server is running correctly, you should see the User Interface for our GPM and MGF-parsing scripts.
 
-###Please keep the summary file created after each run in the folder with the output files.  This will save time calculating total intensitites for future runs.
+### Please keep the summary file created after each run in the folder with the output files.  This will save time calculating total intensitites for future runs.
 
 ### PLAINCOUNT
 
