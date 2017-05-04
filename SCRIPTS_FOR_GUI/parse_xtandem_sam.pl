@@ -98,6 +98,8 @@ if ($error==0)
   my $unacceptable="N";
   my %protein_expect=();
   my $index_protein_start="";
+  my $bioml_mgf="";
+  my $bioml_mgf_sans_mgf="";
 
   while ($line=<IN>)
   {
@@ -119,6 +121,15 @@ if ($error==0)
       $missed="";
       $unacceptable="N";
     }
+    #this line checks if the mgf was from a single file search
+    if($line=~/<bioml xmlns:GAML=.*label=\"(.*mgf)'\">/)
+    {
+      $bioml_mgf=$1;
+      $bioml_mgf=~s/^.*[\/\\]([^\/\\]+)$/$1/;
+      @f_name_array_to_hold_stuff=split(".mgf",$bioml_mgf);
+      $bioml_mgf_sans_mgf=$f_name_array_to_hold_stuff[0];
+    }
+
     if ($line=~/\<domain\s+id="([0-9\.edED\+\-]+)".*start="([0-9]+)".*end="([0-9]+)".*expect="([0-9\.edED\+\-]+)".*mh="([0-9\.edED\+\-]+)".*delta="([0-9\.edED\+\-]+)".*pre="(.*)".*post="(.*)".*seq="([A-Z]+)".*missed_cleavages="([0-9]+)"/)
     {
       my $start_=$2;
@@ -241,6 +252,7 @@ if ($error==0)
         $scan=~s/,.*$//;
         $scan=~s/&quot;//g;
       }
+      #this only appears in a multiple file mudpit style search
       if($title=~/source=(.*\.mgf)/)
       {
         $filename=$1;
@@ -403,6 +415,13 @@ if ($error==0)
         if ($protein_description!~/\w/) { $protein_description="None"; }
         if ($other_protein_descriptions!~/\w/) { $other_protein_descriptions="None"; }
         
+        #this only happens if the mgf file is a single search and not from mudpit
+        if ($filename eq "")
+        {
+          $filename=$bioml_mgf;
+          $f_name_sans_mgf = $bioml_mgf_sans_mgf;
+        }
+
         print OUT qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$index_protein_start\t$expect\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
         open (OUT_,qq!>>$xmlfile_/$f_name_sans_mgf.reporter!) || die "Could not open $xmlfile_/$filename.reporter\n";
         if ($filenames{$filename}!~/\w/)
