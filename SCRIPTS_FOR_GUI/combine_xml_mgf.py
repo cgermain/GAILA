@@ -301,13 +301,17 @@ def combine_plain_parsed_xml_mgf(selected_mgfdir, xmldir):
 				mgf = pd.read_table(testing_filename, index_col=['filename','scan','charge'])
 				xml = pd.read_table(xml_filename, index_col=['filename','scan','charge'])
 				dfc=pd.merge(mgf,xml, left_index=True, right_index=True)
-				dfc_=dfc.dropna()
-				dfc_=dfc_.drop("labeling",1)
+				#TODO - fix modifications to print N so we can dropna rows again
+				#dfc_=dfc.dropna()
+				dfc_=dfc.drop("labeling",1)
+				#dfc_=dfc_.drop("labeling",1)
 				csv_filename = join(xmldir, filename + '_nocal_table.txt')
 				dfc_.to_csv(csv_filename,sep='\t')
 				os.remove(testing_filename)
 				data = pd.read_table(csv_filename)
 				this_filename = join(xmldir, filename + '_nocal_table_corrected.txt')
+				#mgf.to_csv(this_filename+"_mgf.csv", sep="\t")
+				#xml.to_csv(this_filename+"_xml.csv", sep="\t")
 				data.to_csv(this_filename,sep='\t',index=False)
 
 		first=1
