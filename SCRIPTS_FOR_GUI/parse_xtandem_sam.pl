@@ -75,7 +75,7 @@ if ($error==0)
 	open (OUT,qq!>$xmlfile.txt!) || die "Could not open $xmlfile\n";
 	open (OUT_TEST,qq!>$xmlfile.txttest!) || die "Could not open $xmlfile\n";
 	open (OUT_LOOP_TEST,qq!>$xmlfile.txt_loop_test!) || die "Could not open $xmlfile\n";
-	print OUT qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tlabeling\ttryptic\tmissed\tunacceptable modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
+	print OUT qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tlabeling\ttryptic\tmissed\tunacceptable modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\tunique peptides\n!;
 	my $xmlfile_=$xmldir;
 
 	my %filenames=();
@@ -510,22 +510,19 @@ if ($error==0)
 				if ($filenames{$filename}!~/\w/)
 				{
 					$filenames{$filename}=1;
-					print OUT_ qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tlabeling\ttryptic\tmissed\tflagged modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
+					print OUT_ qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tlabeling\ttryptic\tmissed\tflagged modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\tunique peptides\n!;
 				}
+
+				my $number_unique_peptides = scalar keys %new_peptide_dict;
 				foreach my $key (keys %new_peptide_dict)
 				{
-					#print "key: " . $key;
-					#my @new_peptide_details = ($pre_, $peptide_, $post_, $modifications, $start_, $expect_, $tryptic, $missed_, $unacceptable_, $protein_expect_, $protein_name_, $protein_description, $gene, $gene_id, $protein_other, $other_protein_descriptions, $other_genes, $other_gene_ids, $different_genes);
 					my $pep_filename = $filename;
 					my $pep_scan = $scan;
 					my $pep_charge = $charge;
 					my $pep_pre = $new_peptide_dict{$key}[0];
 					my $pep_peptide = $new_peptide_dict{$key}[1];
 					my $pep_post = $new_peptide_dict{$key}[2];
-					#my $pep_modifications = new_peptide_dict{$key}[3];
-					#print "mods: " . $new_peptide_dict{$key}[3];
 					my $pep_modifications = $new_peptide_dict{$key}[3];
-					#my $pep_modifications = "N";
 					my $pep_start = $new_peptide_dict{$key}[4];
 					my $pep_peptide_expectation = $new_peptide_dict{$key}[5];
 					my $pep_labeling = $new_peptide_dict{$key}[6];
@@ -543,13 +540,8 @@ if ($error==0)
 					my $pep_other_gene_ids = $new_peptide_dict{$key}[18];
 					my $pep_different_genes = $new_peptide_dict{$key}[19];
 					
-					print OUT qq!$pep_filename\t$pep_scan\t$pep_charge\t$pep_pre\t$pep_peptide\t$pep_post\t$pep_modifications\t$pep_start\t$pep_peptide_expectation\t$pep_labeling\t$pep_tryptic\t$pep_missed\t$pep_unacceptable_modifications\t$pep_protein_log_e\t$pep_protein\t$pep_description\t$pep_gene\t$pep_gene_id\t$pep_other_proteins\t$pep_other_descriptions\t$pep_other_genes\t$pep_other_gene_ids\t$pep_different_genes\n!;
-					print OUT_ qq!$pep_filename\t$pep_scan\t$pep_charge\t$pep_pre\t$pep_peptide\t$pep_post\t$pep_modifications\t$pep_start\t$pep_peptide_expectation\t$pep_labeling\t$pep_tryptic\t$pep_missed\t$pep_unacceptable_modifications\t$pep_protein_log_e\t$pep_protein\t$pep_description\t$pep_gene\t$pep_gene_id\t$pep_other_proteins\t$pep_other_descriptions\t$pep_other_genes\t$pep_other_gene_ids\t$pep_different_genes\n!;
-					#print OUT qq!$filename\t$scan\t$charge\t$pep_pre\t$pep_peptide\t$pep_post\t$pep_new_modifications\t$pep_start\t$pep_expect\t$pep_labeling\t$tryptic\t$missed\t$unacceptable\t$pep_protein_expect\t$pep_protein_name\t$pep_protein_description\t$pep_other_genes\t$pep_gene_id\t$pep_protein_other\t$pep_other_protein_description\t$pep_other_genes\t$pep_other_gene_ids\t$different_genes\n!;
-					#print OUT_ qq!$filename\t$scan\t$charge\t$pep_pre\t$pep_peptide\t$pep_post\t$pep_new_modifications\t$pep_start\t$pep_expect\t$pep_labeling\t$tryptic\t$missed\t$unacceptable\t$pep_protein_expect\t$pep_protein_name\t$pep_protein_description\t$pep_gene\t$pep_gene_id\t$pep_protein_other\t$pep_other_protein_description\t$pep_other_genes\t$pep_other_gene_ids\t$different_genes\n!;
-					#print OUT_LOOP_TEST qq!$filename\t$scan\t$charge\t$pep_pre\t$pep_peptide\t$pep_post\t$pep_modifications\t$pep_start\t$pep_expect\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$proteins\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
-					#print OUT_ qq!$filename\t$scan\t$charge\t$pep_pre\t$pep_peptide\t$pep_post\t$pep_modifications\t$pep_start\t$pep_expect\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$proteins\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
-					#print OUT_ qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$index_protein_start\t$expect\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
+					print OUT qq!$pep_filename\t$pep_scan\t$pep_charge\t$pep_pre\t$pep_peptide\t$pep_post\t$pep_modifications\t$pep_start\t$pep_peptide_expectation\t$pep_labeling\t$pep_tryptic\t$pep_missed\t$pep_unacceptable_modifications\t$pep_protein_log_e\t$pep_protein\t$pep_description\t$pep_gene\t$pep_gene_id\t$pep_other_proteins\t$pep_other_descriptions\t$pep_other_genes\t$pep_other_gene_ids\t$pep_different_genes\t$number_unique_peptides\n!;
+					print OUT_ qq!$pep_filename\t$pep_scan\t$pep_charge\t$pep_pre\t$pep_peptide\t$pep_post\t$pep_modifications\t$pep_start\t$pep_peptide_expectation\t$pep_labeling\t$pep_tryptic\t$pep_missed\t$pep_unacceptable_modifications\t$pep_protein_log_e\t$pep_protein\t$pep_description\t$pep_gene\t$pep_gene_id\t$pep_other_proteins\t$pep_other_descriptions\t$pep_other_genes\t$pep_other_gene_ids\t$pep_different_genes\t$number_unique_peptides\n!;
 				}
 
 				close(OUT_);
