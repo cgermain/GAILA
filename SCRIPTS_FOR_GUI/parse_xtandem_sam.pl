@@ -2,7 +2,6 @@
 #
 use strict;
 use File::Basename;
-use List::MoreUtils qw(uniq);
 
 my $error=0;
 my $xmlfile=0;
@@ -66,7 +65,7 @@ if ($error==0)
 			$protein_descriptions{$1}=$no_newline;
 			}
 		}
-	close(IN);
+		close(IN);
 	}
 	else
 	{
@@ -97,6 +96,7 @@ if ($error==0)
 	my $first_peptide="";
 	my @protein_array=();
 	my %peptide_dict;
+	my %new_peptide_dict;
 	my $multi_peptides="N";
 	my $title="";
 	my $modifications="";
@@ -117,7 +117,14 @@ if ($error==0)
 			$protein_expect{$protein_name}=$protein_expect;
 			if($protein_name!~/\:reversed$/) { $proteins.="#$protein_name#"; }
 			#TODO make this line up with the peptide_dict
-			push(@protein_array, $protein_name);
+			#TODO this lines up, but why?
+			#if the protein is not in the protein array, push it and the protein expect
+			if ($protein_name !~~ @protein_array)
+			{
+				#print "pushing to protein array: " + $protein_name;
+				push(@protein_array, $protein_name);
+			}
+				
 			$start="";
 			$end="";
 			$expect=1;
@@ -148,7 +155,7 @@ if ($error==0)
 			my $expect_=$4;
 			my $pre_=$7;
 			my $post_=$8;
-			my $peptide_=$9	
+			my $peptide_=$9;
 			if ($expect_<$expect)
 			{
 				$start=$start_;
@@ -161,11 +168,13 @@ if ($error==0)
 				$missed=0;
 				my $temp=$peptide;
 
-				if ($first_peptide eq ""){
+				if ($first_peptide eq "")
+				{
 					$first_peptide=$peptide;
 				}
 
-				if ($peptide ne $first_peptide){
+				if ($peptide ne $first_peptide)
+				{
 					#print $peptide." - ".$first_peptide."\n";
 					$multi_peptides="Y";
 					#push(@peptide_array, $peptide)
@@ -176,7 +185,9 @@ if ($error==0)
 					my $aa=$1;
 					if ($aa!~/P/) { $missed++; }
 				}
+				
 				$tryptic="Y";
+				
 				if ($pre!~/[KR]$/)
 				{
 					if ($pre!~/\[M$/ and $pre!~/\[$/)
@@ -191,6 +202,7 @@ if ($error==0)
 						$tryptic="N";
 					}
 				}
+				
 				if ($peptide!~/[KR]$/)
 				{
 					if ($post!~/^\]/)
@@ -205,6 +217,7 @@ if ($error==0)
 						$tryptic="N";
 					} 
 				}
+				
 				$unacceptable="N";
 
 				if ($line!~/\<domain[^\>]+\/\>/)
@@ -245,7 +258,8 @@ if ($error==0)
 							unless ($unacceptable eq "Y")
 							{
 								my $bad_label="";
-								foreach $bad_label (@unacceptable_label_mod_array) {
+								foreach $bad_label (@unacceptable_label_mod_array)
+								{
 									if ($mod_aa eq $bad_label and $mod_pos_!=1 and int($mod_mass+0.5)==$label_mass_int)
 									{
 										$unacceptable="Y";
@@ -264,17 +278,18 @@ if ($error==0)
 				}
 
 				#If we're at the end of a peptide, save the unique peptide information in case a second matching sequence is found
-				my $peptide_key = $peptide."!";
-				if (exists($peptide_dict{$peptide_key.$modifications}))
+				if (exists($peptide_dict{$peptide}))
 				{
 					#skip
 				}
 				else
 				{
 					#Set the key to the peptide and the value to a list of the things we need to make a new entry 
-					#VERY IMPORTANT TODO: MAKE THIS LINE UP WITH PROTEIN LIST
-					my @peptide_details = ($start, $end, $expect, $pre, $post, $peptide, $modifications);
-					$peptide_dict{$peptide_key.$modifications} = \@peptide_details;
+					#scalar protein array lets us keep track of what the index in the protein list is
+					my $array_length = scalar @protein_array;
+					my $array_index = $array_length - 1;
+					my @peptide_details = ($start, $end, $expect, $pre, $post, $peptide, $modifications, $tryptic, $unacceptable, $array_index, $missed);
+					$peptide_dict{$peptide} = \@peptide_details;
 				}
 			}
 		}
@@ -388,72 +403,101 @@ if ($error==0)
 				$other_gene_ids=~s/#//g;
 				$other_protein_descriptions=~s/##/,/g;
 				$other_protein_descriptions=~s/#//g;
-				my %itraq_labels=();
-				my $temp=$modifications;
-				$modifications="";
-				my $complete_labeling=0;
-				while($temp=~s/^([^\@]+)\@([A-Z])([0-9]+)\-?\>?([A-Z]?),//)
+
+				foreach my $key (keys %peptide_dict)
 				{
-					my $mod_mass=$1;
-					my $mod_aa=$2;
-					my $mod_res=$3;
-					my $mod_pm=$4;
-					$modifications.="$mod_mass\@$mod_aa$mod_res";
-					if ($mod_pm=~/\w/){ $modifications.="->$mod_pm"; }
-					$modifications.=",";
-					if ($mod_pm=~/^K$/)
+					my %itraq_labels=();
+					#$temp=$modifications;
+					my $temp = $peptide_dict{$key}[6];
+					my $modifications="";
+					my $complete_labeling=0;	
+					while($temp=~s/^([^\@]+)\@([A-Z])([0-9]+)\-?\>?([A-Z]?),//)
 					{
-						$complete_labeling++;
+						my $mod_mass=$1;
+						my $mod_aa=$2;
+						my $mod_res=$3;
+						my $mod_pm=$4;
+						$modifications.="$mod_mass\@$mod_aa$mod_res";
+						if ($mod_pm=~/\w/){ $modifications.="->$mod_pm"; }
+						$modifications.=",";
+						if ($mod_pm=~/^K$/)
+						{
+							$complete_labeling++;
+						}
+						if ($mod_res==1 or $mod_aa=~/^K$/)
+						{
+							if (int($mod_mass)==$label_mass_int)
+							{
+								$itraq_labels{$mod_res}++;
+							}
+							if (int($mod_mass)==-$label_mass_int)
+							{
+								$itraq_labels{$mod_res}--;
+							}
+							if (int($mod_mass)==2*$label_mass_int)
+							{
+								$itraq_labels{$mod_res}+=2;
+							}
+						}
 					}
-					if ($mod_res==1 or $mod_aa=~/^K$/)
+
+					my $labeling=0;
+					my $reactive_residue_count=0;
+					#my $temp=$peptide;
+					my $temp=$key;
+					while($temp=~s/^([A-Z])//)
 					{
-						if (int($mod_mass)==$label_mass_int)
+						my $aa=$1;
+						$reactive_residue_count++;
+						if ($itraq_labels{$reactive_residue_count}>0)
 						{
-							$itraq_labels{$mod_res}++;
+							$labeling+=$itraq_labels{$reactive_residue_count};
 						}
-						if (int($mod_mass)==-$label_mass_int)
+						if ($reactive_residue_count==1)
 						{
-							$itraq_labels{$mod_res}--;
+							$complete_labeling++;
 						}
-						if (int($mod_mass)==2*$label_mass_int)
+						if ($aa=~/^K$/)
 						{
-							$itraq_labels{$mod_res}+=2;
+							$complete_labeling++;
 						}
 					}
+					$labeling/=1.0*$complete_labeling;
+					if ($modifications!~/\w/) { $modifications="N"; }
+					if ($protein_other!~/\w/) { $protein_other="N"; }
+					my $gene=$genes{$protein_};
+					if ($gene!~/\w/) { $gene="None - ".$protein_; }
+					if ($other_genes!~/\w/) { $other_genes="None"; }
+					my $gene_id=$gene_ids{$protein_};
+					if ($gene_id!~/\w/) { $gene_id="None - ".$protein_; }
+					if ($other_gene_ids!~/\w/) { $other_gene_ids="None"; }
+					my $protein_description=$protein_descriptions{$protein_};
+					if ($protein_description!~/\w/) { $protein_description="None"; }
+					if ($other_protein_descriptions!~/\w/) { $other_protein_descriptions="None"; }
+
+					#($start, $end, $expect, $pre, $post, $peptide, $modifications, $tryptic, $unacceptable, ((scalar @protein_array)-1), $missed);
+					#save this newly computed info back to the hash
+					my $start_ = $peptide_dict{$key}[0];
+					my $end_ = $peptide_dict{$key}[1];
+					my $expect_ = $peptide_dict{$key}[2];
+					my $pre_ = $peptide_dict{$key}[3];
+					my $post_ = $peptide_dict{$key}[4];
+					my $peptide_ = $peptide_dict{$key}[5];
+					#[6] = modifications
+					my $typtic_ = $peptide_dict{$key}[7];
+					my $unacceptable_ = $peptide_dict{$key}[8];
+					my $missed_ = $peptide_dict{$key}[10];
+
+					#pull the protein expect index from the hash and grab the name and expect from the 2 arrays set up in the beginning
+					my $protein_index = $peptide_dict{$key}[9];
+					my $protein_name_ = $protein_array[$protein_index];
+					my $protein_expect_ = $protein_expect{$protein_name_};
+
+					my @new_peptide_details = ($pre_, $peptide_, $post_, $modifications, $start_, $expect_, $labeling, $tryptic, $missed_, $unacceptable_, $protein_expect_, $protein_name_, $protein_description, $gene, $gene_id, $protein_other, $other_protein_descriptions, $other_genes, $other_gene_ids, $different_genes);
+
+					$new_peptide_dict{$key} = \@new_peptide_details;
 				}
-				my $labeling=0;
-				my $reactive_residue_count=0;
-				my $temp=$peptide;
-				while($temp=~s/^([A-Z])//)
-				{
-					my $aa=$1;
-					$reactive_residue_count++;
-					if ($itraq_labels{$reactive_residue_count}>0)
-					{
-						$labeling+=$itraq_labels{$reactive_residue_count};
-					}
-					if ($reactive_residue_count==1)
-					{
-						$complete_labeling++;
-					}
-					if ($aa=~/^K$/)
-					{
-						$complete_labeling++;
-					}
-				}
-				$labeling/=1.0*$complete_labeling;
-				if ($modifications!~/\w/) { $modifications="N"; }
-				if ($protein_other!~/\w/) { $protein_other="N"; }
-				my $gene=$genes{$protein_};
-				if ($gene!~/\w/) { $gene="None - ".$protein_; }
-				if ($other_genes!~/\w/) { $other_genes="None"; }
-				my $gene_id=$gene_ids{$protein_};
-				if ($gene_id!~/\w/) { $gene_id="None - ".$protein_; }
-				if ($other_gene_ids!~/\w/) { $other_gene_ids="None"; }
-				my $protein_description=$protein_descriptions{$protein_};
-				if ($protein_description!~/\w/) { $protein_description="None"; }
-				if ($other_protein_descriptions!~/\w/) { $other_protein_descriptions="None"; }
-				
+
 				#this only happens if the mgf file is a single search and not from mudpit
 				if ($filename eq "")
 				{
@@ -462,58 +506,52 @@ if ($error==0)
 				}
 
 				open (OUT_,qq!>>$xmlfile_/$f_name_sans_mgf.reporter!) || die "Could not open $xmlfile_/$filename.reporter\n";
-				#if more than one peptide was found for in a single block
-				if ((keys %peptide_dict)>1)
+
+				if ($filenames{$filename}!~/\w/)
 				{
-					#print scalar (keys %peptide_dict);
-					my $protein_count = 0;
-					if ($filenames{$filename}!~/\w/)
-					{
-						#$filenames{$filename}=1;
-						#print OUT_ qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tlabeling\ttryptic\tmissed\tflagged modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
-					}
-					foreach my $key (keys %peptide_dict)
-					{
-						#@($start, $end, $expect, $pre, $post, $peptide, $modifications)
-						my $pep_start = $peptide_dict{$key}[0];
-						my $pep_end = $peptide_dict{$key}[1];
-						my $pep_expect = $peptide_dict{$key}[2];
-						my $pep_pre = $peptide_dict{$key}[3];
-						my $pep_post = $peptide_dict{$key}[4];
-						my $pep_peptide = $peptide_dict{$key}[5];
-						my $pep_modifications = $peptide_dict{$key}[6];
-
-						my $protein_name = $protein_array[$protein_count];
-						$protein_count++;
-
-						print "Peptide: " . $pep_peptide;
-						print "Modifications: " . $pep_modifications;
-						print OUT qq!$filename\t$scan\t$charge\t$pep_pre\t$pep_peptide\t$pep_post\t$pep_modifications\t$pep_start\t$pep_expect\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$proteins\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
-						print OUT_LOOP_TEST qq!$filename\t$scan\t$charge\t$pep_pre\t$pep_peptide\t$pep_post\t$pep_modifications\t$pep_start\t$pep_expect\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$proteins\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
-						print OUT_ qq!$filename\t$scan\t$charge\t$pep_pre\t$pep_peptide\t$pep_post\t$pep_modifications\t$pep_start\t$pep_expect\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$proteins\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
-						#print OUT_ qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$index_protein_start\t$expect\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
-					}
+					$filenames{$filename}=1;
+					print OUT_ qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tlabeling\ttryptic\tmissed\tflagged modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
 				}
-				else
+				foreach my $key (keys %new_peptide_dict)
 				{
-					#print $peptide;
-					if ($peptide eq "MELQEIQLK")
-					{
-						print "MELQEIQLK in ELSE\n";
-						print qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$index_protein_start\t$expect\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
-						while (my ($k,$v)=each %peptide_dict){print "$k $v\n"}
-					}
-
-					if ($filenames{$filename}!~/\w/)
-					{
-						$filenames{$filename}=1;
-						print OUT_ qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tlabeling\ttryptic\tmissed\tflagged modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
-					}
+					#print "key: " . $key;
+					#my @new_peptide_details = ($pre_, $peptide_, $post_, $modifications, $start_, $expect_, $tryptic, $missed_, $unacceptable_, $protein_expect_, $protein_name_, $protein_description, $gene, $gene_id, $protein_other, $other_protein_descriptions, $other_genes, $other_gene_ids, $different_genes);
+					my $pep_filename = $filename;
+					my $pep_scan = $scan;
+					my $pep_charge = $charge;
+					my $pep_pre = $new_peptide_dict{$key}[0];
+					my $pep_peptide = $new_peptide_dict{$key}[1];
+					my $pep_post = $new_peptide_dict{$key}[2];
+					#my $pep_modifications = new_peptide_dict{$key}[3];
+					#print "mods: " . $new_peptide_dict{$key}[3];
+					my $pep_modifications = $new_peptide_dict{$key}[3];
+					#my $pep_modifications = "N";
+					my $pep_start = $new_peptide_dict{$key}[4];
+					my $pep_peptide_expectation = $new_peptide_dict{$key}[5];
+					my $pep_labeling = $new_peptide_dict{$key}[6];
+					my $pep_tryptic = $new_peptide_dict{$key}[7];
+					my $pep_missed = $new_peptide_dict{$key}[8];
+					my $pep_unacceptable_modifications = $new_peptide_dict{$key}[9];
+					my $pep_protein_log_e = $new_peptide_dict{$key}[10];
+					my $pep_protein = $new_peptide_dict{$key}[11];
+					my $pep_description = $new_peptide_dict{$key}[12];
+					my $pep_gene = $new_peptide_dict{$key}[13];
+					my $pep_gene_id = $new_peptide_dict{$key}[14];
+					my $pep_other_proteins = $new_peptide_dict{$key}[15];
+					my $pep_other_descriptions = $new_peptide_dict{$key}[16];
+					my $pep_other_genes = $new_peptide_dict{$key}[17];
+					my $pep_other_gene_ids = $new_peptide_dict{$key}[18];
+					my $pep_different_genes = $new_peptide_dict{$key}[19];
+					
+					print OUT qq!$pep_filename\t$pep_scan\t$pep_charge\t$pep_pre\t$pep_peptide\t$pep_post\t$pep_modifications\t$pep_start\t$pep_peptide_expectation\t$pep_labeling\t$pep_tryptic\t$pep_missed\t$pep_unacceptable_modifications\t$pep_protein_log_e\t$pep_protein\t$pep_description\t$pep_gene\t$pep_gene_id\t$pep_other_proteins\t$pep_other_descriptions\t$pep_other_genes\t$pep_other_gene_ids\t$pep_different_genes\n!;
+					print OUT_ qq!$pep_filename\t$pep_scan\t$pep_charge\t$pep_pre\t$pep_peptide\t$pep_post\t$pep_modifications\t$pep_start\t$pep_peptide_expectation\t$pep_labeling\t$pep_tryptic\t$pep_missed\t$pep_unacceptable_modifications\t$pep_protein_log_e\t$pep_protein\t$pep_description\t$pep_gene\t$pep_gene_id\t$pep_other_proteins\t$pep_other_descriptions\t$pep_other_genes\t$pep_other_gene_ids\t$pep_different_genes\n!;
+					#print OUT qq!$filename\t$scan\t$charge\t$pep_pre\t$pep_peptide\t$pep_post\t$pep_new_modifications\t$pep_start\t$pep_expect\t$pep_labeling\t$tryptic\t$missed\t$unacceptable\t$pep_protein_expect\t$pep_protein_name\t$pep_protein_description\t$pep_other_genes\t$pep_gene_id\t$pep_protein_other\t$pep_other_protein_description\t$pep_other_genes\t$pep_other_gene_ids\t$different_genes\n!;
+					#print OUT_ qq!$filename\t$scan\t$charge\t$pep_pre\t$pep_peptide\t$pep_post\t$pep_new_modifications\t$pep_start\t$pep_expect\t$pep_labeling\t$tryptic\t$missed\t$unacceptable\t$pep_protein_expect\t$pep_protein_name\t$pep_protein_description\t$pep_gene\t$pep_gene_id\t$pep_protein_other\t$pep_other_protein_description\t$pep_other_genes\t$pep_other_gene_ids\t$different_genes\n!;
+					#print OUT_LOOP_TEST qq!$filename\t$scan\t$charge\t$pep_pre\t$pep_peptide\t$pep_post\t$pep_modifications\t$pep_start\t$pep_expect\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$proteins\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
+					#print OUT_ qq!$filename\t$scan\t$charge\t$pep_pre\t$pep_peptide\t$pep_post\t$pep_modifications\t$pep_start\t$pep_expect\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$proteins\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
 					#print OUT_ qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$index_protein_start\t$expect\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
-					print OUT qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$index_protein_start\t$expect\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
-					print OUT_TEST qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$index_protein_start\t$expect\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
-					print OUT_ qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$index_protein_start\t$expect\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
 				}
+
 				close(OUT_);
 			}
 
@@ -531,6 +569,7 @@ if ($error==0)
 			$post="";
 			$peptide="";
 			%peptide_dict=();
+			%new_peptide_dict=();
 			@protein_array=();
 			$first_peptide="";
 			$multi_peptides="N";
