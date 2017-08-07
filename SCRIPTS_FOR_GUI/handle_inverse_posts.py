@@ -40,6 +40,8 @@ def get_header_for_reporterType(r_t):
     return ['126','127','128','129','130','131']
   elif r_t == 'TMT10':
     return ['126','127N','127C','128N','128C','129N','129C','130N','130C','131']
+  elif r_t == 'TMT11':
+    return ['126','127N','127C','128N','128C','129N','129C','130N','130C','131', '131C']
   elif r_t == 'iTRAQ4':
     return ['114','115','116','117']
   elif r_t == 'iTRAQ8':
@@ -49,7 +51,7 @@ def get_header_for_reporterType(r_t):
 
 
 def create_inverse_given_header_and_data(header, data):
-  # header = ['126','127N','127C','128N','128C','129N','129C','130N','130C','131']
+  # header = ['126','127N','127C','128N','128C','129N','129C','130N','130C','131', '131C']
   matrix = []
   normalization_array = []
   for head in header:

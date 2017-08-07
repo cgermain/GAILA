@@ -27,7 +27,7 @@ def validate_int(num):
 	return matched
 
 def validate_ion_type(ion_type):
-	possibilities = ['iTRAQ4','iTRAQ8','TMT10','TMT2','TMT6','TMT6OLD','TMT0']
+	possibilities = ['iTRAQ4','iTRAQ8','TMT10','TMT11','TMT2','TMT6','TMT6OLD','TMT0']
 	return (ion_type in possibilities)
 
 
@@ -139,6 +139,7 @@ def get_inverse_files_array():
 		'iTRAQ4-inv.txt',
 		'iTRAQ8-inv.txt',
 		'TMT10-inv.txt',
+		'TMT11-inv.txt',
 		'TMT0-inv.txt',
 		'TMT2-inv.txt',
 		'TMT6-inv.txt',

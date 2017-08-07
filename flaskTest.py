@@ -330,6 +330,9 @@ def writeSummary():
 						if reporters == "TMT10-126\tTMT10-127\tTMT10-127\tTMT10-128\tTMT10-128\tTMT10-129\tTMT10-129\tTMT10-130\tTMT10-130\tTMT10-131\n":
 							reporters = "TMT10-126\tTMT10-127N\tTMT10-127C\tTMT10-128N\tTMT10-128C\tTMT10-129N\tTMT10-129C\tTMT10-130N\tTMT10-130C\tTMT10-131\n"
 							summary_line = reporters
+						if reporters == "TMT11-126\tTMT11-127\tTMT11-127\tTMT11-128\tTMT11-128\tTMT11-129\tTMT11-129\tTMT11-130\tTMT11-130\tTMT11-131\tTMT11-131\n":
+							reporters = "TMT11-126\tTMT11-127N\tTMT11-127C\tTMT11-128N\tTMT11-128C\tTMT11-129N\tTMT11-129C\tTMT11-130N\tTMT11-130C\tTMT11-131\TMT11-131C\n"
+							summary_line = reporters
 					if summary_line != "" or summary_line != "\n":
 						out_file.write(summary_line)
 			os.remove(mgf_txt_write_dir_path+'intensity_summary.txt')

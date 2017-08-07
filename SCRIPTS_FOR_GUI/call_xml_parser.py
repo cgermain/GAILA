@@ -109,6 +109,7 @@ def convert_reporter_to_label_mass(reporter):
 		'TMT6' : '229',
 		'TMT6OLD' : '229',
 		'TMT10' : '229',
+		'TMT11' : '229',
 		'iTRAQ4' : '144',
 		'iTRAQ8': '304'
 	}
