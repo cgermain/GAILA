@@ -73,8 +73,6 @@ if ($error==0)
 	}
 	open (IN,qq!$xmlfile!) || die "Could not open $xmlfile\n";
 	open (OUT,qq!>$xmlfile.txt!) || die "Could not open $xmlfile\n";
-	open (OUT_TEST,qq!>$xmlfile.txttest!) || die "Could not open $xmlfile\n";
-	open (OUT_LOOP_TEST,qq!>$xmlfile.txt_loop_test!) || die "Could not open $xmlfile\n";
 	print OUT qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tlabeling\ttryptic\tmissed\tunacceptable modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\tunique peptides\n!;
 	my $xmlfile_=$xmldir;
 
@@ -116,8 +114,6 @@ if ($error==0)
 			my $protein_name=$2;
 			$protein_expect{$protein_name}=$protein_expect;
 			if($protein_name!~/\:reversed$/) { $proteins.="#$protein_name#"; }
-			#TODO make this line up with the peptide_dict
-			#TODO this lines up, but why?
 			#if the protein is not in the protein array, push it and the protein expect
 			if ($protein_name !~~ @protein_array)
 			{
@@ -175,9 +171,7 @@ if ($error==0)
 
 				if ($peptide ne $first_peptide)
 				{
-					#print $peptide." - ".$first_peptide."\n";
 					$multi_peptides="Y";
-					#push(@peptide_array, $peptide)
 				}
 
 				while ($temp=~s/^[^KR]*[KR](.)/$1/)
@@ -575,7 +569,5 @@ if ($error==0)
 	}
 	close(IN);
 	close(OUT);
-	close(OUT_TEST);
-	close(OUT_LOOP_TEST);
 	print "Processing Complete: $short_filename\n";
 }

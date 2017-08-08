@@ -361,7 +361,6 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 			label_mass_int=229
 		elif reporter_ion_type=='TMT11':
 			start_col=reporter_ion_type+'-126'
-			#TODO Check if 131C or 131
 			end_col=reporter_ion_type+'-131'
 			label_mass_int=229
 		else:
