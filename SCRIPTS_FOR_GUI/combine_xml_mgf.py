@@ -361,7 +361,7 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 			label_mass_int=229
 		elif reporter_ion_type=='TMT11':
 			start_col=reporter_ion_type+'-126'
-			end_col=reporter_ion_type+'-131'
+			end_col=reporter_ion_type+'-131C'
 			label_mass_int=229
 		else:
 			print "bad reporter ion type"
@@ -421,7 +421,7 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 					for k in range(len(data)):
 						# this next line gets the kth row, and the start_col to end_col columns, which are strings like iTRAQ-115.
 						temp = data.ix[k,start_col:end_col]
-						temp_intensities = [float(intensity)/norm for intensity, norm in zip(temp, normalized_intensities)]
+						temp_intensities = [float(intensity)/norm if norm != 0 else 0 for intensity, norm in zip(temp, normalized_intensities)]
 						if sum(temp_intensities) == 0:
 							normalized_temp_intensities = temp_intensities
 						else:
