@@ -73,15 +73,18 @@ def add_a_or_b_label_to_sorted_mfg_txt_file(filename):
 	first_line_arr = first_line.split('\t')
 	filename_index = first_line_arr.index("filename")
 	scan_index = first_line_arr.index("scan")
-	if scan_index == -1 or filename_index == -1:
+	charge_index = first_line_arr.index("charge")
+
+	if scan_index == -1 or filename_index == -1 or charge_index == -1:
 		raise Exception("something is wrong with the file formatting")
 	scan_list = []
 	first = True
-	most_recent = (None, None)
+	most_recent = (None, None, None)
 	for line in a:
 		line_arr = line.split("\t")
 		curr_scan = line_arr[scan_index]
 		curr_filename = line_arr[filename_index]
+		curr_charge = line_arr[charge_index]
 		tup = (curr_filename, curr_scan)
 		if (not first) and (not (most_recent[1] == tup[1])):
 			if len(scan_list) == 0:
@@ -89,6 +92,10 @@ def add_a_or_b_label_to_sorted_mfg_txt_file(filename):
 				pass
 				# raise Exception("In add a or b, shouldn't be zero")
 			elif len(scan_list) == 1:
+				temp_file.write(scan_list[0].strip() + "\tA\n")
+			#if the charges match, write it out
+			#indicates we created a second entry for this scan with different sequences
+			elif most_recent[2] == tup[2]:
 				temp_file.write(scan_list[0].strip() + "\tA\n")
 			else:
 				for l in scan_list:
@@ -142,6 +149,10 @@ def add_c_labels_to_duplicate_marker_column(filename):
 				# raise Exception("Shouldn't be zero")
 			elif len(scan_list) == 1:
 				temp_file.write("\t".join(scan_list[0]))
+			#check if A because we only want to process B's into C's
+			elif curr_replicate_spec_flag == "A":
+				for entry in scan_list:
+					temp_file.write("\t".join(entry))
 			else:
 				new_list = [(float(l[log_e_index]), l) for l in scan_list]
 				new_list = sorted(new_list)
