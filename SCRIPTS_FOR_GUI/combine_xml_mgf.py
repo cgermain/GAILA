@@ -4,6 +4,7 @@ import numpy as np
 import sys, os, shutil
 from os.path import join
 from datetime import datetime
+from collections import defaultdict
 
 TIME_FORMAT =  "%Y-%m-%d_%H-%M-%S"
 
@@ -85,18 +86,22 @@ def add_a_or_b_label_to_sorted_mfg_txt_file(filename):
 		curr_scan = line_arr[scan_index]
 		curr_filename = line_arr[filename_index]
 		curr_charge = line_arr[charge_index]
-		tup = (curr_filename, curr_scan)
+		tup = (curr_filename, curr_scan, curr_charge)
 		if (not first) and (not (most_recent[1] == tup[1])):
+			all_charges_in_list = [l.split("\t")[charge_index] for l in scan_list]
+
 			if len(scan_list) == 0:
 				# continue even if the scan list is empty 
 				pass
 				# raise Exception("In add a or b, shouldn't be zero")
 			elif len(scan_list) == 1:
 				temp_file.write(scan_list[0].strip() + "\tA\n")
-			#if the charges match, write it out
+			#if the charges match, write it out as A
 			#indicates we created a second entry for this scan with different sequences
-			elif most_recent[2] == tup[2]:
-				temp_file.write(scan_list[0].strip() + "\tA\n")
+			elif all(x==all_charges_in_list[0] for x in all_charges_in_list):
+				for l in scan_list:
+					temp_file.write(l.strip() + "\tA\n")
+			#write it out as a B so it can either be dropna'd or continue onto being C labeled
 			else:
 				for l in scan_list:
 					temp_file.write(l.strip() + "\tB\n")
@@ -104,21 +109,33 @@ def add_a_or_b_label_to_sorted_mfg_txt_file(filename):
 		scan_list.append(line)
 		most_recent = tup
 		first = False
+
+	#process the last scan_list
+	all_charges_in_list = [l.split("\t")[charge_index] for l in scan_list]
+
 	if len(scan_list) == 0:
 		# continue even if the scan list is empty 
 		pass
-		# raise Exception("In add a or b, shouldn't be zero - 2")
+		# raise Exception("In add a or b, shouldn't be zero")
 	elif len(scan_list) == 1:
 		temp_file.write(scan_list[0].strip() + "\tA\n")
+	#if the charges match, write it out as A
+	#indicates we created a second entry for this scan with different sequences
+	elif all(x==all_charges_in_list[0] for x in all_charges_in_list):
+		for l in scan_list:
+			temp_file.write(l.strip() + "\tA\n")
+	#write it out as a B so it can either be dropna'd or continue onto being C labeled
 	else:
 		for l in scan_list:
 			temp_file.write(l.strip() + "\tB\n")
+
 	a.close()
 	temp_file.close()
 	os.remove(filename)
 	os.rename(temp_filename,filename)
 
 
+#this reevaluates the A/B labels after sequences have been duplicated
 def add_c_labels_to_duplicate_marker_column(filename):
 	a = open(filename, "r")
 	temp_filename = filename + "_PLACEHOLDER"
@@ -129,19 +146,24 @@ def add_c_labels_to_duplicate_marker_column(filename):
 	first_line_arr = first_line.split('\t')
 	filename_index = first_line_arr.index("filename")
 	scan_index = first_line_arr.index("scan")
+	charge_index = first_line_arr.index("charge")
 	duplicate_index = first_line_arr.index("replicate_spec_flag")
-	log_e_index = first_line_arr.index("peptide expectation") #Hopefully it's there
-	if scan_index == -1 or filename_index == -1 or duplicate_index == -1 or log_e_index == -1:
+	log_e_index = first_line_arr.index("protein log(e)")
+
+	if scan_index == -1 or filename_index == -1 or duplicate_index == -1 or log_e_index == -1 or charge_index == -1:
 		raise Exception("something is wrong with the file formatting")
+	
 	scan_list = []
 	first = True
-	most_recent = (None, None)
+	most_recent = (None, None, None)
+
 	for line in a:
 		line_arr = line.split("\t")
 		curr_scan = line_arr[scan_index]
 		curr_filename = line_arr[filename_index]
+		curr_charge = line_arr[charge_index]
 		curr_replicate_spec_flag = line_arr[duplicate_index]
-		tup = (curr_filename, curr_scan)
+		tup = (curr_filename, curr_scan, curr_charge)
 		if (not first) and (not (most_recent[1] == tup[1])):
 			if len(scan_list) == 0:
 				# continue even if the scan list is empty
@@ -149,34 +171,134 @@ def add_c_labels_to_duplicate_marker_column(filename):
 				# raise Exception("Shouldn't be zero")
 			elif len(scan_list) == 1:
 				temp_file.write("\t".join(scan_list[0]))
-			#check if A because we only want to process B's into C's
-			elif curr_replicate_spec_flag == "A":
-				for entry in scan_list:
-					temp_file.write("\t".join(entry))
+			#if multiple items are in the scan list
 			else:
-				new_list = [(float(l[log_e_index]), l) for l in scan_list]
-				new_list = sorted(new_list)
-				for i in range(len(new_list)):
-					arr = new_list[i][1]
-					arr[duplicate_index] = "C" + str(i + 1)
-					temp_file.write("\t".join(arr)) 
+				#if all of the charges are equal, they're all A's
+				if all(scan[charge_index] == scan_list[0][charge_index] for scan in scan_list):
+					new_list = [(float(l[log_e_index]), l) for l in scan_list]
+					new_list = sorted(new_list)
+					for i in range(len(new_list)):
+						arr = new_list[i][1]
+						arr[duplicate_index] = "A"
+						temp_file.write("\t".join(arr)) 
+				
+				#if there are multiple duplicate charges in the list, they're A's
+				#if there are single charges, they're B's
+				#if there are multiple single charges, they're C's
+				else:
+
+					final_scan_list_to_sort = []
+					scan_dict = defaultdict(list)
+					for scan in scan_list:
+						scan_dict[scan[charge_index]].append(scan)
+
+					single_charges = []
+					multiple_charges = []
+
+					#for each charge, if its unique, add that scan to the single charges list (meaning these are Cs)
+					for key in scan_dict:
+						if len(scan_dict[key]) == 1:
+							single_charges.append(scan_dict[key])
+						else:
+							multiple_charges.append(scan_dict[key])
+
+					#flatten the list of lists
+					single_charges_combined = [item for sublist in single_charges for item in sublist]
+					multiple_charges_combined = [item for sublist in multiple_charges for item in sublist]
+
+					#if there are multiple single charges, write them out as C's
+					if len(single_charges) > 1:
+						c_new_scanlist = [(float(l[log_e_index]), l) for l in single_charges_combined]
+						c_new_scanlist = sorted(c_new_scanlist)
+						for i in range(len(c_new_scanlist)):
+							c_new_scanlist[i][1][duplicate_index] = "C" + str(i + 1)
+							final_scan_list_to_sort.append(c_new_scanlist[i][1])
+					#if there is just one, write it back out as a B
+					else:
+						single_charges_combined[0][duplicate_index] = "B"
+						final_scan_list_to_sort.append(single_charges_combined[0])
+
+					#We've found a mix of A's and B/C, so we have to relabel them	
+					for charges in multiple_charges_combined:
+						charges[duplicate_index] = "A"
+						final_scan_list_to_sort.append(charges)
+
+					#sort the final list
+					final_scan_list_to_sort = [(float(l[log_e_index]), l) for l in final_scan_list_to_sort]
+					final_scan_list_sorted = sorted(final_scan_list_to_sort)
+					for sorted_scan in final_scan_list_sorted:
+						temp_file.write("\t".join(sorted_scan[1]))
+
 			scan_list = []
 		scan_list.append(line_arr)
 		most_recent = tup
 		first = False
+
+	#catch the last scanlist and process it
 	if len(scan_list) == 0:
 		# continue even if the scan list is empty
-		pass
+		pass 
 		# raise Exception("Shouldn't be zero")
 	elif len(scan_list) == 1:
 		temp_file.write("\t".join(scan_list[0]))
+	#if multiple items are in the scan list
 	else:
-		new_list = [(float(l[log_e_index]), l) for l in scan_list]
-		new_list = sorted(new_list)
-		for i in range(len(new_list)):
-			arr = new_list[i][1]
-			arr[duplicate_index] = "C" + str(i + 1)
-			temp_file.write("\t".join(arr)) 
+		#if all of the charges are equal, they're all A's
+		if all(scan[charge_index] == scan_list[0][charge_index] for scan in scan_list):
+			#print "Found a group of A's"
+			new_list = [(float(l[log_e_index]), l) for l in scan_list]
+			new_list = sorted(new_list)
+			for i in range(len(new_list)):
+				arr = new_list[i][1]
+				arr[duplicate_index] = "A"
+				temp_file.write("\t".join(arr)) 
+		
+		#if there are multiple duplicate charges in the list, they're A's
+		#if there are single charges, they're B's
+		#if there are multiple single charges, they're C's
+		else:
+			final_scan_list_to_sort = []
+			scan_dict = defaultdict(list)
+			for scan in scan_list:
+				scan_dict[scan[charge_index]].append(scan)
+
+			single_charges = []
+			multiple_charges = []
+
+			#for each charge, if its unique, add that scan to the single charges list (meaning these are Cs)
+			for key in scan_dict:
+				if len(scan_dict[key]) == 1:
+					single_charges.append(scan_dict[key])
+				else:
+					multiple_charges.append(scan_dict[key])
+
+			#flatten the list of lists
+			single_charges_combined = [item for sublist in single_charges for item in sublist]
+			multiple_charges_combined = [item for sublist in multiple_charges for item in sublist]
+
+			#if there are multiple single charges, write them out as C's
+			if len(single_charges) > 1:
+				c_new_scanlist = [(float(l[log_e_index]), l) for l in single_charges_combined]
+				c_new_scanlist = sorted(c_new_scanlist)
+				for i in range(len(c_new_scanlist)):
+					c_new_scanlist[i][1][duplicate_index] = "C" + str(i + 1)
+					final_scan_list_to_sort.append(c_new_scanlist[i][1])
+			#if there is just one, write it back out as a B
+			else:
+				single_charges_combined[0][duplicate_index] = "B"
+				final_scan_list_to_sort.append(single_charges_combined[0])
+
+			#We've found a mix of A's and B/C, so we have to relabel them	
+			for charges in multiple_charges_combined:
+				charges[duplicate_index] = "A"
+				final_scan_list_to_sort.append(charges)
+
+			#sort the final list
+			final_scan_list_to_sort = [(float(l[log_e_index]), l) for l in final_scan_list_to_sort]
+			final_scan_list_sorted = sorted(final_scan_list_to_sort)
+			for sorted_scan in final_scan_list_sorted:
+				temp_file.write("\t".join(sorted_scan[1]))
+
 	a.close()
 	temp_file.close()
 	os.remove(filename)
