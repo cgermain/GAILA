@@ -504,7 +504,7 @@ if ($error==0)
 				if ($filenames{$filename}!~/\w/)
 				{
 					$filenames{$filename}=1;
-					print OUT_ qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tlabeling\tunique peptides\tryptic\tmissed\tflagged modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
+					print OUT_ qq!filename\tscan\tcharge\tunique peptides\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tlabeling\ttryptic\tmissed\tflagged modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
 				}
 
 				my $number_unique_peptides = scalar keys %new_peptide_dict;
@@ -534,8 +534,8 @@ if ($error==0)
 					my $pep_other_gene_ids = $new_peptide_dict{$key}[18];
 					my $pep_different_genes = $new_peptide_dict{$key}[19];
 					
-					print OUT qq!$pep_filename\t$pep_scan\t$pep_charge\t$pep_pre\t$pep_peptide\t$pep_post\t$pep_modifications\t$pep_start\t$pep_peptide_expectation\t$pep_labeling\t$number_unique_peptides\t$pep_tryptic\t$pep_missed\t$pep_unacceptable_modifications\t$pep_protein_log_e\t$pep_protein\t$pep_description\t$pep_gene\t$pep_gene_id\t$pep_other_proteins\t$pep_other_descriptions\t$pep_other_genes\t$pep_other_gene_ids\t$pep_different_genes\n!;
-					print OUT_ qq!$pep_filename\t$pep_scan\t$pep_charge\t$pep_pre\t$pep_peptide\t$pep_post\t$pep_modifications\t$pep_start\t$pep_peptide_expectation\t$pep_labeling\t$number_unique_peptides\t$pep_tryptic\t$pep_missed\t$pep_unacceptable_modifications\t$pep_protein_log_e\t$pep_protein\t$pep_description\t$pep_gene\t$pep_gene_id\t$pep_other_proteins\t$pep_other_descriptions\t$pep_other_genes\t$pep_other_gene_ids\t$pep_different_genes\n!;
+					print OUT qq!$pep_filename\t$pep_scan\t$pep_charge\t$number_unique_peptides\t$pep_pre\t$pep_peptide\t$pep_post\t$pep_modifications\t$pep_start\t$pep_peptide_expectation\t$pep_labeling\t$pep_tryptic\t$pep_missed\t$pep_unacceptable_modifications\t$pep_protein_log_e\t$pep_protein\t$pep_description\t$pep_gene\t$pep_gene_id\t$pep_other_proteins\t$pep_other_descriptions\t$pep_other_genes\t$pep_other_gene_ids\t$pep_different_genes\n!;
+					print OUT_ qq!$pep_filename\t$pep_scan\t$pep_charge\t$number_unique_peptides\t$pep_pre\t$pep_peptide\t$pep_post\t$pep_modifications\t$pep_start\t$pep_peptide_expectation\t$pep_labeling\t$pep_tryptic\t$pep_missed\t$pep_unacceptable_modifications\t$pep_protein_log_e\t$pep_protein\t$pep_description\t$pep_gene\t$pep_gene_id\t$pep_other_proteins\t$pep_other_descriptions\t$pep_other_genes\t$pep_other_gene_ids\t$pep_different_genes\n!;
 				}
 
 				close(OUT_);
