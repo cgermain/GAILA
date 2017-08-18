@@ -93,6 +93,7 @@ if ($error==0)
 	my $peptide="";
 	my $first_peptide="";
 	my @protein_array=();
+	my %protein_dict;
 	my %peptide_dict;
 	my %new_peptide_dict;
 	my $multi_peptides="N";
@@ -314,7 +315,6 @@ if ($error==0)
 
 		if($line=~/<GAML:attribute type="charge">([0-9]+)<\/GAML:attribute>/)
 		{
-			#TODO - Run through for each peptide sequence & modifications
 			$charge=$1;
 			$mz=($mh+(($charge-1)*$proton_mass))/$charge; 
 			if($expect<$threshold)
@@ -341,6 +341,7 @@ if ($error==0)
 				while($temp=~s/^#([^#]+)#//)
 				{
 					my $temp_=$1;
+					#TODO Run through for each protein to get the "others"
 					if ($temp_!~/^$protein_$/)
 					{
 						$protein_other.="#$temp_#";
@@ -457,17 +458,6 @@ if ($error==0)
 						}
 					}
 					$labeling/=1.0*$complete_labeling;
-					if ($modifications!~/\w/) { $modifications="N"; }
-					if ($protein_other!~/\w/) { $protein_other="N"; }
-					my $gene=$genes{$protein_};
-					if ($gene!~/\w/) { $gene="None - ".$protein_; }
-					if ($other_genes!~/\w/) { $other_genes="None"; }
-					my $gene_id=$gene_ids{$protein_};
-					if ($gene_id!~/\w/) { $gene_id="None - ".$protein_; }
-					if ($other_gene_ids!~/\w/) { $other_gene_ids="None"; }
-					my $protein_description=$protein_descriptions{$protein_};
-					if ($protein_description!~/\w/) { $protein_description="None"; }
-					if ($other_protein_descriptions!~/\w/) { $other_protein_descriptions="None"; }
 
 					#($start, $end, $expect, $pre, $post, $peptide, $modifications, $tryptic, $unacceptable, ((scalar @protein_array)-1), $missed);
 					#save this newly computed info back to the hash
@@ -486,6 +476,22 @@ if ($error==0)
 					my $protein_index = $peptide_dict{$key}[9];
 					my $protein_name_ = $protein_array[$protein_index];
 					my $protein_expect_ = $protein_expect{$protein_name_};
+
+					if ($modifications!~/\w/) { $modifications="N"; }
+					if ($protein_other!~/\w/) { $protein_other="N"; }
+
+					#using protein_name_ so that each protein gets its own unique details
+					my $gene=$genes{$protein_name_};
+					if ($gene!~/\w/) { $gene="None - ".$protein_name_; }
+					if ($other_genes!~/\w/) { $other_genes="None"; }
+					
+					my $gene_id=$gene_ids{$protein_name_};
+					if ($gene_id!~/\w/) { $gene_id="None - ".$protein_name_; }
+					if ($other_gene_ids!~/\w/) { $other_gene_ids="None"; }
+					
+					my $protein_description=$protein_descriptions{$protein_name_};
+					if ($protein_description!~/\w/) { $protein_description="None"; }
+					if ($other_protein_descriptions!~/\w/) { $other_protein_descriptions="None"; }
 
 					my @new_peptide_details = ($pre_, $peptide_, $post_, $modifications, $start_, $expect_, $labeling, $tryptic, $missed_, $unacceptable_, $protein_expect_, $protein_name_, $protein_description, $gene, $gene_id, $protein_other, $other_protein_descriptions, $other_genes, $other_gene_ids, $different_genes);
 
