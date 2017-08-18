@@ -165,6 +165,9 @@ my $line="";
 my @total_intensity=(0) x scalar @reporters;	
 my $total_ms1=0;
 
+my $previous_scan = "";
+my $previous_title = "";
+
 while($line=<IN>)
 {
 	if ($line=~/^TITLE=(.*)$/)
@@ -355,10 +358,18 @@ while($line=<IN>)
 						}
 
 						print OUT_TABLE qq!\t$sum_!;
-						$total_intensity[$k]+=$zero_product_array[$k];
+						#if this is a replicate of the previous scan, don't add its intensity to the total
+						if (($scans ne $previous_scan) && ($title ne $previous_title))
+						{
+							$total_intensity[$k]+=$zero_product_array[$k];
+						}
 					}
 					print OUT_TABLE qq!\t$zero_product_array_sum\n!;
-					$total_ms1+=$ms1_intensity;
+					#if this is a replicate of the previous scan, don't add its intensity to the total
+					if (($scans ne $previous_scan) && ($title ne $previous_title))
+					{
+						$total_ms1+=$ms1_intensity;
+					}
 				}
 			}
 
@@ -386,10 +397,18 @@ while($line=<IN>)
 						print OUT_TABLE qq!\t$sum_!;
 					}
 					print OUT_TABLE qq!\t$sum\n!;
-					$total_ms1+=$ms1_intensity;
+					#if this is a replicate of the previous scan, don't add its intensity to the total ms1
+					if (($scans ne $previous_scan) && ($title ne $previous_title))
+					{
+						$total_ms1+=$ms1_intensity;
+					}
 				}
 
 			}
+			
+			$previous_title = $title;
+			$previous_scan = $scans;
+
 			$pepmass="";
 			$title="";
 			$charge="";

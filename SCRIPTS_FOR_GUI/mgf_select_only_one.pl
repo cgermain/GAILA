@@ -164,6 +164,9 @@ if (open (IN, "$read_file_path"))
 		my @total_intensity=(0) x scalar @reporters;
 		my $total_ms1=0;
 
+		my $previous_scan="";
+		my $previous_title="";
+
 		while($line=<IN>)
 		{
 			if ($line=~/^TITLE=(.*)$/)
@@ -220,6 +223,7 @@ if (open (IN, "$read_file_path"))
 			}
 			else
 			{
+				#if (($done_reading_fragments==1) 
 				if ($done_reading_fragments==1)
 				{
 					$footer.=$line;
@@ -313,8 +317,13 @@ if (open (IN, "$read_file_path"))
 						}
 						
 						print OUT_TABLE qq!$parsed_filename\t$scans\t$charge\t$rt\t$ms1_intensity!;
-						$total_ms1+=$ms1_intensity;
-
+						
+						#if this is a replicate of the previous scan, don't add its intensity to the total ms1
+						if (($scans ne $previous_scan) && ($title ne $previous_title))
+						{
+							$total_ms1+=$ms1_intensity;
+						}
+						
 						#normalize the intensities
 						for(my $k=0;$k<$reporter_count;$k++)
 						{
@@ -324,11 +333,20 @@ if (open (IN, "$read_file_path"))
 							}
 
 							print OUT_TABLE qq!\t$sum_!;
-							$total_intensity[$k]+=$zero_product_array[$k];
+
+							#if this is a replicate of the previous scan, don't add its intensity to the total
+							if (($scans ne $previous_scan) && ($title ne $previous_title))
+							{
+								$total_intensity[$k]+=$zero_product_array[$k];
+							}
+							
 						}
 						print OUT_TABLE qq!\t$zero_product_array_sum\n!;
 					}
 					
+					$previous_title = $title;
+					$previous_scan = $scans;
+
 					$pepmass="";
 					$title="";
 					$charge="";
