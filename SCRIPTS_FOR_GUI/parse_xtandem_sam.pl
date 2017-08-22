@@ -2,6 +2,7 @@
 #
 use strict;
 use File::Basename;
+use experimental 'smartmatch';
 
 my $error=0;
 my $xmlfile=0;
@@ -338,66 +339,62 @@ if ($error==0)
 				my $different_genes="N";
 				my $different_gene_fam="N";
 				my $temp=$proteins;
-				while($temp=~s/^#([^#]+)#//)
+
+				my %other_protein_dict_genes;
+				my %other_protein_dict_gene_ids;
+				my %other_protein_dict_descriptions;
+				my %other_protein_dict;
+				my %diff_gene_dict;
+
+				#for each protein
+				foreach my $current_protein (@protein_array)
 				{
-					my $temp_=$1;
-					#TODO Run through for each protein to get the "others"
-					if ($temp_!~/^$protein_$/)
-					{
-						$protein_other.="#$temp_#";
-						if ($genes{$temp_}=~/\w/ and $other_genes!~/#$genes{$temp_}#/i)
-						{
-							$other_genes.="#\U$genes{$temp_}#";
-						}
-						else
-						{
-							if ($genes{$temp_}!~/\w/ and $other_genes!~/#NotFound#/i)
+					my @nested_genes_list = ();
+					my @nested_gene_ids_list = ();
+					my @nested_protein_descriptions_list = ();
+					my @nested_other_proteins = ();
+
+					#go through all of the other proteins and get their info
+					foreach my $nested_protein (@protein_array){
+						#but skip the one we're currently on so that each is unique
+						if ($nested_protein ne $current_protein){
+
+							push (@nested_other_proteins, $nested_protein);
+
+							if (!($genes{$nested_protein} ~~ @nested_genes_list))
 							{
-								$other_genes.="#NotFound#";
+								my $result = $genes{$nested_protein};
+								if ($result!~/\w/) { $result="NotFound"; }
+								push(@nested_genes_list, $result);
 							}
-						}
-						if ($gene_ids{$temp_}=~/\w/ and $other_gene_ids!~/#$gene_ids{$temp_}#/)
-						{
-							$other_gene_ids.="#$gene_ids{$temp_}#";
-						}
-						else
-						{
-							if ($gene_ids{$temp_}!~/\w/ and $other_gene_ids!~/#NotFound#/)
+
+							if (!($gene_ids{$nested_protein} ~~ @nested_gene_ids_list))
 							{
-								$other_gene_ids.="#NotFound#";
+								my $result = $gene_ids{$nested_protein};
+								if ($result!~/\w/) { $result="NotFound"; }
+								push(@nested_gene_ids_list, $result);
 							}
-						}
-						if ($protein_descriptions{$temp_}=~/\w/ and (index($other_protein_descriptions,"#$protein_descriptions{$temp_}#")==-1))
-						{
-							$other_protein_descriptions.="#$protein_descriptions{$temp_}#";
-						}
-						else
-						{
-							if ($protein_descriptions{$temp_}!~/\w/ and $other_protein_descriptions!~/#NotFound#/)
+
+							if (!($protein_descriptions{$nested_protein} ~~ @nested_protein_descriptions_list))
 							{
-								$other_protein_descriptions.="#NotFound#";
+								my $result = $protein_descriptions{$nested_protein};
+								if ($result!~/\w/) { $result="NotFound"; }
+								push(@nested_protein_descriptions_list, $result);
 							}
-						}
-						my $temp__=$genes{$temp_};
-						$temp__=~s/([0-9\.]).*$//;
-						if ($genes{$protein_}!~/^$temp__([0-9\.]?).*$/i)
-						{
-							$different_gene_fam="Y";
-						}
-						if ($genes{$protein_}!~/^$genes{$temp_}$/i)
-						{
-							$different_genes="Y";
 						}
 					}
+
+					my $other_gene_length = scalar @nested_genes_list;
+					if ((!($genes{$current_protein} ~~ @nested_genes_list) && $other_gene_length > 0)|| $other_gene_length > 1){
+						$different_genes = "Y";
+					}
+
+					$other_protein_dict_genes{$current_protein} = \@nested_genes_list;
+					$other_protein_dict_gene_ids{$current_protein} = \@nested_gene_ids_list;
+					$other_protein_dict_descriptions{$current_protein} = \@nested_protein_descriptions_list;
+					$other_protein_dict{$current_protein} = \@nested_other_proteins;
+					$diff_gene_dict{$current_protein} = $different_genes;
 				}
-				$protein_other=~s/##/,/g;
-				$protein_other=~s/#//g;
-				$other_genes=~s/##/,/g;
-				$other_genes=~s/#//g;
-				$other_gene_ids=~s/##/,/g;
-				$other_gene_ids=~s/#//g;
-				$other_protein_descriptions=~s/##/,/g;
-				$other_protein_descriptions=~s/#//g;
 
 				foreach my $key (keys %peptide_dict)
 				{
@@ -477,21 +474,31 @@ if ($error==0)
 					my $protein_name_ = $protein_array[$protein_index];
 					my $protein_expect_ = $protein_expect{$protein_name_};
 
-					if ($modifications!~/\w/) { $modifications="N"; }
+					$protein_other = join "," , @{$other_protein_dict{$protein_name_}};
 					if ($protein_other!~/\w/) { $protein_other="N"; }
+
+					$other_protein_descriptions = join ",",@{$other_protein_dict_descriptions{$protein_name_}};
+					if ($other_protein_descriptions!~/\w/) { $other_protein_descriptions="None"; }
+
+					$other_genes = join "," , @{$other_protein_dict_genes{$protein_name_}};
+					if ($other_genes!~/\w/) { $other_genes="None"; }
+
+					$other_gene_ids = join "," , @{$other_protein_dict_gene_ids{$protein_name_}};
+					if ($other_gene_ids!~/\w/) { $other_gene_ids="None"; }
+
+					$different_genes = $diff_gene_dict{$protein_name_};
+
+					if ($modifications!~/\w/) { $modifications="N"; }
 
 					#using protein_name_ so that each protein gets its own unique details
 					my $gene=$genes{$protein_name_};
 					if ($gene!~/\w/) { $gene="None - ".$protein_name_; }
-					if ($other_genes!~/\w/) { $other_genes="None"; }
-					
+
 					my $gene_id=$gene_ids{$protein_name_};
 					if ($gene_id!~/\w/) { $gene_id="None - ".$protein_name_; }
-					if ($other_gene_ids!~/\w/) { $other_gene_ids="None"; }
 					
 					my $protein_description=$protein_descriptions{$protein_name_};
 					if ($protein_description!~/\w/) { $protein_description="None"; }
-					if ($other_protein_descriptions!~/\w/) { $other_protein_descriptions="None"; }
 
 					my @new_peptide_details = ($pre_, $peptide_, $post_, $modifications, $start_, $expect_, $labeling, $tryptic, $missed_, $unacceptable_, $protein_expect_, $protein_name_, $protein_description, $gene, $gene_id, $protein_other, $other_protein_descriptions, $other_genes, $other_gene_ids, $different_genes);
 
