@@ -1,7 +1,8 @@
 import re
 import os
 import shutil
-
+import string
+import itertools
 
 def all_fields_nonblank(form, fields):
 	try:
@@ -222,6 +223,9 @@ def get_matrixreal_string_from_dataframe(df):
 	rows_with_spaces = ["[ " + " ".join(row.split()) + " ]\n" for row in rows]
 	rows_as_string = "".join(rows_with_spaces)
 	return rows_as_string
+
+def long_alphabet():
+	return [chars for chars in itertools.chain(string.ascii_uppercase, itertools.product(string.ascii_uppercase, repeat=2), itertools.product(string.ascii_uppercase, repeat=3))]
 
 def tests():
 	assert validate_float('-0.5')

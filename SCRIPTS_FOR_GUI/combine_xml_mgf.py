@@ -2,6 +2,7 @@ from pandas import Series, DataFrame
 import pandas as pd
 import numpy as np
 import sys, os, shutil
+import utility
 from os.path import join
 from datetime import datetime
 from collections import defaultdict
@@ -149,8 +150,9 @@ def add_c_labels_to_duplicate_marker_column(filename):
 	charge_index = first_line_arr.index("charge")
 	duplicate_index = first_line_arr.index("replicate_spec_flag")
 	log_e_index = first_line_arr.index("protein log(e)")
+	unique_peptide_index = first_line_arr.index("unique peptides")
 
-	if scan_index == -1 or filename_index == -1 or duplicate_index == -1 or log_e_index == -1 or charge_index == -1:
+	if scan_index == -1 or filename_index == -1 or duplicate_index == -1 or log_e_index == -1 or charge_index == -1 or unique_peptide_index == -1:
 		raise Exception("something is wrong with the file formatting")
 	
 	scan_list = []
@@ -177,9 +179,12 @@ def add_c_labels_to_duplicate_marker_column(filename):
 				if all(scan[charge_index] == scan_list[0][charge_index] for scan in scan_list):
 					new_list = [(float(l[log_e_index]), l) for l in scan_list]
 					new_list = sorted(new_list)
+					letters = utility.long_alphabet()
 					for i in range(len(new_list)):
 						arr = new_list[i][1]
 						arr[duplicate_index] = "A"
+						#add a ranking to each unique peptide
+						arr[unique_peptide_index] = arr[unique_peptide_index]+letters[i]
 						temp_file.write("\t".join(arr)) 
 				
 				#if there are multiple duplicate charges in the list, they're A's
@@ -210,17 +215,24 @@ def add_c_labels_to_duplicate_marker_column(filename):
 					if len(single_charges) > 1:
 						c_new_scanlist = [(float(l[log_e_index]), l) for l in single_charges_combined]
 						c_new_scanlist = sorted(c_new_scanlist)
+						letters = utility.long_alphabet()
 						for i in range(len(c_new_scanlist)):
 							c_new_scanlist[i][1][duplicate_index] = "C" + str(i + 1)
+							unique_peptide_count = c_new_scanlist[i][1][unique_peptide_index]
+							if (int(unique_peptide_count) > 1):
+								c_new_scanlist[i][1][unique_peptide_index] = unique_peptide_count + letters[i]
 							final_scan_list_to_sort.append(c_new_scanlist[i][1])
+
 					#if there is just one, write it back out as a B
 					else:
 						single_charges_combined[0][duplicate_index] = "B"
 						final_scan_list_to_sort.append(single_charges_combined[0])
 
+					letters = utility.long_alphabet()
 					#We've found a mix of A's and B/C, so we have to relabel them	
-					for charges in multiple_charges_combined:
+					for i, charges in enumerate(multiple_charges_combined):
 						charges[duplicate_index] = "A"
+						charges[unique_peptide_index] = charges[unique_peptide_index] + letters[i]
 						final_scan_list_to_sort.append(charges)
 
 					#sort the final list
@@ -248,9 +260,12 @@ def add_c_labels_to_duplicate_marker_column(filename):
 			#print "Found a group of A's"
 			new_list = [(float(l[log_e_index]), l) for l in scan_list]
 			new_list = sorted(new_list)
+			letters = long_alphabet()
 			for i in range(len(new_list)):
 				arr = new_list[i][1]
 				arr[duplicate_index] = "A"
+				#add a ranking to each unique peptide
+				arr[unique_peptide_index] = arr[unique_peptide_index]+letters[i]
 				temp_file.write("\t".join(arr)) 
 		
 		#if there are multiple duplicate charges in the list, they're A's
@@ -280,8 +295,12 @@ def add_c_labels_to_duplicate_marker_column(filename):
 			if len(single_charges) > 1:
 				c_new_scanlist = [(float(l[log_e_index]), l) for l in single_charges_combined]
 				c_new_scanlist = sorted(c_new_scanlist)
+				letters = utility.long_alphabet()
 				for i in range(len(c_new_scanlist)):
 					c_new_scanlist[i][1][duplicate_index] = "C" + str(i + 1)
+					unique_peptide_count = c_new_scanlist[i][1][unique_peptide_index]
+					if (int(unique_peptide_count) > 1):
+						c_new_scanlist[i][1][unique_peptide_index] = unique_peptide_count + letters[i]
 					final_scan_list_to_sort.append(c_new_scanlist[i][1])
 			#if there is just one, write it back out as a B
 			else:
@@ -289,8 +308,10 @@ def add_c_labels_to_duplicate_marker_column(filename):
 				final_scan_list_to_sort.append(single_charges_combined[0])
 
 			#We've found a mix of A's and B/C, so we have to relabel them	
-			for charges in multiple_charges_combined:
+			letters = utility.long_alphabet()
+			for i, charges in enumerate(multiple_charges_combined):
 				charges[duplicate_index] = "A"
+				charges[unique_peptide_index] = charges[unique_peptide_index] + letters[i]
 				final_scan_list_to_sort.append(charges)
 
 			#sort the final list
