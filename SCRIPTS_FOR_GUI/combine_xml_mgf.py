@@ -260,7 +260,7 @@ def add_c_labels_to_duplicate_marker_column(filename):
 			#print "Found a group of A's"
 			new_list = [(float(l[log_e_index]), l) for l in scan_list]
 			new_list = sorted(new_list)
-			letters = long_alphabet()
+			letters = utility.long_alphabet()
 			for i in range(len(new_list)):
 				arr = new_list[i][1]
 				arr[duplicate_index] = "A"
