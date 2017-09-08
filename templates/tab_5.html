@@ -13,8 +13,8 @@
     <div class="input-group" style="margin: 1%">
       <span class="input-group-addon" id="basic-addon1">Count only Unique proteins</span>
       <select class='form-control' id="countUniques">
-        <option value="1">Include all spectra and highest scored protein match</option>
-        <option value="0">Exclude spectra with multiple protein matches</option>
+        <option value="0">Include all spectra and highest scored protein match</option>
+        <option value="1">Exclude spectra with multiple protein matches</option>
       </select>
       <!-- <span class="input-group-btn">
         <button class="btn btn-info" onclick="alert('Option to perform reporter-ion mass-recalibration before selecting runs. Provides more accuracy as a slight tradeoff for speed')">?</button>
@@ -47,7 +47,7 @@
     console.log(serializedForm);
 
     var rightSide = $(this).parent().siblings("#rightSide").first()
-    rightSide.append("<div>Starting protein count</div>")
+    rightSide.append("<div><br>Starting protein count.  Status available in terminal window.</div>")
     var startTime = new Date();
 
     async.waterfall([
@@ -59,7 +59,7 @@
           success : function(result){
             console.log("Count protein complete.");
             console.log(result);
-            rightSide.append("<div>Count complete: " + result + "</div>")
+            rightSide.append("<h3 style=color:green>Count complete. </h3><br><div>" + result + "</div>");
             return callback(null);
           },
           error: function(response, textStatus, HTTPError){

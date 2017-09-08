@@ -267,9 +267,9 @@ def plainCountProteins():
 	count_uniques = request.form['countUniques']
 	result, error = plaincount.count_proteins(plain_parsed_file, count_uniques)
 	if not error:
-		return result
+		return result, 400
 	else:
-		return result, 500
+		return result
 
 @app.route("/writeSummary", methods=['POST'])
 @nocache

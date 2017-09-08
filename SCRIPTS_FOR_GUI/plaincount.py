@@ -27,6 +27,7 @@ def count_proteins(plain_parse_file, unique_protein_option):
 			unique_index = header.index("unique peptides")
 
 			if filename_index != -1 and protein_index != -1 and gene_index != -1 and unique_index != -1:
+				print "Total lines in plain parse file: " + str(total_line_count)
 				print "Reading plain parse file..."
 				for row in csvreader:
 					current_line_count += 1
@@ -40,37 +41,45 @@ def count_proteins(plain_parse_file, unique_protein_option):
 					percentage_complete = 100*current_line_count/total_line_count
 					if percentage_complete > previous_percentage_complete:
 						previous_percentage_complete = percentage_complete
-						print "total lines: " + str(total_line_count) + "  |  current line: " + str(current_line_count) + "  |  percentage complete: " + str(percentage_complete) + "%\r",
-						sys.stdout.flush()
+						sys.stdout.write(".")
 			else:
 				return "Error in formatting of plain parse file.  Header index not found.", False
 	except IOError as e:
-		return "Error opening plain parse file: " + plain_parse_file, False
+		return "Error opening plain parse file: " + plain_parse_file, 0
 	except ValueError as e:
-		return "Error: Column header improperly formatted in plain parse file.", False
+		return "Error: Column header improperly formatted in plain parse file.", 0
+	except:
+		return "Error in count proteins while reading.", 0
 
 	timestamp = datetime.now().strftime(TIME_FORMAT)
 	out_filename = os.path.join(base_directory, gpm_filename+"_count_"+timestamp+".txt")
 	print "\n"
-	print "Writing",
+	print "Writing..."
 	try:
 		with open(out_filename, 'wb') as out_file:
 			previous_percentage_complete = 0
 			current_line_count = 0
-			total_line_count = len(file_tree.keys())
 			csvwriter = csv.writer(out_file, delimiter='\t')
 			csvwriter.writerow(HEADER)
-			for line in [(filename, protein, gene_name, file_tree[filename][protein][gene_name]) \
+			out_lines = [(filename, protein, gene_name, file_tree[filename][protein][gene_name]) \
 						for filename in file_tree \
 						for protein in file_tree[filename] \
-						for gene_name in file_tree[filename][protein]]:
+						for gene_name in file_tree[filename][protein]]
+			total_lines = len(out_lines)
+			for line in out_lines:
+				current_line_count += 1
 				csvwriter.writerow(line)
-				sys.stdout.write(".")
+				percentage_complete = 100*current_line_count/total_lines
+				if percentage_complete > previous_percentage_complete:
+					previous_percentage_complete = percentage_complete
+					sys.stdout.write(".")
 
 		print "\nSaved: " + out_filename + "\n"
-		return out_filename, True
+		return out_filename, 1
 	except IOError as e:
-		return "Error opening output file.", False
+		return "Error opening output file.", 0
+	except:
+		return "Error in count proteins while writing.", 0
 
 def buffered_line_count(filename):
     f = open(filename)                  
