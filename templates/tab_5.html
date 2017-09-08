@@ -10,6 +10,16 @@
     </div>
 
     <br>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">Count only Unique proteins</span>
+      <select class='form-control' id="countUniques">
+        <option value="1">Include all spectra and highest scored protein match</option>
+        <option value="0">Exclude spectra with multiple protein matches</option>
+      </select>
+      <!-- <span class="input-group-btn">
+        <button class="btn btn-info" onclick="alert('Option to perform reporter-ion mass-recalibration before selecting runs. Provides more accuracy as a slight tradeoff for speed')">?</button>
+      </span> -->
+    </div>
 
     <button id="tab_5_button" class="btn btn-primary">Click to submit</button>
 
@@ -49,6 +59,7 @@
           success : function(result){
             console.log("Count protein complete.");
             console.log(result);
+            rightSide.append("<div>Count complete: " + result + "</div>")
             return callback(null);
           },
           error: function(response, textStatus, HTTPError){

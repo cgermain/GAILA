@@ -264,9 +264,12 @@ def createInverseFiles():
 @nocache
 def plainCountProteins():
 	plain_parsed_file = request.form['plainParseReadPath']
-	plain_count_file = plaincount.count_proteins(plain_parsed_file)
-	return "Plain count finished in python"
-	#return plain_count_file
+	count_uniques = request.form['countUniques']
+	result, error = plaincount.count_proteins(plain_parsed_file, count_uniques)
+	if not error:
+		return result
+	else:
+		return result, 500
 
 @app.route("/writeSummary", methods=['POST'])
 @nocache
@@ -493,5 +496,5 @@ def multiple_select_to_two_arrays(unacceptable_mods):
 	return mass_val_arr, mod_val_arr 
 
 if __name__ == "__main__":
-	app.debug = True
+	app.debug = False
 	app.run()
