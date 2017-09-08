@@ -14,6 +14,7 @@ from SCRIPTS_FOR_GUI import utility
 from SCRIPTS_FOR_GUI import validation
 from SCRIPTS_FOR_GUI import handle_inverse_posts
 from SCRIPTS_FOR_GUI import makeFolderNames
+from SCRIPTS_FOR_GUI import plaincount
 import shutil
 from datetime import datetime
 import pandas as pd
@@ -258,6 +259,17 @@ def createInverseFiles():
 	reporter_type = post_obj['reporterType']
 	inverse_string = handle_inverse_posts.create_inverse_file(post_obj)
 	return inverse_string
+
+@app.route("/plainCountProteins", methods=['POST'])
+@nocache
+def plainCountProteins():
+	plain_parsed_file = request.form['plainParseReadPath']
+	count_uniques = request.form['countUniques']
+	result, error = plaincount.count_proteins(plain_parsed_file, count_uniques)
+	if not error:
+		return result, 400
+	else:
+		return result
 
 @app.route("/writeSummary", methods=['POST'])
 @nocache
