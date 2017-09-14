@@ -1,0 +1,80 @@
+<div>
+  <div style="float:left;width:60%" id="leftSide">
+    <h2 style="margin:1%">MERGE MS2/MS3</h2>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">FULL PATH TO DIRECTORY OF MS2/MS3 FILES</span>
+      <input type="text" class="form-control" id="ms2ms3directory">
+      <span class="input-group-btn">
+        <button class="btn btn-info" onclick="alert('On windows, open windows explorer and navigate to the directory where your MS2 and MS3 files are located. \n\nHold shift as you right click on the directory, and then select from the menu that pops up \'copy as path\'. That copies the path to your clipboard. Paste that value into this text box, and remove the quotation marks.')">?</button>
+      </span>
+    </div>
+
+    <br>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">MZ Cutoff</span>
+      <input type="text" class="form-control" id="mzCutoff">
+      <span class="input-group-btn">
+        <button class="btn btn-info" onclick="alert('This is the value to merge the MS2/MS3 files at')">?</button>
+      </span>
+    </div>
+
+    <button id="tab_6_button" class="btn btn-primary">Click to submit</button>
+
+  </div>
+
+  <div style="float:right;width:30%;height:88vh;border-style:solid;border-width:5px;overflow:scroll;padding:10px" id="rightSide">
+    <h1>Progress</h1>
+    <ul>
+    </ul>
+  </div>
+  
+  <script>$('#tab_6_button').click(function(e){
+
+    console.log("clicked");
+    $(this).attr('disabled', true);
+    // $(this).prop('value', "stevenson");
+    $(this).text("Processing...")
+    
+    var that = $(this);
+    var leftSide = that.parent();
+
+    var inputs = leftSide.find('input, select');
+    
+    var serializedForm = serializeForm(inputs);
+    console.log(serializedForm);
+
+    var rightSide = $(this).parent().siblings("#rightSide").first()
+    rightSide.append("<div><br>Starting ms2/ms3 file merge.  Status available in terminal window.</div>")
+    var startTime = new Date();
+
+    async.waterfall([
+      function callCountProtein(callback){
+        $.ajax({
+          type:"POST",
+          url:"mergeMS2MS3",
+          data:serializedForm,
+          success : function(result){
+            console.log("MS2/MS3 merge complete.");
+            console.log(result);
+            rightSide.append("<h3 style=color:green>Merge complete. </h3><br><div>" + result + "</div>");
+            return callback(null);
+          },
+          error: function(response, textStatus, HTTPError){
+            console.log(response.responseText);
+            rightSide.append('<h3 style="color:red">' + response.responseText + '</h3>');
+            return callback("error: " + response.responseText);
+          }
+        })
+      }
+    ],function(err, result){
+      console.log("in final waterfall catcher");
+      if (err){
+        alert(err)
+      }
+      var difference = new Date() - startTime;
+      rightSide.append("<div>MILLISECONDS TAKEN: " + difference + " <div>")
+      that.attr('disabled', false);
+      that.text('Click to submit');
+    })
+  })</script>
+</div>

@@ -21,6 +21,7 @@ import pandas as pd
 import re
 import logging
 from decimal import Decimal
+from SCRIPTS_FOR_GUI import mergemgf
 
 TIME_FORMAT =  "%Y-%m-%d_%H-%M-%S"
 
@@ -266,6 +267,17 @@ def plainCountProteins():
 	plain_parsed_file = request.form['plainParseReadPath']
 	count_uniques = request.form['countUniques']
 	result, error = plaincount.count_proteins(plain_parsed_file, count_uniques)
+	if not error:
+		return result, 400
+	else:
+		return result
+
+@app.route("/mergeMS2MS3", methods=['POST'])
+@nocache
+def mergeMS2MS3():
+	ms2_ms3_directory = request.form['ms2ms3directory']
+	mz_cutoff = request.form['mzCutoff']
+	result, error = mergemgf.merge_ms2_ms3(ms2_ms3_directory, mz_cutoff)
 	if not error:
 		return result, 400
 	else:
