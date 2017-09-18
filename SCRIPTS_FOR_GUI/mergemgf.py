@@ -7,7 +7,9 @@ import sys
 TIME_FORMAT = "%Y-%m-%d_%H-%M-%S"
 FUZZY_RT_VALUE = 5
 
-def merge_ms2_ms3(ms2_ms3_directory, mz_cutoff):
+def merge_ms2_ms3(ms2_ms3_directory, mz_cutoff_string):
+
+	mz_cutoff = float(mz_cutoff_string)
 
 	if not os.path.isdir(ms2_ms3_directory):
 		print "Please check that you are passing in the MS2/MS3 directory."
