@@ -47,6 +47,13 @@ def validate_error_input(error_input):
 	else:
 		return False
 
+def validate_float(number):
+    try:
+        float(number)
+        return True
+    except ValueError:
+        return False
+
 def multiple_select_to_two_arrays(unacceptable_mods):
 	long_string = ','.join(unacceptable_mods)
 	good_array = long_string.split(',')

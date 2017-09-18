@@ -275,9 +275,16 @@ def plainCountProteins():
 @app.route("/mergeMS2MS3", methods=['POST'])
 @nocache
 def mergeMS2MS3():
+	
+	valid, validation_error = validation.validate_tab_6(request.form)
+	if not valid:
+		return validation_error, 500
+
 	ms2_ms3_directory = request.form['ms2ms3directory']
 	mz_cutoff = request.form['mzCutoff']
+
 	result, error = mergemgf.merge_ms2_ms3(ms2_ms3_directory, mz_cutoff)
+
 	if not error:
 		return result, 400
 	else:

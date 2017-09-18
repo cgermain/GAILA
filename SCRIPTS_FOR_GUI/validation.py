@@ -263,6 +263,31 @@ def validate_tab_4(form):
 		print "error: " + str(e)
 		return False, "Missing form input"
 
+def validate_tab_6(form):
+
+	try:
+		ms2ms3directory = form['ms2ms3directory']
+		mz_cutoff = form['mzCutoff']
+
+		if (not ms2ms3directory) or (not mz_cutoff):
+			return False, "Field is missing"
+	except Exception as e:
+		return False, "Field is missing"
+
+	try:
+		if not os.path.isdir(str(ms2ms3directory)):
+			print "ms2ms3 directory path is not a directory"
+			return False, "ms2ms3 directory path is not a directory"
+		if not validate_float(mz_cutoff):
+			print "mz cutoff value is inavlid"
+			return False, "mz cutoff value is invalid"
+	except Exception as e:
+		print e
+		return False, "Error validating form"
+
+	return True, None
+
+
 def validate_check_for_final_product(form):
 	if form_contains_dropbox_path(form):
 		return False, "A path you entered appears to be a Dropbox folder. Dropbox has been know to create problems with these scripts. Please move your data to a non-synced folder and try again"
