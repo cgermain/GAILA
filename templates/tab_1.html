@@ -84,6 +84,14 @@
         </span>
       </div>
     </div>
+    <br>
+    <div class="input-group" style="margin: 1%">
+        <span class="input-group-addon" id="basic-addon1">Output directory</span>
+        <input type="text" class="form-control" id="outDirPath">
+        <span class="input-group-btn">
+          <button class="btn btn-info" onclick="alert('On windows, open windows explorer and navigate to your output directory. Clicking on your url bar will highlight the directory path, copy paste that into this text box.  Will default to the IDEAA/Archive folder.')">?</button>
+        </span>
+      </div>
 
     <br>
     <button id="tab_1_button" class="btn btn-primary">Click to submit</button>
@@ -98,20 +106,6 @@
     console.log("Yo");
     console.log(e.target.value);
     var value = e.target.value;
-    // if (value == 'only_extract'){
-    //   console.log("value is only_extract");
-    //   $("#form_elements_if_only_extract").show();
-    //   $("#form_elements_if_extract_and_select").hide();
-    // }
-    // else if (value == 'extract_and_select'){
-    //   console.log("value is extract_and_select");
-    //   $("#form_elements_if_only_extract").hide();
-    //   $("#form_elements_if_extract_and_select").show();
-    // }
-    // else{
-    //   alert("Something is funky, ask sam whats up");
-    // }
-    // Not necessary any more, but might be later, so I'll keep it.
   });
   </script>
   <script>

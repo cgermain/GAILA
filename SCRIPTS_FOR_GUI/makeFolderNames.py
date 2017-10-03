@@ -91,30 +91,23 @@ def construct_merged_gpm_reporter_filename(form):
 
 
 def rename_folders(form, timestamp):
-	print "in rename"
 	if form['mgfOperationToPerform'] == '0':
-		print "in first if"
 		#tab 1 - select reporters
 		if 'xmlReadPath' not in form:
-			mgf_folder_name = construct_reporter_folder_path(form)
-			new_mgf_folder_name = join(form['mgfReadDirPath'], "rep_sel_"+timestamp, '')
-			os.rename(mgf_folder_name, new_mgf_folder_name)
+			reporter_folder_name = construct_reporter_folder_path(form)
+			if form['outDirPath'] == '':
+				new_reporter_folder_name = join(sys.path[0], "Archive", "rep_sel_"+timestamp, '')
+			else:
+				new_reporter_folder_name = join(form['outDirPath'], "rep_sel_"+timestamp, '')
+			shutil.copytree(mgf_folder_name, new_mgf_folder_name)
+			shutil.rmtree(mgf_folder_name)
 			return
 		#tab 2 - use pre extracted reporters
 		else:
+			#TODO check output directory
 			# don't rename
 			return
 	else:
-		#tab 1 - select reporters and make mgf
-		if 'xmlReadPath' not in form:
-			mgf_folder_name = construct_selected_mgf_path(form)
-			new_mgf_folder_name = join(form['mgfReadDirPath'], "mgf_sel_"+timestamp, '')
-			os.rename(mgf_folder_name, new_mgf_folder_name)
-			reporter_folder_name = construct_reporter_folder_path(form)
-			new_reporter_folder_name = join(form['mgfReadDirPath'], "rep_sel_"+timestamp, '')
-			os.rename(reporter_folder_name, new_reporter_folder_name)
-			return
-
 		#tab 4 - plain parse & tab 2 - use raw MGF files
 		reporter_folder_name = ''
 		new_reporter_folder_name = ''
@@ -129,23 +122,30 @@ def rename_folders(form, timestamp):
 			mgf_folder_name = construct_selected_mgf_path(form)
 			reporter_folder_name = construct_reporter_folder_path(form)
 			output_suffix = "rep_sel_"
-
+			print "in rename"
 			if form['outDirPath'] == '':
 				new_mgf_folder_name = join(sys.path[0], "Archive", "mgf_sel_"+timestamp, '')
 			else:
 				new_mgf_folder_name = join(form['outDirPath'], "mgf_sel_"+timestamp, '')
 
-			if form['removeMGF'] == '0':
-				shutil.rmtree(mgf_folder_name)
-			else:
+			#check if in tab 1, if so, move the MGF
+			if 'xmlReadPath' not in form:
 				shutil.copytree(mgf_folder_name, new_mgf_folder_name)
 				shutil.rmtree(mgf_folder_name)
 
-		if form['removeReporters'] == '0':
-			reporter_folder_files=os.listdir(reporter_folder_name)
-			for filename in reporter_folder_files:
-				if filename.endswith(".reporter"):
-					os.remove(join(reporter_folder_name, filename))
+			elif 'removeMGF' in form:
+				if form['removeMGF'] == '0':
+					shutil.rmtree(mgf_folder_name)
+				else:
+					shutil.copytree(mgf_folder_name, new_mgf_folder_name)
+					shutil.rmtree(mgf_folder_name)
+
+		if 'removeReporters' in form:
+			if form['removeReporters'] == '0':
+				reporter_folder_files=os.listdir(reporter_folder_name)
+				for filename in reporter_folder_files:
+					if filename.endswith(".reporter"):
+						os.remove(join(reporter_folder_name, filename))
 		
 		#write to output directory if one given, else write to IDEAA/Archive/
 		if form['outDirPath'] == '':
