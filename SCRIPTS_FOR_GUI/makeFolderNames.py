@@ -95,12 +95,12 @@ def rename_folders(form, timestamp):
 		#tab 1 - select reporters
 		if 'xmlReadPath' not in form:
 			reporter_folder_name = construct_reporter_folder_path(form)
-			if form['outDirPath'] == '':
+			if form['outDirPath'] == 'Default IDEAA Archive':
 				new_reporter_folder_name = join(sys.path[0], "Archive", "rep_sel_"+timestamp, '')
 			else:
 				new_reporter_folder_name = join(form['outDirPath'], "rep_sel_"+timestamp, '')
-			shutil.copytree(mgf_folder_name, new_mgf_folder_name)
-			shutil.rmtree(mgf_folder_name)
+			shutil.copytree(reporter_folder_name, new_reporter_folder_name)
+			shutil.rmtree(reporter_folder_name)
 			return
 		#tab 2 - use pre extracted reporters
 		else:
@@ -122,8 +122,7 @@ def rename_folders(form, timestamp):
 			mgf_folder_name = construct_selected_mgf_path(form)
 			reporter_folder_name = construct_reporter_folder_path(form)
 			output_suffix = "rep_sel_"
-			print "in rename"
-			if form['outDirPath'] == '':
+			if form['outDirPath'] == 'Default IDEAA Archive':
 				new_mgf_folder_name = join(sys.path[0], "Archive", "mgf_sel_"+timestamp, '')
 			else:
 				new_mgf_folder_name = join(form['outDirPath'], "mgf_sel_"+timestamp, '')
@@ -148,7 +147,7 @@ def rename_folders(form, timestamp):
 						os.remove(join(reporter_folder_name, filename))
 		
 		#write to output directory if one given, else write to IDEAA/Archive/
-		if form['outDirPath'] == '':
+		if form['outDirPath'] == 'Default IDEAA Archive':
 			new_reporter_folder_name = join(sys.path[0], "Archive", output_suffix+timestamp, '')
 		else:
 			new_reporter_folder_name = join(form['outDirPath'], output_suffix+timestamp, '')
