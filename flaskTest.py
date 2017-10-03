@@ -378,7 +378,7 @@ def writeSummary():
 
 			os.remove(mgf_txt_write_dir_path+'mgf_summary.txt')
 
-	makeFolderNames.rename_folders(request.form)
+	makeFolderNames.rename_folders(request.form, timestamp)
 	return "Summary complete."
 
 def clean_up_after_tab_2():
