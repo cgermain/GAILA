@@ -22,6 +22,7 @@ import re
 import logging
 from decimal import Decimal
 from SCRIPTS_FOR_GUI import mergemgf
+import sys
 
 TIME_FORMAT =  "%Y-%m-%d_%H-%M-%S"
 
@@ -42,6 +43,10 @@ def nocache(f):
 @app.route("/")
 @nocache
 def main():
+	#generate the default Archive folder on first run if none exists
+	if not os.path.isdir(os.path.join(sys.path[0], "Archive")):
+		os.makedirs(os.path.join(sys.path[0], "Archive"))
+	
 	if not utility.inverse_array_is_correct():
 		true_inverse_files = utility.get_true_inverse_array()
 		inverse_file_array = utility.get_inverse_files_array()
