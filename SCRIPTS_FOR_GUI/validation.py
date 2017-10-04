@@ -290,10 +290,34 @@ def validate_tab_4(form):
 def validate_tab_6(form):
 
 	try:
+		plain_parse_read_path = form['plainParseReadPath']
+
+		output_dir_path = form['outDirPath']
+		if (not plain_parse_read_path) or (not output_dir_path):
+			return False, "Field is missing"
+	except Exception as e:
+		return False, "Field is missing"
+
+	try:
+		if not os.path.isfile(str(plain_parse_read_path)):
+			print "plain parse file not found"
+			return False, "plain parse file not found"
+		if output_dir_path != "Default IDEAA Archive" and not os.path.isdir(output_dir_path):
+			print "Output directory is not a correct path"
+			return False, "Output directory is not a correct path"
+	except Exception as e:
+		print e
+		return False, "Error validating form"
+
+	return True, None
+
+def validate_tab_5(form):
+
+	try:
 		ms2ms3directory = form['ms2ms3directory']
 		mz_cutoff = form['mzCutoff']
-
-		if (not ms2ms3directory) or (not mz_cutoff):
+		output_dir_path = form['outDirPath']
+		if (not ms2ms3directory) or (not mz_cutoff) or (not output_dir_path):
 			return False, "Field is missing"
 	except Exception as e:
 		return False, "Field is missing"
@@ -305,12 +329,14 @@ def validate_tab_6(form):
 		if not validate_float(mz_cutoff):
 			print "mz cutoff value is inavlid"
 			return False, "mz cutoff value is invalid"
+		if output_dir_path != "Default IDEAA Archive" and not os.path.isdir(output_dir_path):
+			print "Output directory is not a correct path"
+			return False, "Output directory is not a correct path"
 	except Exception as e:
 		print e
 		return False, "Error validating form"
 
 	return True, None
-
 
 def validate_check_for_final_product(form):
 	if form_contains_dropbox_path(form):

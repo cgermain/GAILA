@@ -266,9 +266,17 @@ def createInverseFiles():
 @app.route("/plainCountProteins", methods=['POST'])
 @nocache
 def plainCountProteins():
+
+	valid, validation_error = validation.validate_tab_6(request.form)
+	if not valid:
+		return validation_error, 500
+
 	plain_parsed_file = request.form['plainParseReadPath']
 	count_uniques = request.form['countUniques']
-	result, error = plaincount.count_proteins(plain_parsed_file, count_uniques)
+	timestamp = request.form['timestamp']
+	output_dir = request.form['outDirPath']
+
+	result, error = plaincount.count_proteins(plain_parsed_file, count_uniques,output_dir, timestamp)
 	if not error:
 		return result, 400
 	else:
@@ -278,14 +286,16 @@ def plainCountProteins():
 @nocache
 def mergeMS2MS3():
 	
-	valid, validation_error = validation.validate_tab_6(request.form)
+	valid, validation_error = validation.validate_tab_5(request.form)
 	if not valid:
 		return validation_error, 500
 
 	ms2_ms3_directory = request.form['ms2ms3directory']
 	mz_cutoff = request.form['mzCutoff']
+	output_dir = request.form['outDirPath']
+	timestamp = request.form['timestamp']
 
-	result, error = mergemgf.merge_ms2_ms3(ms2_ms3_directory, mz_cutoff)
+	result, error = mergemgf.merge_ms2_ms3(ms2_ms3_directory, mz_cutoff, output_dir, timestamp)
 
 	if not error:
 		return result, 400

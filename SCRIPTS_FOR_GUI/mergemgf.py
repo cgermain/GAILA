@@ -7,7 +7,7 @@ import sys
 TIME_FORMAT = "%Y-%m-%d_%H-%M-%S"
 FUZZY_RT_VALUE = 5
 
-def merge_ms2_ms3(ms2_ms3_directory, mz_cutoff_string):
+def merge_ms2_ms3(ms2_ms3_directory, mz_cutoff_string, output_dir, timestamp):
 
 	mz_cutoff = float(mz_cutoff_string)
 
@@ -19,6 +19,9 @@ def merge_ms2_ms3(ms2_ms3_directory, mz_cutoff_string):
 	filenames = listdir_fullpath(ms2_ms3_directory)
 	mgf_files = [filename for filename in filenames if os.path.isfile(filename) and filename.endswith(".mgf")]
 
+	if output_dir == 'Default IDEAA Archive':
+		output_dir = os.path.join(sys.path[0], "Archive", "")
+	
 	#the chunker and merging require an even number of MGF files
 	if len(mgf_files) % 2 == 0:
 		#mgf_files.sort(key=str.lower)
@@ -28,8 +31,6 @@ def merge_ms2_ms3(ms2_ms3_directory, mz_cutoff_string):
 	else:
 		print "Directory must contain an even number of MGF files to merge."
 		return
-
-	timestamp = datetime.now().strftime(TIME_FORMAT)
 
 	#run through the pairs once to make sure the MS2/MS3 filenames match
 	for ms2_ms3_pair in chunker(mgf_files,2):
@@ -43,7 +44,7 @@ def merge_ms2_ms3(ms2_ms3_directory, mz_cutoff_string):
 			print "Merged MS2/MS3 file already exists in directory."
 			print "Remove and rerun."
 			return "Merged MS2/MS3 file already exists in directory.", 0
-		if os.path.isdir(generate_output_directory_name(ms2_ms3_pair[0], timestamp)):
+		if os.path.isdir(generate_output_directory_name(ms2_ms3_pair[0], output_dir, timestamp)):
 			print "Merged output directory already exists."
 			print "Remove and rerun."
 			return "Merged output directory already exists.", 0
@@ -52,7 +53,7 @@ def merge_ms2_ms3(ms2_ms3_directory, mz_cutoff_string):
 		#execute the merge and save the new MGF file for each MS2/MS3 pair
 		for ms2_ms3_pair in chunker(mgf_files,2):
 			merge_result = merge_mgf_files(ms2_ms3_pair[0], ms2_ms3_pair[1], mz_cutoff)
-			save_mgf_output(merge_result, ms2_ms3_pair[0], ms2_ms3_directory, timestamp)
+			save_mgf_output(merge_result, ms2_ms3_pair[0], output_dir, timestamp)
 			print_merge_stats(merge_result)
 			del merge_result #attempt to free up memory
 	except:
@@ -170,13 +171,13 @@ def output_file_exists(chunk):
 	except:
 		return True
 
-def save_mgf_output(merge_result, ms2_file, ms2_ms3_directory, timestamp):
+def save_mgf_output(merge_result, ms2_file, output_dir, timestamp):
 	#create merged directory and save renamed file out to it
-	output_directory = generate_output_directory_name(ms2_file, timestamp)
+	output_directory = generate_output_directory_name(ms2_file, output_dir, timestamp)
 	if not os.path.isdir(output_directory):
 		os.makedirs(output_directory)
 
-	merged_mgf_filename = generate_output_merged_mgf_name(ms2_file, timestamp)
+	merged_mgf_filename = generate_output_merged_mgf_name(ms2_file, output_dir, timestamp)
 	print "\nWriting merged MGF: " + merged_mgf_filename
 	mgf.write(merge_result["merged_mgf"], output=merged_mgf_filename)
 	
@@ -185,15 +186,13 @@ def print_merge_stats(merge_result):
 	print "MS3 Count  : " + str(merge_result["ms3_count"])
 	print "Merged Count: " + str(merge_result["merged_count"])
 
-def generate_output_directory_name(ms2_file, timestamp):
-	directory_path = os.path.dirname(ms2_file)
-	output_directory = os.path.join(directory_path, "merged_MS2_MS3_" + timestamp)
+def generate_output_directory_name(ms2_file, output_dir, timestamp):
+	output_directory = os.path.join(output_dir, "merged_MS2_MS3_" + timestamp)
 	return output_directory
 
-def generate_output_merged_mgf_name(ms2_file, timestamp):
-	directory_path = os.path.dirname(ms2_file)
+def generate_output_merged_mgf_name(ms2_file, output_dir, timestamp):
 	base_name = os.path.basename(ms2_file).split("MS2")[0]
-	output_directory = generate_output_directory_name(ms2_file, timestamp)
+	output_directory = generate_output_directory_name(ms2_file, output_dir, timestamp)
 	merged_mgf_filename = os.path.join(output_directory, base_name + "_MS2_MS3.mgf")
 	return merged_mgf_filename
 

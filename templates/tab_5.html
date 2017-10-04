@@ -9,7 +9,6 @@
       </span>
     </div>
 
-    <br>
     <div class="input-group" style="margin: 1%">
       <span class="input-group-addon" id="basic-addon1">Peptide-spectrum-matches to count</span>
       <select class='form-control' id="countUniques">
@@ -20,7 +19,16 @@
         <button class="btn btn-info" onclick="alert('Option to perform reporter-ion mass-recalibration before selecting runs. Provides more accuracy as a slight tradeoff for speed')">?</button>
       </span> -->
     </div>
+    <br>
 
+    <div class="input-group" style="margin: 1%">
+        <span class="input-group-addon" id="basic-addon1">Output directory</span>
+        <input type="text" class="form-control" id="outDirPath" value="Default IDEAA Archive">
+        <span class="input-group-btn">
+          <button class="btn btn-info" onclick="alert('On windows, open windows explorer and navigate to your output directory. Clicking on your url bar will highlight the directory path, copy paste that into this text box.  Will default to the IDEAA/Archive folder.')">?</button>
+        </span>
+      </div>
+      <br>
     <button id="tab_5_button" class="btn btn-primary">Click to submit</button>
 
   </div>
@@ -43,7 +51,7 @@
 
     var inputs = leftSide.find('input, select');
     
-    var serializedForm = serializeForm(inputs);
+    var serializedForm = serializeForm(inputs, getTimestamp());
     console.log(serializedForm);
 
     var rightSide = $(this).parent().siblings("#rightSide").first()

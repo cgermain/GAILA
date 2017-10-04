@@ -5,7 +5,7 @@ from datetime import datetime
 TIME_FORMAT = "%Y-%m-%d_%H-%M-%S"
 HEADER = ("Filename", "Protein", "Gene Name", "Count")
 
-def count_proteins(plain_parse_file, unique_protein_option):
+def count_proteins(plain_parse_file, unique_protein_option, output_dir, timestamp):
 	#file_tree[filename][protein][gene_name] = count
 	file_tree = defaultdict(lambda:defaultdict(lambda:defaultdict(lambda:0)))
 
@@ -14,6 +14,9 @@ def count_proteins(plain_parse_file, unique_protein_option):
 
 	total_line_count = 0
 	current_line_count = 0
+
+	if output_dir == 'Default IDEAA Archive':
+		output_dir = os.path.join(sys.path[0], "Archive", "")
 
 	try:
 		total_line_count = buffered_line_count(plain_parse_file)
@@ -51,8 +54,10 @@ def count_proteins(plain_parse_file, unique_protein_option):
 	except:
 		return "Error in count proteins while reading.", 0
 
-	timestamp = datetime.now().strftime(TIME_FORMAT)
-	out_filename = os.path.join(base_directory, gpm_filename+"_count_"+timestamp+".txt")
+	if not os.path.isdir(os.path.join(output_dir, "protein_count_"+timestamp)):
+		os.makedirs(os.path.join(output_dir, "protein_count_"+timestamp))
+		
+	out_filename = os.path.join(output_dir, "protein_count_"+timestamp, gpm_filename+"_count_"+timestamp+".txt")
 	print "\n"
 	print "Writing..."
 	try:
