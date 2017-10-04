@@ -91,26 +91,6 @@
     <br>
 
     <div class="input-group" style="margin: 1%">
-      <span class="input-group-addon" id="basic-addon1">Remove temporary MGF files</span>
-      <select class='form-control' id="removeMGF">
-        <option value="0">Yes, remove the temporary files</option>
-        <option value="1">Keep the temporary files</option>
-      </select>
-      <span class="input-group-btn">
-        <button class="btn btn-info" onclick="alert('Remove MGF files created during processing')">?</button>
-      </span>
-    </div>
-    <div class="input-group" style="margin: 1%">
-      <span class="input-group-addon" id="basic-addon1">Remove temporary reporter files</span>
-      <select class='form-control' id="removeReporters">
-        <option value="0">Yes, remove the temporary files</option>
-        <option value="1">Keep the temporary files</option>
-      </select>
-      <span class="input-group-btn">
-        <button class="btn btn-info" onclick="alert('Remove reporter files created during processing')">?</button>
-      </span>
-    </div>
-    <div class="input-group" style="margin: 1%">
         <span class="input-group-addon" id="basic-addon1">Output directory</span>
         <input type="text" class="form-control" id="outDirPath" value="Default IDEAA Archive">
         <span class="input-group-btn">
@@ -198,7 +178,7 @@
           // contentType: "application/json",
           success : function(result){
             console.log(result);
-            rightSide.append('<h3 style="color:green">XML parsed successfully. You can find the parsed xml the specific output folder.</h3>');
+            rightSide.append('<h3 style="color:green">XML parsed successfully. You can find the parsed xml the specified output folder.</h3>');
             writeSummaryToFile(rightSide, serializedForm, function(err){});
             return callback(null);
           },
