@@ -275,6 +275,11 @@ def validate_tab_4(form):
 		if not str(output_dir_path) == 'Default IDEAA Archive' and not os.path.isdir(str(output_dir_path)):
 			print "Output directory is not a correct path"
 			return False, "Output directory is not a correct path"
+
+		if output_dir_path == mgf_read_dir_path:
+			print "Output directory can not be MGF directory"
+			return False, "Output directory can not be MGF directory"
+
 		return True, None
 
 	except Exception as e:
