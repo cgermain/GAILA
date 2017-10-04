@@ -53,8 +53,19 @@
 	  	});
 	  })
 	  </script>
+	  
 	  <script type="text/javascript">
-	  function serializeForm(elem){
+	  function getTimestamp(){
+	  	var timestamp = new Date();
+    	timestamp.setMinutes(timestamp.getMinutes() - timestamp.getTimezoneOffset());
+   		timestamp = timestamp.toISOString().slice(0,19).replace(/-/g,"-").replace(/T/g,"_").replace(/:/g,"-");
+   		return timestamp;
+	  };
+	  </script>
+
+	  <script type="text/javascript">
+	  //adding the timestamp to every form click
+	  function serializeForm(elem, timestamp){
 	  	// return;
 	  	var toReturn = {};
 	  	$.each(elem, function(i, e){
@@ -67,6 +78,7 @@
 	  		}
 	  		toReturn[id] = jqe.val();
 	  	})
+	  	toReturn["timestamp"] = timestamp;
 	  	return toReturn;
 	  	//$.each($('input, select'), function(e,f){console.log($(f).val())}) is a good start. That prints all the values.
 	  };

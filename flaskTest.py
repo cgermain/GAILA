@@ -95,10 +95,11 @@ def plain_parse_xtandem_combine_with_mgf():
 	geneFile = request.form['geneFile']
 	should_use_unacceptable = request.form['assignUnacceptableModifications']
 	unacceptable_mods = request.form.getlist('unacceptableMods[]')
+	timestamp = request.form['timestamp']
 
 	mgf_txt_foldername = makeFolderNames.construct_plain_parse_reporter_folder_path(request.form)
 
-	a = call_xml_parser.plain_parse_xtandem_combine_with_mgf(xml_read_path, log_error_threshold, geneFile, mgf_txt_foldername, unacceptable_mods)
+	a = call_xml_parser.plain_parse_xtandem_combine_with_mgf(xml_read_path, log_error_threshold, geneFile, mgf_txt_foldername, unacceptable_mods, timestamp)
 
 	if a:
 		print "Error in tab 4. Trying cleanup now, either way returning error"
@@ -122,6 +123,7 @@ def tab_2_helper_function():
 	should_use_unacceptable = request.form['assignUnacceptableModifications']
 	unacceptable_mods = request.form.getlist('unacceptableMods[]')
 	normalize_intensities = request.form.getlist('normalizeIntensities')
+	timestamp = request.form['timestamp']
 
 	if request.form['mgfOperationToPerform'] == '1':
 		mgf_txt_foldername = makeFolderNames.construct_reporter_folder_path(request.form)
@@ -136,7 +138,7 @@ def tab_2_helper_function():
 	if should_use_unacceptable == "1":
 		unacceptable_mods = []
 
-	a = call_xml_parser.parse_xtandem_combine_with_mgf(xml_read_path, log_error_threshold, reporter_type, geneFile, mgf_txt_foldername, unacceptable_mods, normalize_intensities)
+	a = call_xml_parser.parse_xtandem_combine_with_mgf(xml_read_path, log_error_threshold, reporter_type, geneFile, mgf_txt_foldername, unacceptable_mods, normalize_intensities, timestamp)
 
 	if a:
 		print "Error in tab 2. Cleaning up."
@@ -293,7 +295,7 @@ def mergeMS2MS3():
 @app.route("/writeSummary", methods=['POST'])
 @nocache
 def writeSummary():
-	timestamp = datetime.now().strftime(TIME_FORMAT)
+	timestamp = request.form['timestamp']
 	mgf_intensity_regex = re.compile("MS1 intensity: (.+)")
 	mgf_filename_regex = re.compile("(.+.mgf)")
 
@@ -345,6 +347,8 @@ def writeSummary():
 				continue
 			elif option == "mzError" and request.form["performRecalibration"] == "1":
 				continue
+			elif option == "timestamp":
+				continue
 			else:
 				out_file.write(get_detailed_summary(option, value))
 
@@ -378,7 +382,7 @@ def writeSummary():
 
 			os.remove(mgf_txt_write_dir_path+'mgf_summary.txt')
 
-	makeFolderNames.rename_folders(request.form, timestamp)
+	makeFolderNames.rename_folders(request.form)
 	return "Summary complete."
 
 def clean_up_after_tab_2():

@@ -137,8 +137,8 @@
     var that = $(this);
     var leftSide = that.parent();
     var inputs = leftSide.find('input, select');
-    
-    var serializedForm = serializeForm(inputs);
+
+    var serializedForm = serializeForm(inputs, getTimestamp());
 
     var rightSide = $(this).parent().siblings("#rightSide").first()
     rightSide.append("<div>Executing Function Now</div>")

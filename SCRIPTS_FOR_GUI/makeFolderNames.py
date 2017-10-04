@@ -68,7 +68,7 @@ def construct_reporter_folder_path(form):
 
 
 def construct_short_reporter_folder_path(form):
-	timestamp = datetime.now().strftime(TIME_FORMAT)
+	timestamp = form['timestamp']
 	fullpath = join(form['mgfReadDirPath'], "ReporterSelect_"+timestamp , "")
 	return fullpath
 
@@ -90,7 +90,8 @@ def construct_merged_gpm_reporter_filename(form):
 	return outfile_name
 
 
-def rename_folders(form, timestamp):
+def rename_folders(form):
+	timestamp = form['timestamp']
 	if form['mgfOperationToPerform'] == '0':
 		#tab 1 - select reporters
 		if 'xmlReadPath' not in form:
@@ -103,9 +104,19 @@ def rename_folders(form, timestamp):
 			shutil.rmtree(reporter_folder_name)
 			return
 		#tab 2 - use pre extracted reporters
+		#TODO - timestamp work was for here to filter out old results
 		else:
-			#TODO check output directory
-			# don't rename
+			if form['outDirPath'] == 'Default IDEAA Archive':
+				new_mgf_folder_name = join(sys.path[0], "Archive", "mgf_sel_"+timestamp, '')
+			else:
+				new_mgf_folder_name = join(form['outDirPath'], "mgf_sel_"+timestamp, '')
+
+			if form['removeMGF'] == '0':
+				shutil.rmtree(mgf_folder_name)
+			else:
+				shutil.copytree(mgf_folder_name, new_mgf_folder_name)
+				shutil.rmtree(mgf_folder_name)
+
 			return
 	else:
 		#tab 4 - plain parse & tab 2 - use raw MGF files

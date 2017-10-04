@@ -152,7 +152,7 @@
 
     var inputs = leftSide.find('input, select');
     
-    var serializedForm = serializeForm(inputs);
+    var serializedForm = serializeForm(inputs, getTimestamp());
     console.log(serializedForm);
 
     var rightSide = $(this).parent().siblings("#rightSide").first()

@@ -430,7 +430,7 @@ def check_for_selected_xmldir_lineup(selected_mgfdir, xmldir):
 				return False, str(filename) + " does not exist in the selected mgfdir"
 	return True, None
 
-def combine_plain_parsed_xml_mgf(selected_mgfdir, xmldir):
+def combine_plain_parsed_xml_mgf(selected_mgfdir, xmldir, timestamp):
 	try:
 		this_dir = os.path.dirname(os.path.realpath(__file__))	
 
@@ -465,7 +465,6 @@ def combine_plain_parsed_xml_mgf(selected_mgfdir, xmldir):
 				data.to_csv(this_filename,sep='\t',index=False)
 
 		first=1
-		timestamp = datetime.now().strftime(TIME_FORMAT)
 		outfile_name = join(selected_mgfdir, parent_xml_filename + '_' + timestamp + '.txt')
 		with open(outfile_name, 'w') as outfile:
 			for filename in os.listdir(xmldir):
@@ -481,7 +480,7 @@ def combine_plain_parsed_xml_mgf(selected_mgfdir, xmldir):
 		print err
 		return "Error combining xml and mgf in plain parse"
 
-def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize_intensities):
+def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize_intensities, timestamp):
 	try:
 		this_dir = os.path.dirname(os.path.realpath(__file__))
 		#checking reporter ion type
@@ -589,7 +588,6 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 				data.to_csv(this_filename,sep='\t',index=False)
 
 		first=1
-		timestamp = datetime.now().strftime(TIME_FORMAT)
 		outfile_name = join(selected_mgfdir, parent_xml_filename + '_' + timestamp + '.txt')
 		with open(outfile_name, 'w') as outfile:
 			for filename in os.listdir(xmldir):

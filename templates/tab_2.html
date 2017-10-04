@@ -187,15 +187,17 @@
         <button class="btn btn-info" onclick="alert('Remove MGF files created during processing')">?</button>
       </span>
     </div>
-    <div class="input-group" style="margin: 1%">
-      <span class="input-group-addon" id="basic-addon1">Remove temporary reporter files</span>
-      <select class='form-control' id="removeReporters">
-        <option value="0">Yes, remove the temporary files</option>
-        <option value="1">Keep the temporary files</option>
-      </select>
-      <span class="input-group-btn">
-        <button class="btn btn-info" onclick="alert('Remove reporter files created during processing')">?</button>
-      </span>
+    <div id="option_if_RemoveReporters">
+      <div class="input-group" style="margin: 1%">
+        <span class="input-group-addon" id="basic-addon1">Remove temporary reporter files</span>
+        <select class='form-control' id="removeReporters">
+          <option value="0">Yes, remove the temporary files</option>
+          <option value="1">Keep the temporary files</option>
+        </select>
+        <span class="input-group-btn">
+          <button class="btn btn-info" onclick="alert('Remove reporter files created during processing')">?</button>
+        </span>
+      </div>
     </div>
     <div class="input-group" style="margin: 1%">
         <span class="input-group-addon" id="basic-addon1">Output directory</span>
@@ -245,6 +247,18 @@
     }
   });
   </script>
+   <script type="text/javascript">
+  $('div[id="tab_2"]').find("#mgfOperationToPerform").change(function(e){
+    var val = e.target.value;
+    console.log("mgfOperationToPerform is " + val);
+    if (val == "0"){
+      $('div[id="tab_2"]').find("#option_if_RemoveReporters").hide();
+    }
+    else{
+      $('div[id="tab_2"]').find("#option_if_RemoveReporters").show(); 
+    }
+  });
+  </script>
   <script type="text/javascript">
   $('div[id="tab_2"]').find("#mgfOperationToPerform").change(function(e){
     var val = e.target.value;
@@ -260,7 +274,7 @@
       $('div[id="tab_2"]').find('#options_if_not_selecting').show();
     }
     else{
-      alert('Somethings fishy with mgfOperationToPerform, tell Sam Lobel');
+      alert('Somethings fishy with mgfOperationToPerform');
     }
   });
 
@@ -277,7 +291,7 @@
 
     var inputs = leftSide.find('input, select');
     
-    var serializedForm = serializeForm(inputs);
+    var serializedForm = serializeForm(inputs, getTimestamp())
     console.log(serializedForm);
 
     var rightSide = $(this).parent().siblings("#rightSide").first()
