@@ -104,19 +104,23 @@ def rename_folders(form):
 			shutil.rmtree(reporter_folder_name)
 			return
 		#tab 2 - use pre extracted reporters
-		#TODO - timestamp work was for here to filter out old results
+		#filter new results out of previous reporter select folder
 		else:
+			output_suffix = "rep_sel_"
+			previous_reporter_folder_name = form['mgfTxtReadDirPath']
 			if form['outDirPath'] == 'Default IDEAA Archive':
-				new_mgf_folder_name = join(sys.path[0], "Archive", "mgf_sel_"+timestamp, '')
+				new_reporter_folder_name = join(sys.path[0], "Archive", output_suffix+timestamp, '')
 			else:
-				new_mgf_folder_name = join(form['outDirPath'], "mgf_sel_"+timestamp, '')
+				new_reporter_folder_name = join(form['outDirPath'], output_suffix+timestamp, '')
 
-			if form['removeMGF'] == '0':
-				shutil.rmtree(mgf_folder_name)
-			else:
-				shutil.copytree(mgf_folder_name, new_mgf_folder_name)
-				shutil.rmtree(mgf_folder_name)
-
+			previous_reporter_filenames = os.listdir(previous_reporter_folder_name)
+			#copy everything with a new timestamp over
+			for filename in previous_reporter_filenames:
+				if timestamp in filename:
+					if not os.path.exists(new_reporter_folder_name):
+						os.makedirs(new_reporter_folder_name)
+					shutil.copy2(os.path.join(previous_reporter_folder_name,filename), new_reporter_folder_name)
+					os.remove(os.path.join(previous_reporter_folder_name,filename))
 			return
 	else:
 		#tab 4 - plain parse & tab 2 - use raw MGF files
