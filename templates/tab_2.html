@@ -333,7 +333,7 @@
         }
       },
       function parseXML(callback){
-        rightSide.append("<div>Parsing XML file with MGF files</div>");
+        rightSide.append("<div>Parsing XML file with MGF files or pre-selected reporters</div>");
         rightSide.append('<div style="color:blue">Please be patient as this may take a while.  Progress can be viewed in the command line window.</div>');
         $.ajax({
           type:"POST",
@@ -343,7 +343,7 @@
           // contentType: "application/json",
           success : function(result){
             console.log(result);
-            rightSide.append('<h3 style="color:green">XML parsed successfully. You can find the parsed xml in the same folder which stores the selected reporter ion files</h3>');
+            rightSide.append('<h3 style="color:green">XML parsed successfully. You can find the parsed xml in the specified output folder</h3>');
             writeSummaryToFile(rightSide, serializedForm, function(err){});
             return callback(null);
           },

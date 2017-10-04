@@ -198,7 +198,7 @@
           // contentType: "application/json",
           success : function(result){
             console.log(result);
-            rightSide.append('<h3 style="color:green">XML parsed successfully. You can find the parsed xml in the same folder which stores the selected reporter ion files</h3>');
+            rightSide.append('<h3 style="color:green">XML parsed successfully. You can find the parsed xml the specific output folder.</h3>');
             writeSummaryToFile(rightSide, serializedForm, function(err){});
             return callback(null);
           },
