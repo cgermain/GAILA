@@ -590,6 +590,9 @@
     var transformed = {};
     var broken = false;
     _.each(_.keys(serializedFormSection), function(key){
+      if (key=="timestamp"){
+        return;
+      }
       if (broken){
         return;
       }
