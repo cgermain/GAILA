@@ -31,6 +31,13 @@
         {% endif %}
       </select>
     </div>
+    
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">REPORTER INVERSE FILE</span>
+      <select class='form-control' id="reporterInverseFiles">
+      </select>
+    </div>
+
     <div class="input-group" style="margin: 1%">
       <span class="input-group-addon" id="basic-addon1">Minimum Intensity per reporter</span>
       <input type="text" class="form-control" id="minIntensity" value="1000">
@@ -127,6 +134,61 @@
       alert("Issue with calibration options");
     }
   });
+  </script>
+
+  <script type="text/javascript">
+      function inverse_file_update_tab1(e){
+        var val = e.target.value;
+        console.log("inverse update")
+        console.log("reporterIonType value is " + val);
+        $.ajax({
+            type:"POST",
+            url:"reporterIonType",
+            data:{"ionType": val},
+            success : function(result){
+              console.log("Retrieved Ion Types");
+              console.log(result);
+              inverse_files = JSON.parse(result);
+              $('div[id="tab_1"]').find('#reporterInverseFiles').empty();
+              $.each(inverse_files, function(i, filename) {
+                $('div[id="tab_1"]').find('#reporterInverseFiles').append($('<option>').text(filename).attr('inverse_file', filename));
+              });
+            },
+            error: function(response, textStatus, HTTPError){
+              console.log("Error");
+              console.log(response);
+            }
+          })
+      }
+
+        function inverse_file_load_tab1(){
+        var val = $('div[id="tab_1"]').find("#reporterIonType").val();
+        console.log("inverse load")
+        console.log("reporterIonType value is " + val);
+        $.ajax({
+            type:"POST",
+            url:"reporterIonType",
+            data:{"ionType": val},
+            success : function(result){
+              console.log("Retrieved Ion Types");
+              console.log(result);
+              inverse_files = JSON.parse(result);
+              $('div[id="tab_1"]').find('#reporterInverseFiles').empty();
+              $.each(inverse_files, function(i, filename) {
+                $('div[id="tab_1"]').find('#reporterInverseFiles').append($('<option>').text(filename).attr('inverse_file', filename));
+              });
+            },
+            error: function(response, textStatus, HTTPError){
+              console.log("Error");
+              console.log(response);
+            }
+          })
+    }
+  </script>
+
+  <script type="text/javascript">
+    $('div[id="tab_1"]').find("#reporterIonType").change(inverse_file_update_tab1);
+    $(document).ready(inverse_file_load_tab1);
   </script>
 
   <script>

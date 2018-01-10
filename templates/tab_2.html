@@ -105,6 +105,7 @@
       </span>
 
     </div>
+
     <div class="input-group" style="margin: 1%">
       <span class="input-group-addon" id="basic-addon1">REPORTER ION TYPE</span>
       <select class='form-control' id="reporterIonType">
@@ -115,6 +116,13 @@
         {% endif %}
       </select>
     </div>
+
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">REPORTER INVERSE FILE</span>
+      <select class='form-control' id="reporterInverseFiles">
+      </select>
+    </div>
+
     <div class="input-group" style="margin: 1%">
       <span class="input-group-addon" id="basic-addon1">Include spectra peptide expectation &#8804 </span>
       <input type="text" class="form-control" id="logErrorThreshold" value="0.1">
@@ -260,6 +268,7 @@
     }
   });
   </script>
+
   <script type="text/javascript">
   $('div[id="tab_2"]').find("#mgfOperationToPerform").change(function(e){
     var val = e.target.value;
@@ -278,8 +287,63 @@
       alert('Somethings fishy with mgfOperationToPerform');
     }
   });
-
   </script>
+  
+  	<script type="text/javascript">
+	  	function inverse_file_update_tab2(e){
+      	var val = e.target.value;
+      	console.log("inverse update tab2")
+        console.log("reporterIonType value is " + val);
+        $.ajax({
+            type:"POST",
+            url:"reporterIonType",
+            data:{"ionType": val},
+            success : function(result){
+              console.log("Retrieved Ion Types");
+              console.log(result);
+              inverse_files = JSON.parse(result);
+              $('div[id="tab_2"').find('#reporterInverseFiles').empty();
+              $.each(inverse_files, function(i, filename) {
+                $('div[id="tab_2"]').find('#reporterInverseFiles').append($('<option>').text(filename).attr('inverse_file', filename));
+              });
+            },
+            error: function(response, textStatus, HTTPError){
+              console.log("Error");
+              console.log(response);
+            }
+          })
+    	}
+
+        function inverse_file_load_tab2(){
+      	var val = $('div[id="tab_2"]').find("#reporterIonType").val();
+      	console.log("inverse load tab2")
+        console.log("reporterIonType value is " + val);
+        $.ajax({
+            type:"POST",
+            url:"reporterIonType",
+            data:{"ionType": val},
+            success : function(result){
+              console.log("Retrieved Ion Types");
+              console.log(result);
+              inverse_files = JSON.parse(result);
+              $('div[id="tab_2"]').find('#reporterInverseFiles').empty();
+              $.each(inverse_files, function(i, filename) {
+                $('div[id="tab_2"]').find('#reporterInverseFiles').append($('<option>').text(filename).attr('inverse_file', filename));
+              });
+            },
+            error: function(response, textStatus, HTTPError){
+              console.log("Error");
+              console.log(response);
+            }
+          })
+    }
+	</script>
+
+  <script type="text/javascript">
+    $('div[id="tab_2"]').find("#reporterIonType").change(inverse_file_update_tab2);
+    $(document).ready(inverse_file_load_tab2);
+  </script>
+
   <script>$('#tab_2_button').click(function(e){
 
   	console.log("clicked");

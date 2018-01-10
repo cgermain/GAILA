@@ -526,11 +526,6 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 			print "XML doesn't line up"
 			return message
 
-		corr_path = join(this_dir, "inverse_files", reporter_ion_type + "-inv.txt")
-		if not os.path.isfile(corr_path):
-			return "Cannot find inverse file"
-		corr = pd.read_table(corr_path)
-		corr=corr.drop('Unnamed: 0', axis=1)
 		xmldir = join(xmldir,"")
 		parent_xml_filename = os.path.basename(os.path.normpath(xmldir))
 		# if first loop through

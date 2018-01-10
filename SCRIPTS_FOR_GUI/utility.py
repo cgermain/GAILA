@@ -140,6 +140,14 @@ def get_true_inverse_array():
 			inverse_file_array_calculated.append(f)
 	return inverse_file_array_calculated
 
+def get_inverse_filenames_from_ion_type(ion_type):
+	this_dir = os.path.dirname(os.path.realpath(__file__))
+	inverse_filenames = []
+	for f in os.listdir(os.path.join(this_dir, "inverse_files")):
+		if f.startswith(ion_type):
+			inverse_filenames.append(f)
+	return inverse_filenames
+
 def get_inverse_files_array():
 	# I think I need to hardcode this now, considering that people are
 	# going to mess with the files in there.

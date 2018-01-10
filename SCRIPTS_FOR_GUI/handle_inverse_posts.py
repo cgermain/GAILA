@@ -85,6 +85,11 @@ def create_inverse_given_header_and_data(header, data):
 def create_inverse_file(post_obj):
   reporterType = post_obj['reporterType']
   data = post_obj['data']
+  timestamp = post_obj['timestamp']
   header = get_header_for_reporterType(reporterType)
   inverse_string = create_inverse_given_header_and_data(header, data)
-  return inverse_string
+  this_dir = os.path.dirname(os.path.realpath(__file__))
+  inv_path = os.path.join(this_dir, "inverse_files",reporterType+"_"+timestamp+"-inv.txt")
+  with open(inv_path, 'w+') as out_file:
+    out_file.write(inverse_string)
+  return inv_path

@@ -634,7 +634,8 @@
     }
     var stringDataToSend = JSON.stringify({
       reporterType : reporterType.val(),
-      data : transformed
+      data : transformed,
+      timestamp: getTimestamp()
     })
     console.log(stringDataToSend);
     console.log(transformed);
@@ -644,20 +645,20 @@
       contentType: 'application/json; charset=utf-8',
       data: stringDataToSend,
       success : function(result){
-        console.log("good job friend!");
         console.log(result);
+        alert("Inverse filed saved:\n" + result + "\n\nIt will now be selectable under Reporter Inverse File");
         // console.log('bob');
-        var filename = reporterType.val() + "-inv.txt"
-        console.log('filename: ' + filename);
-        var type='text/plain';
-        var blob = new Blob([result], {type : type});
-        var URL = window.URL || window.webkitURL;
-        var downloadUrl = URL.createObjectURL(blob);
-        var a = document.createElement("a");
-        a.href = downloadUrl;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
+        // var filename = reporterType.val() + "-inv.txt"
+        // console.log('filename: ' + filename);
+        // var type='text/plain';
+        // var blob = new Blob([result], {type : type});
+        // var URL = window.URL || window.webkitURL;
+        // var downloadUrl = URL.createObjectURL(blob);
+        // var a = document.createElement("a");
+        // a.href = downloadUrl;
+        // a.download = filename;
+        // document.body.appendChild(a);
+        // a.click();
         console.log('clicked');
 
       },

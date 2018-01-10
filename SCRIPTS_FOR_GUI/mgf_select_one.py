@@ -13,7 +13,7 @@ debug = False
 #all of the initial files have got to be relative to this directory.
 this_dir = os.path.dirname(os.path.realpath(__file__))
 
-def select_only_one(mgf_read_path, mgf_write_path, mgf_txt_write_path, mz_error, reporter_type, min_intensity, min_reporters, should_select):
+def select_only_one(mgf_read_path, mgf_write_path, mgf_txt_write_path, mz_error, reporter_type, inverse_file, min_intensity, min_reporters, should_select):
 	perl_file = 'mgf_select_only_one.pl'
 
 	if os.path.isfile(mgf_txt_write_path):
@@ -22,7 +22,7 @@ def select_only_one(mgf_read_path, mgf_write_path, mgf_txt_write_path, mz_error,
 		return "mgf_write_path is already a file"
 
 	this_dir = os.path.dirname(os.path.realpath(__file__))
-	corr_path = join(this_dir, "inverse_files", reporter_type + "-inv.txt")
+	corr_path = join(this_dir, "inverse_files", inverse_file)
 	if not os.path.isfile(corr_path):
 		return "Cannot find inverse file"
 	corr = pd.read_table(corr_path)
@@ -46,7 +46,7 @@ def select_only_one(mgf_read_path, mgf_write_path, mgf_txt_write_path, mz_error,
 			return 0
 
 
-def select_only_one_recalibrate(mgf_read_path, mgf_write_path, mgf_txt_write_path, mz_error, reporter_type, min_intensity, min_reporters, should_select, recal_mz_error):
+def select_only_one_recalibrate(mgf_read_path, mgf_write_path, mgf_txt_write_path, mz_error, reporter_type, inverse_file, min_intensity, min_reporters, should_select, recal_mz_error):
 	perl_file = 'mgf_select_only_one_with_recalibrate.pl'
 
 	if os.path.isfile(mgf_txt_write_path):
@@ -55,7 +55,7 @@ def select_only_one_recalibrate(mgf_read_path, mgf_write_path, mgf_txt_write_pat
 		return "mgf_write_path is already a file"
 
 	this_dir = os.path.dirname(os.path.realpath(__file__))
-	corr_path = join(this_dir, "inverse_files", reporter_type + "-inv.txt")
+	corr_path = join(this_dir, "inverse_files", inverse_file)
 	if not os.path.isfile(corr_path):
 		return "Cannot find inverse file"
 	corr = pd.read_table(corr_path)

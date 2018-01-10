@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, make_response
+from flask import Flask, render_template, request, make_response, jsonify
 from functools import update_wrapper
 app = Flask(__name__)
 from time import time
@@ -47,11 +47,12 @@ def main():
 	if not os.path.isdir(os.path.join(sys.path[0], "Archive")):
 		os.makedirs(os.path.join(sys.path[0], "Archive"))
 	
-	if not utility.inverse_array_is_correct():
-		true_inverse_files = utility.get_true_inverse_array()
-		inverse_file_array = utility.get_inverse_files_array()
-		return render_template('bad_inverse_names.html', true_inverse_files=true_inverse_files,\
-			inverse_file_array=inverse_file_array)
+	#TODO check inverse directory for proper naming
+	# if not utility.inverse_array_is_correct():
+	# 	true_inverse_files = utility.get_true_inverse_array()
+	# 	inverse_file_array = utility.get_inverse_files_array()
+	# 	return render_template('bad_inverse_names.html', true_inverse_files=true_inverse_files,\
+	# 		inverse_file_array=inverse_file_array)
 
 	return render_template('index_new.html')
 
@@ -164,6 +165,7 @@ def tab_1_helper_function():
 	mgf_read_dir_path = request.form['mgfReadDirPath']
 	mgf_file_name = request.form['mgfFileName']
 	reporter_type = request.form['reporterIonType']
+	inverse_file = request.form['reporterInverseFiles']
 	min_intensity = request.form['minIntensity']
 	min_reporters = request.form['minReporters']
 
@@ -206,7 +208,7 @@ def tab_1_helper_function():
 	if perform_recalibration == '1':
 		error = mgf_select_one.select_only_one_recalibrate(mgf_read_path, \
 			mgf_write_path, mgf_txt_write_path, mz_error_initial_run,\
-			reporter_type, min_intensity, min_reporters, should_select, \
+			reporter_type, inverse_file, min_intensity, min_reporters, should_select, \
 			mz_error_recalibration)
 		if error:
 			print "error in mgf_select_with_recalibrate"
@@ -218,7 +220,7 @@ def tab_1_helper_function():
 		# Can do this because both were validated
 		error = mgf_select_one.select_only_one(mgf_read_path, \
 			mgf_write_path, mgf_txt_write_path, mz_error, reporter_type, \
-			min_intensity, min_reporters, should_select)
+			inverse_file, min_intensity, min_reporters, should_select)
 		if error:
 			print "error in mgf_select_no_recalibrate"
 			return error, 500
@@ -399,6 +401,12 @@ def writeSummary():
 
 	makeFolderNames.rename_folders(request.form)
 	return "Summary complete."
+
+@app.route("/reporterIonType", methods=['POST'])
+@nocache
+def get_inverse_filenames_from_ion_type():
+	ion_type = str(request.form["ionType"])
+	return json.dumps(utility.get_inverse_filenames_from_ion_type(ion_type))
 
 def clean_up_after_tab_2():
 	print "cleaning up possible leaked files if there was an error."

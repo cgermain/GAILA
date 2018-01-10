@@ -34,19 +34,53 @@
 	  <div id="tab_3" name="tab_body" style="display: none"></div>
 	  
 	  <script type="text/javascript">
+
+        function inverse_file_load(tab_number){
+      	var val = $('div[id="tab_1"]').find("#reporterIonType").val();
+      	console.log("inverse load")
+        console.log("reporterIonType value is " + val);
+        $.ajax({
+            type:"POST",
+            url:"reporterIonType",
+            data:{"ionType": val},
+            success : function(result){
+              console.log("Retrieved Ion Types");
+              console.log("from index file load");
+              console.log(result);
+              inverse_files = JSON.parse(result);
+              $('div[id="tab_1"]').find('#reporterInverseFiles').empty();
+              $.each(inverse_files, function(i, filename) {
+                $('div[id="tab_1"]').find('#reporterInverseFiles').append($('<option>').text(filename).attr('inverse_file', filename));
+              });
+            },
+            error: function(response, textStatus, HTTPError){
+              console.log("Error");
+              console.log(response);
+            }
+          })
+    }
+	</script>
+
+	  <script type="text/javascript">
 	  $('[name=tab_body]').each(function(index){
 	  	console.log(index)
 	  	var id = $(this).attr('id');
 	  	$(this).load('/tab', 'name=' + id)
 	  })
+	  	// inverse_file_load("tab_1");
 	  </script>
+
 	  <script type="text/javascript">
+
 	  $('[name=tab_link]').click(function(e){
 	  	console.log('clicked');
 	  	var id = $(this).attr('id')
 	  	$('[name=tab_body]').each(function(index){
 	  		if ($(this).attr('id') == id) {
-					$(this).show();	  			
+					$(this).show();
+					if (id == "tab_2" || id == "tab_1"){
+						inverse_file_load(id);
+					}
 	  		} else {
 	  			$(this).hide();
 	  		}
