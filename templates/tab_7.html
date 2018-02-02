@@ -1,0 +1,194 @@
+<div>
+  <div style="float:left;width:60%" id="leftSide">
+    <h2 style="margin:1%">FAST PARSER</h2>
+    <div id="options_if_selecting">
+      <div class="input-group" style="margin: 1%">
+          <input type="hidden" id="fast_parse" value="1">
+          <input type="hidden" id="mgfOperationToPerform" value="1">
+      </div>
+    </div>
+	  <!-- <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">FULL PATH to MGF DIRECTORY</span>
+      <input type="text" class="form-control" id="mgfReadDirPath">
+    </div> -->
+    <br>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">FULL PATH to XML FILE YOU WANT TO PARSE</span>
+      <input type="text" class="form-control" id="xmlReadPath">
+      <span class="input-group-btn">
+        <button class="btn btn-info" onclick="alert('On windows, open windows explorer and navigate to the directory where your xml file is located. \n\nHold shift as you right click on the file, and then select from the menu that pops up \'copy as path\'. That copies the path to your clipboard. Paste that value into this text box, and remove the quotation marks.')">?</button>
+      </span>
+    </div>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">GENE FILE</span>
+      <select class='form-control' id="geneFile">
+        {% if gene_files %}
+          {% for f in gene_files %}
+            <option value={{f}}>{{f.rpartition('.')[0]}}</option>
+          {% endfor %}
+        {% endif %}
+      </select>
+      <span class="input-group-btn">
+        <button class="btn btn-info" onclick="alert('This file is used to match spectra to specific runs.')">?</button>
+      </span>
+
+    </div>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">Include spectra peptide expectation &#8804 </span>
+      <input type="text" class="form-control" id="logErrorThreshold" value="0.1">
+      <span class="input-group-btn">
+        <button class="btn btn-info" onclick="alert('GPM outputs an match probability for each spectra. This filters out spectra with higher error than the value given. Must be a number between 0 and 1, written in either decimal form or scientific notation (1.3e-5)')">?</button>
+      </span>
+    </div>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">Operation to perform</span>
+      <select class='form-control' id="assignUnacceptableModifications">
+        <option value="0">Flag modifications</option>
+        <option value="1">DO NOT flag modifications</option>
+      </select>
+      <span class="input-group-btn">
+        <button class="btn btn-info" onclick="alert('Indicate flagged modifications on output to allow subsequent filtering of data')">?</button>
+      </span>
+    </div>
+    <div id="options_if_choosing_unacceptable_mods">
+      <div class="input-group" style="margin: 1%">
+        <span class="input-group-addon" id="basic-addon1">Modifications</span>
+        <select class='form-control' id="unacceptableMods" multiple="multiple">
+          <option value="ISOBARIC_LABEL@Y" selected>Reporter Ion modifies with Y-hydroxyl</option>
+          <option value="15.994915@M">Oxidation (M)</option>
+          <option value="31.98983@M" selected>Dioxidation (M)</option>
+          <option value="15.994915@W" selected>Oxidation (W)</option>
+          <option value="31.98983@W" selected>Dioxidation (W)</option>
+          <option value="0.984016@N" selected>Deamidation (N)</option>
+          <option value="0.984016@Q" selected>Deamidation (Q)</option>
+          <option value="21.982@D,21.982@E">Cation:Na (E,D)</option>
+          <option value="37.955885@D,37.955885@E">Cation:K (E,D)</option>
+          <option value="15.994915@P">Hydroxy (P)</option>
+          <option value="79.966331@S">Phospho (S)</option>
+          <option value="79.966331@T">Phospho (T)</option>
+          <option value="79.966331@Y">Phospho (Y)</option>
+          <option value="79.956815@Y">Sulfo (Y)</option>
+          <option value="42.010565@K">Acetyl (K)</option>
+          <option value="43.989829@E">gamma-carboxyl (E)</option>
+          <option value="43.005814@[">Carbamyl (nt)</option>
+          <option value="43.005814@K">Carbamyl (K)</option>
+          <option value="57.021464@[">Carbamidomethyl (nt)</option>
+          <option value="57.021464@K">Carbamidomethyl (K)</option>
+          <option value="27.994915@K">formyl (K)</option>
+          <option value="27.994915@[">formyl (nt)</option>
+          
+        </select>
+        <span class="input-group-btn">
+          <button class="btn btn-info" onclick="alert('On windows, select multiple by holding down ctrl. On mac, hold down command')">?</button>
+        </span>
+      </div>
+    </div>
+    <br>
+
+    <div class="input-group" style="margin: 1%">
+        <span class="input-group-addon" id="basic-addon1">Output directory</span>
+        <input type="text" class="form-control" id="outDirPath" value="Default IDEAA Archive">
+        <span class="input-group-btn">
+          <button class="btn btn-info" onclick="alert('On windows, open windows explorer and navigate to your output directory. Clicking on your url bar will highlight the directory path, copy paste that into this text box.  Will default to the IDEAA/Archive folder.')">?</button>
+        </span>
+      </div>
+      <br>
+
+    <button id="tab_7_button" class="btn btn-primary">Click to submit</button>
+  </div>
+  <div style="float:right;width:30%;height:88vh;border-style:solid;border-width:5px;overflow:scroll;padding:10px" id="rightSide">
+  	<h1>Progress</h1>
+  	<ul>
+  	</ul>
+  </div>
+  
+  <script type="text/javascript">
+  $('div[id="tab_7"]').find("#assignUnacceptableModifications").change(function(e){
+    var val = e.target.value;
+    console.log("unnacceptablemodsvalue is " + val);
+    if (val == "0"){
+      $('div[id="tab_7"]').find("#options_if_choosing_unacceptable_mods").show();
+    }
+    else{
+      $('div[id="tab_7"]').find("#options_if_choosing_unacceptable_mods").hide(); 
+    }
+  });
+  </script>
+  
+  <script>$('#tab_7_button').click(function(e){
+
+  	console.log("clicked");
+  	$(this).attr('disabled', true);
+    // $(this).prop('value', "stevenson");
+    $(this).text("Processing...")
+  	
+    var that = $(this);
+    var leftSide = that.parent();
+
+    var inputs = leftSide.find('input, select');
+    
+    var serializedForm = serializeForm(inputs, getTimestamp());
+    console.log(serializedForm);
+
+    var rightSide = $(this).parent().siblings("#rightSide").first()
+    rightSide.append("<div>Executing Function Now</div>")
+    var startTime = new Date();
+
+    // async.waterfall([
+
+    // ])
+    // if (serializedForm.mgfOperationToPerform == '1'){
+
+    // }
+    async.waterfall([
+      // function checkIfFinalProductExistsAlready4(callback){
+      //   $.ajax({
+      //     type:"POST",
+      //     url:"check_if_gpm_merge_already_exists",
+      //     data:serializedForm,
+      //     success : function(result){
+      //       console.log("final product doesn't already exist");
+      //       console.log(result);
+      //       return callback(null);
+      //     },
+      //     error: function(response, textStatus, HTTPError){
+      //       console.log(response.responseText);
+      //       rightSide.append('<h3 style="color:red">' + response.responseText + '</h3>');
+      //       return callback("error: " + response.responseText);
+      //     }
+      //   })
+      // },
+      function fast_parse(callback){
+        rightSide.append("<div>Parsing XML file with MGF files</div>");
+        rightSide.append('<div style="color:blue">Please be patient as this may take a while.  Progress can be viewed in the command line window.</div>');
+        $.ajax({
+          type:"POST",
+          url:"fast_parse",
+          data : serializedForm,
+          // dataType : 'json',
+          // contentType: "application/json",
+          success : function(result){
+            console.log(result);
+            rightSide.append('<h3 style="color:green">XML parsed successfully without MGF. You can find the parsed xml the specified output folder.</h3>');
+            writeSummaryToFile(rightSide, serializedForm, function(err){});
+            return callback(null);
+          },
+          error: function(response, textStatus, HTTPError){
+            console.log(response.responseText);
+            rightSide.append('<div style="color:red">' + response.responseText + '</div>')
+            return callback("error: " + response.responseText)
+          }
+        })
+      }
+    ],function(err, result){
+      console.log("in final waterfall catcher");
+      if (err){
+        alert(err)
+      }
+      var difference = new Date() - startTime;
+      rightSide.append("<div>MILLISECONDS TAKEN: " + difference + " <div>")
+      that.attr('disabled', false);
+      that.text('Click to submit');
+    })
+  })</script>
+</div>

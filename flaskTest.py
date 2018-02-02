@@ -116,6 +116,28 @@ def plain_parse_xtandem_combine_with_mgf():
 	else:
 		return "Looks good"
 
+@app.route("/fast_parse", methods=['POST'])
+def fast_parse():
+	xml_read_path = request.form['xmlReadPath']
+	log_error_threshold = request.form['logErrorThreshold']
+	geneFile = request.form['geneFile']
+	should_use_unacceptable = request.form['assignUnacceptableModifications']
+	unacceptable_mods = request.form.getlist('unacceptableMods[]')
+	timestamp = request.form['timestamp']
+
+	xml_folder = makeFolderNames.construct_fast_parse_folder_path(request.form)
+
+	a = call_xml_parser.fast_parse_xtandem(xml_read_path, log_error_threshold, geneFile, unacceptable_mods, timestamp)
+
+	if a:
+		print "Error in tab 7. Trying cleanup now, either way returning error"
+		try:
+			print "Cleaning up"
+		finally: #In case it breaks
+			return a, 500
+	else:
+		return "Looks good"
+
 @app.route("/tab_2_helper_function", methods=['POST'])
 def tab_2_helper_function():
 	valid, validation_error = validation.validate_tab_2(request.form)
@@ -319,6 +341,8 @@ def writeSummary():
 	if request.form['mgfOperationToPerform'] == '1':
 		if 'plain_parse' in request.form and request.form['plain_parse'] == "1":
 			mgf_txt_write_dir_path = makeFolderNames.construct_plain_parse_reporter_folder_path(request.form)
+		elif 'fast_parse' in request.form and request.form['fast_parse'] == "1":
+			mgf_txt_write_dir_path = makeFolderNames.construct_fast_parse_folder_path(request.form)+'\\'
 		else:
 			mgf_txt_write_dir_path = makeFolderNames.construct_reporter_folder_path(request.form)
 
@@ -338,6 +362,8 @@ def writeSummary():
 				else:
 					list_of_mods = request.form.getlist('unacceptableMods[]')
 					out_file.write(get_detailed_summary(option, list_of_mods))
+			elif option.startswith("mgfOperationToPerform") and "fast_parse" in request.form:
+				continue
 			elif option.startswith("mgfOperationToPerform") and "plain_parse" in request.form:
 				continue
 			elif option.startswith("mgfTxtReadDirPath") and request.form["mgfOperationToPerform"] == "1":
@@ -516,6 +542,11 @@ def get_detailed_summary(option, value):
 	elif option == "plain_parse":
 		if value == "1":
 			return option + " - Plain parse MGF and XML\n"
+		else:
+			return ""
+	elif option == "fast_parse":
+		if value =="1":
+			return option+ " - Fast parse XML without MGF"
 		else:
 			return ""
 	elif option == "reporterIonType":

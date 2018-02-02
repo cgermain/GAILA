@@ -299,7 +299,7 @@
             url:"reporterIonType",
             data:{"ionType": val},
             success : function(result){
-              console.log("Retrieved Ion Types");
+              console.log("Retrieved Ion Types tab2");
               console.log(result);
               inverse_files = JSON.parse(result);
               $('div[id="tab_2"').find('#reporterInverseFiles').empty();
@@ -340,6 +340,7 @@
 	</script>
 
   <script type="text/javascript">
+    console.log("loading the javascript");
     $('div[id="tab_2"]').find("#reporterIonType").change(inverse_file_update_tab2);
     $(document).ready(inverse_file_load_tab2);
   </script>

@@ -11,6 +11,13 @@
         {% endif %}
       </select>
     </div>
+    <div class="input-group" id="lot_input" style="margin: 1%">
+        <span class="input-group-addon" id="basic-addon1">Lot Details</span>
+        <input type="text" class="form-control" id="lot_details">
+        <span class="input-group-btn">
+          <button class="btn btn-info" onclick="alert('Enter details about the lot.')">?</button>
+        </span>
+    </div>
     <span id="inverse_matrix_forms">
       <div class="input-group" id="iTRAQ4" style="margin:1%">
         <div class="container">
@@ -516,7 +523,9 @@
             </tbody>
           </table>
         </div>        
-      </div>    </span>
+      </div>    
+      
+    </span>
     <button id="tab_3_button" class="btn btn-primary">Create Inverse File</button>
   </div>
   <!-- <div style="float:right;width:30%;height:88vh;border-style:solid;border-width:5px;overflow:scroll;padding:10px" id="rightSide">
@@ -585,12 +594,16 @@
     var formSection = leftSide.find(qs);
     // console.log(formSection);
     var inputs = formSection.find('input');
+    var lot_val = $('div[id="tab_3"]').find('#lot_details').val();
     var serializedFormSection = serializeForm(inputs);
     console.log(serializedFormSection);
     var transformed = {};
     var broken = false;
     _.each(_.keys(serializedFormSection), function(key){
       if (key=="timestamp"){
+        return;
+      }
+      if (key=="lot_details"){
         return;
       }
       if (broken){
@@ -635,7 +648,8 @@
     var stringDataToSend = JSON.stringify({
       reporterType : reporterType.val(),
       data : transformed,
-      timestamp: getTimestamp()
+      timestamp: getTimestamp(),
+      lot_details: lot_val
     })
     console.log(stringDataToSend);
     console.log(transformed);

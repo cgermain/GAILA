@@ -152,8 +152,8 @@ def chunker(sequence, size):
 
 #checking to make sure that the ms2 and ms3 filenames match properly
 def ms2_ms3_file_pair_mismatch(chunk):
-	ms2_file = chunk[0]
-	ms3_file = chunk[1]
+	ms2_file = os.path.basename(chunk[0])
+	ms3_file = os.path.basename(chunk[1])
 
 	try:	
 		return not ("MS2" in ms2_file and
@@ -163,8 +163,8 @@ def ms2_ms3_file_pair_mismatch(chunk):
 		return True
 
 def output_file_exists(chunk):
-	ms2_file = chunk[0]
-	ms3_file = chunk[1]
+	ms2_file = os.path.basename(chunk[0])
+	ms3_file = os.path.basename(chunk[1])
 
 	try:
 		return ("MS2_MS3" in ms2_file or "MS2_MS3" in ms3_file)

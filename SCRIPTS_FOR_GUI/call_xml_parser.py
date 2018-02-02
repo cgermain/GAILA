@@ -3,8 +3,10 @@ from os.path import join
 import shutil
 from combine_xml_mgf import combine_parsed_xml_mgf 
 from combine_xml_mgf import combine_plain_parsed_xml_mgf
+from combine_xml_mgf import finish_fast_parse
 import utility
 import subprocess
+import makeFolderNames
 
 
 def parse_xtandem_new(full_path_to_xml, error_threshold, reporter_type, genefile, unacceptable_mods):
@@ -43,6 +45,36 @@ def parse_xtandem_new(full_path_to_xml, error_threshold, reporter_type, genefile
 		#Perl script exectued
 		return 0
 
+def parse_xtandem_fast(full_path_to_xml, error_threshold, genefile, unacceptable_mods):
+	this_dir = os.path.dirname(os.path.realpath(__file__))
+	full_path_to_genefile = join(this_dir, 'gene_files', genefile)
+
+	# going on the assumption it's been validated
+	mass_val_literal, mod_val_literal, reporter_mods_literal = utility.get_strings_from_unacceptable_mod_form(unacceptable_mods)
+
+	xml_dir_name = utility.xml_dirname_from_filename_fast_parse(full_path_to_xml)
+	if os.path.isdir(xml_dir_name):
+		print "xml directory already exists here, if you don't need it anymore try deleting it and running again"
+		return "xml directory already exists here, if you don't need it anymore try deleting it and running again"
+
+	xml_txt_filename = full_path_to_xml + '.txt'
+	if os.path.isfile(xml_txt_filename):
+		print "xml txt file already exists there, either you've already run this in the past or you have a residual file you don't want. Consider deleting or moving that file"
+		return "xml txt file already exists there, either you've already run this in the past or you have a residual file you don't want. Consider deleting or moving that file"
+
+	os.mkdir(xml_dir_name)
+
+	perl_call_array=['perl', join(this_dir, 'quick_parse_xtandem.pl'), full_path_to_xml, \
+		xml_dir_name, str(error_threshold), full_path_to_genefile, \
+		mass_val_literal, mod_val_literal, reporter_mods_literal]
+
+	a = subprocess.call(perl_call_array)
+
+	if a:
+		return "ERROR FAST PARSING XML IN PERL SCRIPT"
+	else:
+		#Perl script exectued
+		return 0
 
 def parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, reporter_type, genefile, selected_mgfdir, unacceptable_mods, normalize_intensities, timestamp):
 	resp = parse_xtandem_new(full_path_to_xml, error_threshold, reporter_type, genefile, unacceptable_mods)
@@ -101,6 +133,19 @@ def plain_parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, gene
 
 	return 0
 
+def fast_parse_xtandem(full_path_to_xml, error_threshold, genefile, unacceptable_mods, timestamp):
+	resp = parse_xtandem_fast(full_path_to_xml, error_threshold, genefile, unacceptable_mods)
+	if resp:
+		print "from fast_parse_xtandem, error detected in parse_xtandem_fast: " + str(resp)
+		return resp
+
+	xml_dir_name = utility.xml_dirname_from_filename(full_path_to_xml)
+	resp_2 = finish_fast_parse(xml_dir_name, timestamp)
+	if resp_2:
+		print "from plain_parse_xtandem_combine_with_mgf, error in combine_plain_parsed_xml_mgf: " + str(resp_2)
+		return resp_2
+
+	return 0
 
 def convert_reporter_to_label_mass(reporter):
 	mapping = {

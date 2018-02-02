@@ -78,6 +78,9 @@ def construct_plain_parse_reporter_folder_path(form):
 	full_path = join(form['mgfReadDirPath'], a, '')
 	return full_path
 
+def construct_fast_parse_folder_path(form):
+	full_path = str(form['xmlReadPath']).split(".xml")[0]+"_fast_parse"
+	return full_path
 
 def construct_merged_gpm_reporter_filename(form):
 	reporter_path = None
@@ -133,6 +136,10 @@ def rename_folders(form):
 		if 'plain_parse' in form:
 			output_suffix = "plain_parse_"
 			reporter_folder_name = construct_plain_parse_reporter_folder_path(form)
+		elif 'fast_parse' in form:
+			output_suffix = "fast_parse_"
+			#not actually using reporters, just reusing codeblock below
+			reporter_folder_name = construct_fast_parse_folder_path(form)
 		else:
 			mgf_folder_name = construct_selected_mgf_path(form)
 			reporter_folder_name = construct_reporter_folder_path(form)
