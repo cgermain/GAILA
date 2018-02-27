@@ -29,13 +29,21 @@ if (defined $ARGV[5]) { $unacceptable_mass_array_string=$ARGV[5];} else { exit 6
 if (defined $ARGV[6]) { $unacceptable_mod_array_string=$ARGV[6];} else { exit 7; }
 if (defined $ARGV[7]) { $unacceptable_label_mod_string=$ARGV[7];} else { exit 8; }
 
+# print "unaccept_mass_array_string: $unacceptable_mass_array_string\n";
+# print "unaccept_mod_array_string:  $unacceptable_mod_array_string\n";
+# print "unaccept_label_mod_array_string:  $unacceptable_label_mod_string\n";
+# print "label_mass_int: $label_mass_int\n";
 
 @unacceptable_mass_array=split /,/,$unacceptable_mass_array_string;
 @unacceptable_mod_array=split /,/,$unacceptable_mod_array_string;
-@unacceptable_label_mod_array=split /,/,$unacceptable_mod_array_string;
+@unacceptable_label_mod_array=split /,/,$unacceptable_label_mod_string;
+# print "@unacceptable_label_mod_array\n";
 
 my $length_of_unacceptable_mass=scalar @unacceptable_mass_array;
 my $length_of_unacceptable_mod=scalar @unacceptable_mod_array;
+
+# print "Length of unacceptable mass: $length_of_unacceptable_mass\n";
+# print "Length of unacceptable mod:  $length_of_unacceptable_mod\n";
 
 unless ($length_of_unacceptable_mass == $length_of_unacceptable_mod)
 {
@@ -219,12 +227,14 @@ if ($error==0)
 
 				if ($line!~/\<domain[^\>]+\/\>/)
 				{
+					#print "in the mod part\n";
 					my $labeled_Y_Nterm=0;
 					while ($line!~/\<\/domain\>/)
 					{
 						$line=<IN>;
 						while($line=~s/^\s*\<aa\s+type=\"([A-Z])\"\s+at=\"([0-9]+)\"\s+modified=\"([0-9\.\-\+edED]+)\"\s*//)
 						{
+							#print "in mod part 2\n";
 							$model_count++;
 							my $mod_aa=$1;
 							my $mod_pos=$2;
@@ -243,23 +253,32 @@ if ($error==0)
 
 							my $current_unacc_mass="";
 							my $current_unacc_mod="";
+							#print "length of unacceptable mods: $length_of_unacceptable_mod\n";
 							for(my $mods=0;$mods<$length_of_unacceptable_mod;$mods++)
 							{
 								$current_unacc_mass=$unacceptable_mass_array[$mods];
 								$current_unacc_mod=$unacceptable_mod_array[$mods];
+								#print "current mod_aa/mass from xml: $mod_aa / $mod_mass\n";
+								#print "current mod/mass passed in: $current_unacc_mod / $current_unacc_mass\n";
+
 								if ($mod_aa eq $current_unacc_mod and int((1*$current_unacc_mass) + 0.5)==int((1*$mod_mass) + 0.5))
 								{
+									#print "found unacceptable\n";
 									$unacceptable="Y";
 									last;
 								}
 							}
 							unless ($unacceptable eq "Y")
 							{
+								#print "in checking labeling since mods not found\n";
 								my $bad_label="";
 								foreach $bad_label (@unacceptable_label_mod_array)
 								{
+									# print "current bad label: $bad_label\n";
+
 									if ($mod_aa eq $bad_label and $mod_pos_!=1 and int($mod_mass+0.5)==$label_mass_int)
 									{
+										# print "found via bad label: $mod_aa - $mod_pos \n";
 										$unacceptable="Y";
 										last;
 									}
