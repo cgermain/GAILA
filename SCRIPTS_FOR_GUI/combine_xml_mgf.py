@@ -268,8 +268,6 @@ def remove_log_e_duplicates(filename):
 
 
 def check_for_selected_xmldir_lineup(selected_mgfdir, xmldir):
-	print "mgfdir: " + selected_mgfdir
-	print "xmldir: " + xmldir
 	if not os.path.isdir(selected_mgfdir):
 		return False, "Selected mgf directory doesn't exist"
 	if not os.path.isdir(xmldir):
