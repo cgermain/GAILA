@@ -5,7 +5,7 @@ import sys, os, shutil
 import utility
 from os.path import join
 from datetime import datetime
-from collections import defaultdict
+#from collections import defaultdict
 
 TIME_FORMAT =  "%Y-%m-%d_%H-%M-%S"
 
@@ -63,46 +63,37 @@ def transform_firstline_for_n_and_c(firstline):
 	return new_firstline
 	
 
-def add_a_or_b_label_to_sorted_mfg_txt_file(filename):
+def add_a_or_b_label_to_sorted_mfg_txt_file(filename, quickparsing):
 	a = open(filename, "r")
 	temp_filename = filename + "_PLACEHOLDER"
 	temp_file = open(temp_filename, "w")
 
 	first_line = a.readline()
-	first_line = transform_firstline_for_n_and_c(first_line)
+	
+	if quickparsing:
+		first_line = transform_firstline_for_n_and_c(first_line)
 
 	temp_file.write(first_line.strip() + "\treplicate_spec_flag\n")
 	first_line_arr = first_line.split('\t')
 	filename_index = first_line_arr.index("filename")
 	scan_index = first_line_arr.index("scan")
-	charge_index = first_line_arr.index("charge")
-
-	if scan_index == -1 or filename_index == -1 or charge_index == -1:
+	if scan_index == -1 or filename_index == -1:
 		raise Exception("something is wrong with the file formatting")
 	scan_list = []
 	first = True
-	most_recent = (None, None, None)
+	most_recent = (None, None)
 	for line in a:
 		line_arr = line.split("\t")
 		curr_scan = line_arr[scan_index]
 		curr_filename = line_arr[filename_index]
-		curr_charge = line_arr[charge_index]
-		tup = (curr_filename, curr_scan, curr_charge)
+		tup = (curr_filename, curr_scan)
 		if (not first) and (not (most_recent[1] == tup[1])):
-			all_charges_in_list = [l.split("\t")[charge_index] for l in scan_list]
-
 			if len(scan_list) == 0:
 				# continue even if the scan list is empty 
 				pass
 				# raise Exception("In add a or b, shouldn't be zero")
 			elif len(scan_list) == 1:
 				temp_file.write(scan_list[0].strip() + "\tA\n")
-			#if the charges match, write it out as A
-			#indicates we created a second entry for this scan with different sequences
-			elif all(x==all_charges_in_list[0] for x in all_charges_in_list):
-				for l in scan_list:
-					temp_file.write(l.strip() + "\tA\n")
-			#write it out as a B so it can either be dropna'd or continue onto being C labeled
 			else:
 				for l in scan_list:
 					temp_file.write(l.strip() + "\tB\n")
@@ -110,102 +101,20 @@ def add_a_or_b_label_to_sorted_mfg_txt_file(filename):
 		scan_list.append(line)
 		most_recent = tup
 		first = False
-
-	#process the last scan_list
-	all_charges_in_list = [l.split("\t")[charge_index] for l in scan_list]
-
 	if len(scan_list) == 0:
 		# continue even if the scan list is empty 
 		pass
-		# raise Exception("In add a or b, shouldn't be zero")
+		# raise Exception("In add a or b, shouldn't be zero - 2")
 	elif len(scan_list) == 1:
 		temp_file.write(scan_list[0].strip() + "\tA\n")
-	#if the charges match, write it out as A
-	#indicates we created a second entry for this scan with different sequences
-	elif all(x==all_charges_in_list[0] for x in all_charges_in_list):
-		for l in scan_list:
-			temp_file.write(l.strip() + "\tA\n")
-	#write it out as a B so it can either be dropna'd or continue onto being C labeled
 	else:
 		for l in scan_list:
 			temp_file.write(l.strip() + "\tB\n")
-
 	a.close()
 	temp_file.close()
 	os.remove(filename)
 	os.rename(temp_filename,filename)
 
-def add_a_or_b_label_to_fast_parse(filename):
-	a = open(filename, "r")
-	temp_filename = filename + "_PLACEHOLDER"
-	temp_file = open(temp_filename, "w")
-	first_line = a.readline()
-	temp_file.write(first_line.strip() + "\treplicate_spec_flag\n")
-	first_line_arr = first_line.split('\t')
-	filename_index = first_line_arr.index("filename")
-	scan_index = first_line_arr.index("scan")
-	charge_index = first_line_arr.index("charge")
-
-	if scan_index == -1 or filename_index == -1 or charge_index == -1:
-		raise Exception("something is wrong with the file formatting")
-	scan_list = []
-	first = True
-	most_recent = (None, None, None)
-	for line in a:
-		line_arr = line.split("\t")
-		curr_scan = line_arr[scan_index]
-		curr_filename = line_arr[filename_index]
-		curr_charge = line_arr[charge_index]
-		tup = (curr_filename, curr_scan, curr_charge)
-		if (not first) and (not (most_recent[1] == tup[1])):
-			all_charges_in_list = [l.split("\t")[charge_index] for l in scan_list]
-
-			if len(scan_list) == 0:
-				# continue even if the scan list is empty 
-				pass
-				# raise Exception("In add a or b, shouldn't be zero")
-			elif len(scan_list) == 1:
-				temp_file.write(scan_list[0].strip() + "\tA\n")
-			#if the charges match, write it out as A
-			#indicates we created a second entry for this scan with different sequences
-			elif all(x==all_charges_in_list[0] for x in all_charges_in_list):
-				for l in scan_list:
-					temp_file.write(l.strip() + "\tA\n")
-			#write it out as a B so it can either be dropna'd or continue onto being C labeled
-			else:
-				for l in scan_list:
-					temp_file.write(l.strip() + "\tB\n")
-			scan_list = []
-		scan_list.append(line)
-		most_recent = tup
-		first = False
-
-	#process the last scan_list
-	all_charges_in_list = [l.split("\t")[charge_index] for l in scan_list]
-
-	if len(scan_list) == 0:
-		# continue even if the scan list is empty 
-		pass
-		# raise Exception("In add a or b, shouldn't be zero")
-	elif len(scan_list) == 1:
-		temp_file.write(scan_list[0].strip() + "\tA\n")
-	#if the charges match, write it out as A
-	#indicates we created a second entry for this scan with different sequences
-	elif all(x==all_charges_in_list[0] for x in all_charges_in_list):
-		for l in scan_list:
-			temp_file.write(l.strip() + "\tA\n")
-	#write it out as a B so it can either be dropna'd or continue onto being C labeled
-	else:
-		for l in scan_list:
-			temp_file.write(l.strip() + "\tB\n")
-
-	a.close()
-	temp_file.close()
-	os.remove(filename)
-	os.rename(temp_filename,filename)
-
-
-#this reevaluates the A/B labels after sequences have been duplicated
 def add_c_labels_to_duplicate_marker_column(filename):
 	a = open(filename, "r")
 	temp_filename = filename + "_PLACEHOLDER"
@@ -216,25 +125,19 @@ def add_c_labels_to_duplicate_marker_column(filename):
 	first_line_arr = first_line.split('\t')
 	filename_index = first_line_arr.index("filename")
 	scan_index = first_line_arr.index("scan")
-	charge_index = first_line_arr.index("charge")
 	duplicate_index = first_line_arr.index("replicate_spec_flag")
-	log_e_index = first_line_arr.index("protein log(e)")
-	unique_peptide_index = first_line_arr.index("unique peptides")
-
-	if scan_index == -1 or filename_index == -1 or duplicate_index == -1 or log_e_index == -1 or charge_index == -1 or unique_peptide_index == -1:
+	log_e_index = first_line_arr.index("peptide expectation") #Hopefully it's there
+	if scan_index == -1 or filename_index == -1 or duplicate_index == -1 or log_e_index == -1:
 		raise Exception("something is wrong with the file formatting")
-	
 	scan_list = []
 	first = True
-	most_recent = (None, None, None)
-
+	most_recent = (None, None)
 	for line in a:
 		line_arr = line.split("\t")
 		curr_scan = line_arr[scan_index]
 		curr_filename = line_arr[filename_index]
-		curr_charge = line_arr[charge_index]
 		curr_replicate_spec_flag = line_arr[duplicate_index]
-		tup = (curr_filename, curr_scan, curr_charge)
+		tup = (curr_filename, curr_scan)
 		if (not first) and (not (most_recent[1] == tup[1])):
 			if len(scan_list) == 0:
 				# continue even if the scan list is empty
@@ -242,346 +145,35 @@ def add_c_labels_to_duplicate_marker_column(filename):
 				# raise Exception("Shouldn't be zero")
 			elif len(scan_list) == 1:
 				temp_file.write("\t".join(scan_list[0]))
-			#if multiple items are in the scan list
 			else:
-				#if all of the charges are equal, they're all A's
-				if all(scan[charge_index] == scan_list[0][charge_index] for scan in scan_list):
-					new_list = [(float(l[log_e_index]), l) for l in scan_list]
-					new_list = sorted(new_list)
-					letters = utility.long_alphabet()
-					for i in range(len(new_list)):
-						arr = new_list[i][1]
-						arr[duplicate_index] = "A"
-						#add a ranking to each unique peptide
-						arr[unique_peptide_index] = arr[unique_peptide_index]+letters[i]
-						temp_file.write("\t".join(arr)) 
-				
-				#if there are multiple duplicate charges in the list, they're A's
-				#if there are single charges, they're B's
-				#if there are multiple single charges, they're C's
-				else:
-
-					final_scan_list_to_sort = []
-					scan_dict = defaultdict(list)
-					for scan in scan_list:
-						scan_dict[scan[charge_index]].append(scan)
-
-					single_charges = []
-					multiple_charges = []
-
-					#for each charge, if its unique, add that scan to the single charges list (meaning these are Cs)
-					for key in scan_dict:
-						if len(scan_dict[key]) == 1:
-							single_charges.append(scan_dict[key])
-						else:
-							multiple_charges.append(scan_dict[key])
-
-					#flatten the list of lists
-					single_charges_combined = [item for sublist in single_charges for item in sublist]
-					multiple_charges_combined = [item for sublist in multiple_charges for item in sublist]
-
-					#if there are multiple single charges, write them out as C's
-					if len(single_charges) > 1:
-						c_new_scanlist = [(float(l[log_e_index]), l) for l in single_charges_combined]
-						c_new_scanlist = sorted(c_new_scanlist)
-						letters = utility.long_alphabet()
-						for i in range(len(c_new_scanlist)):
-							c_new_scanlist[i][1][duplicate_index] = "C" + str(i + 1)
-							unique_peptide_count = c_new_scanlist[i][1][unique_peptide_index]
-							if (int(unique_peptide_count) > 1):
-								c_new_scanlist[i][1][unique_peptide_index] = unique_peptide_count + letters[i]
-							final_scan_list_to_sort.append(c_new_scanlist[i][1])
-
-					#if there is just one, write it back out as a B
-					else:
-						single_charges_combined[0][duplicate_index] = "B"
-						final_scan_list_to_sort.append(single_charges_combined[0])
-
-					letters = utility.long_alphabet()
-					#We've found a mix of A's and B/C, so we have to relabel them	
-					for i, charges in enumerate(multiple_charges_combined):
-						charges[duplicate_index] = "A"
-						charges[unique_peptide_index] = charges[unique_peptide_index] + letters[i]
-						final_scan_list_to_sort.append(charges)
-
-					#sort the final list
-					final_scan_list_to_sort = [(float(l[log_e_index]), l) for l in final_scan_list_to_sort]
-					final_scan_list_sorted = sorted(final_scan_list_to_sort)
-					for sorted_scan in final_scan_list_sorted:
-						temp_file.write("\t".join(sorted_scan[1]))
-
+				new_list = [(float(l[log_e_index]), l) for l in scan_list]
+				new_list = sorted(new_list)
+				for i in range(len(new_list)):
+					arr = new_list[i][1]
+					arr[duplicate_index] = "C" + str(i + 1)
+					temp_file.write("\t".join(arr)) 
 			scan_list = []
 		scan_list.append(line_arr)
 		most_recent = tup
 		first = False
-
-	#catch the last scanlist and process it
 	if len(scan_list) == 0:
 		# continue even if the scan list is empty
-		pass 
+		pass
 		# raise Exception("Shouldn't be zero")
 	elif len(scan_list) == 1:
 		temp_file.write("\t".join(scan_list[0]))
-	#if multiple items are in the scan list
 	else:
-		#if all of the charges are equal, they're all A's
-		if all(scan[charge_index] == scan_list[0][charge_index] for scan in scan_list):
-			#print "Found a group of A's"
-			new_list = [(float(l[log_e_index]), l) for l in scan_list]
-			new_list = sorted(new_list)
-			letters = utility.long_alphabet()
-			for i in range(len(new_list)):
-				arr = new_list[i][1]
-				arr[duplicate_index] = "A"
-				#add a ranking to each unique peptide
-				arr[unique_peptide_index] = arr[unique_peptide_index]+letters[i]
-				temp_file.write("\t".join(arr)) 
-		
-		#if there are multiple duplicate charges in the list, they're A's
-		#if there are single charges, they're B's
-		#if there are multiple single charges, they're C's
-		else:
-			final_scan_list_to_sort = []
-			scan_dict = defaultdict(list)
-			for scan in scan_list:
-				scan_dict[scan[charge_index]].append(scan)
-
-			single_charges = []
-			multiple_charges = []
-
-			#for each charge, if its unique, add that scan to the single charges list (meaning these are Cs)
-			for key in scan_dict:
-				if len(scan_dict[key]) == 1:
-					single_charges.append(scan_dict[key])
-				else:
-					multiple_charges.append(scan_dict[key])
-
-			#flatten the list of lists
-			single_charges_combined = [item for sublist in single_charges for item in sublist]
-			multiple_charges_combined = [item for sublist in multiple_charges for item in sublist]
-
-			#if there are multiple single charges, write them out as C's
-			if len(single_charges) > 1:
-				c_new_scanlist = [(float(l[log_e_index]), l) for l in single_charges_combined]
-				c_new_scanlist = sorted(c_new_scanlist)
-				letters = utility.long_alphabet()
-				for i in range(len(c_new_scanlist)):
-					c_new_scanlist[i][1][duplicate_index] = "C" + str(i + 1)
-					unique_peptide_count = c_new_scanlist[i][1][unique_peptide_index]
-					if (int(unique_peptide_count) > 1):
-						c_new_scanlist[i][1][unique_peptide_index] = unique_peptide_count + letters[i]
-					final_scan_list_to_sort.append(c_new_scanlist[i][1])
-			#if there is just one, write it back out as a B
-			else:
-				single_charges_combined[0][duplicate_index] = "B"
-				final_scan_list_to_sort.append(single_charges_combined[0])
-
-			#We've found a mix of A's and B/C, so we have to relabel them	
-			letters = utility.long_alphabet()
-			for i, charges in enumerate(multiple_charges_combined):
-				charges[duplicate_index] = "A"
-				charges[unique_peptide_index] = charges[unique_peptide_index] + letters[i]
-				final_scan_list_to_sort.append(charges)
-
-			#sort the final list
-			final_scan_list_to_sort = [(float(l[log_e_index]), l) for l in final_scan_list_to_sort]
-			final_scan_list_sorted = sorted(final_scan_list_to_sort)
-			for sorted_scan in final_scan_list_sorted:
-				temp_file.write("\t".join(sorted_scan[1]))
-
+		new_list = [(float(l[log_e_index]), l) for l in scan_list]
+		new_list = sorted(new_list)
+		for i in range(len(new_list)):
+			arr = new_list[i][1]
+			arr[duplicate_index] = "C" + str(i + 1)
+			temp_file.write("\t".join(arr)) 
 	a.close()
 	temp_file.close()
 	os.remove(filename)
 	os.rename(temp_filename,filename)
 
-def add_c_labels_to_duplicate_marker_column_quick_parse(filename):
-	a = open(filename, "r")
-	temp_filename = filename + "_PLACEHOLDER"
-	temp_file = open(temp_filename, "w")
-
-	first_line = a.readline()
-	temp_file.write(first_line)
-	first_line_arr = first_line.split('\t')
-
-	filename_index = first_line_arr.index("filename")
-	scan_index = first_line_arr.index("scan")
-	charge_index = first_line_arr.index("charge")
-	duplicate_index = first_line_arr.index("replicate_spec_flag")
-	log_e_index = first_line_arr.index("protein log(e)")
-	unique_peptide_index = first_line_arr.index("unique peptides")
-
-	if scan_index == -1 or filename_index == -1 or duplicate_index == -1 or log_e_index == -1 or charge_index == -1 or unique_peptide_index == -1:
-		raise Exception("something is wrong with the file formatting")
-	
-	scan_list = []
-	first = True
-	most_recent = (None, None, None)
-
-	for line in a:
-		line_arr = line.split("\t")
-		curr_scan = line_arr[scan_index]
-		curr_filename = line_arr[filename_index]
-		curr_charge = line_arr[charge_index]
-		curr_replicate_spec_flag = line_arr[duplicate_index]
-		tup = (curr_filename, curr_scan, curr_charge)
-		if (not first) and (not (most_recent[1] == tup[1])):
-			if len(scan_list) == 0:
-				# continue even if the scan list is empty
-				pass 
-				# raise Exception("Shouldn't be zero")
-			elif len(scan_list) == 1:
-				temp_file.write("\t".join(scan_list[0]))
-			#if multiple items are in the scan list
-			else:
-				#if all of the charges are equal, they're all A's
-				if all(scan[charge_index] == scan_list[0][charge_index] for scan in scan_list):
-					new_list = [(float(l[log_e_index]), l) for l in scan_list]
-					new_list = sorted(new_list)
-					letters = utility.long_alphabet()
-					for i in range(len(new_list)):
-						arr = new_list[i][1]
-						arr[duplicate_index] = "A"
-						#add a ranking to each unique peptide
-						arr[unique_peptide_index] = arr[unique_peptide_index]+letters[i]
-						temp_file.write("\t".join(arr)) 
-				
-				#if there are multiple duplicate charges in the list, they're A's
-				#if there are single charges, they're B's
-				#if there are multiple single charges, they're C's
-				else:
-
-					final_scan_list_to_sort = []
-					scan_dict = defaultdict(list)
-					for scan in scan_list:
-						scan_dict[scan[charge_index]].append(scan)
-
-					single_charges = []
-					multiple_charges = []
-
-					#for each charge, if its unique, add that scan to the single charges list (meaning these are Cs)
-					for key in scan_dict:
-						if len(scan_dict[key]) == 1:
-							single_charges.append(scan_dict[key])
-						else:
-							multiple_charges.append(scan_dict[key])
-
-					#flatten the list of lists
-					single_charges_combined = [item for sublist in single_charges for item in sublist]
-					multiple_charges_combined = [item for sublist in multiple_charges for item in sublist]
-
-					#if there are multiple single charges, write them out as C's
-					if len(single_charges) > 1:
-						c_new_scanlist = [(float(l[log_e_index]), l) for l in single_charges_combined]
-						c_new_scanlist = sorted(c_new_scanlist)
-						letters = utility.long_alphabet()
-						for i in range(len(c_new_scanlist)):
-							c_new_scanlist[i][1][duplicate_index] = "C" + str(i + 1)
-							unique_peptide_count = c_new_scanlist[i][1][unique_peptide_index]
-							if (int(unique_peptide_count) > 1):
-								c_new_scanlist[i][1][unique_peptide_index] = unique_peptide_count + letters[i]
-							final_scan_list_to_sort.append(c_new_scanlist[i][1])
-
-					#if there is just one, write it back out as a B
-					else:
-						single_charges_combined[0][duplicate_index] = "B"
-						final_scan_list_to_sort.append(single_charges_combined[0])
-
-					letters = utility.long_alphabet()
-					#We've found a mix of A's and B/C, so we have to relabel them	
-					for i, charges in enumerate(multiple_charges_combined):
-						charges[duplicate_index] = "A"
-						charges[unique_peptide_index] = charges[unique_peptide_index] + letters[i]
-						final_scan_list_to_sort.append(charges)
-
-					#sort the final list
-					final_scan_list_to_sort = [(float(l[log_e_index]), l) for l in final_scan_list_to_sort]
-					final_scan_list_sorted = sorted(final_scan_list_to_sort)
-					for sorted_scan in final_scan_list_sorted:
-						temp_file.write("\t".join(sorted_scan[1]))
-
-			scan_list = []
-		scan_list.append(line_arr)
-		most_recent = tup
-		first = False
-
-	#catch the last scanlist and process it
-	if len(scan_list) == 0:
-		# continue even if the scan list is empty
-		pass 
-		# raise Exception("Shouldn't be zero")
-	elif len(scan_list) == 1:
-		temp_file.write("\t".join(scan_list[0]))
-	#if multiple items are in the scan list
-	else:
-		#if all of the charges are equal, they're all A's
-		if all(scan[charge_index] == scan_list[0][charge_index] for scan in scan_list):
-			#print "Found a group of A's"
-			new_list = [(float(l[log_e_index]), l) for l in scan_list]
-			new_list = sorted(new_list)
-			letters = utility.long_alphabet()
-			for i in range(len(new_list)):
-				arr = new_list[i][1]
-				arr[duplicate_index] = "A"
-				#add a ranking to each unique peptide
-				arr[unique_peptide_index] = arr[unique_peptide_index]+letters[i]
-				temp_file.write("\t".join(arr)) 
-		
-		#if there are multiple duplicate charges in the list, they're A's
-		#if there are single charges, they're B's
-		#if there are multiple single charges, they're C's
-		else:
-			final_scan_list_to_sort = []
-			scan_dict = defaultdict(list)
-			for scan in scan_list:
-				scan_dict[scan[charge_index]].append(scan)
-
-			single_charges = []
-			multiple_charges = []
-
-			#for each charge, if its unique, add that scan to the single charges list (meaning these are Cs)
-			for key in scan_dict:
-				if len(scan_dict[key]) == 1:
-					single_charges.append(scan_dict[key])
-				else:
-					multiple_charges.append(scan_dict[key])
-
-			#flatten the list of lists
-			single_charges_combined = [item for sublist in single_charges for item in sublist]
-			multiple_charges_combined = [item for sublist in multiple_charges for item in sublist]
-
-			#if there are multiple single charges, write them out as C's
-			if len(single_charges) > 1:
-				c_new_scanlist = [(float(l[log_e_index]), l) for l in single_charges_combined]
-				c_new_scanlist = sorted(c_new_scanlist)
-				letters = utility.long_alphabet()
-				for i in range(len(c_new_scanlist)):
-					c_new_scanlist[i][1][duplicate_index] = "C" + str(i + 1)
-					unique_peptide_count = c_new_scanlist[i][1][unique_peptide_index]
-					if (int(unique_peptide_count) > 1):
-						c_new_scanlist[i][1][unique_peptide_index] = unique_peptide_count + letters[i]
-					final_scan_list_to_sort.append(c_new_scanlist[i][1])
-			#if there is just one, write it back out as a B
-			else:
-				single_charges_combined[0][duplicate_index] = "B"
-				final_scan_list_to_sort.append(single_charges_combined[0])
-
-			#We've found a mix of A's and B/C, so we have to relabel them	
-			letters = utility.long_alphabet()
-			for i, charges in enumerate(multiple_charges_combined):
-				charges[duplicate_index] = "A"
-				charges[unique_peptide_index] = charges[unique_peptide_index] + letters[i]
-				final_scan_list_to_sort.append(charges)
-
-			#sort the final list
-			final_scan_list_to_sort = [(float(l[log_e_index]), l) for l in final_scan_list_to_sort]
-			final_scan_list_sorted = sorted(final_scan_list_to_sort)
-			for sorted_scan in final_scan_list_sorted:
-				temp_file.write("\t".join(sorted_scan[1]))
-
-	a.close()
-	temp_file.close()
-	os.remove(filename)
-	os.rename(temp_filename,filename)
 
 def take_in_file_sorted_by_filename_scan_output_file_with_duplicate_marker_column(filename):
 	a = open(filename, "r")
@@ -676,6 +268,8 @@ def remove_log_e_duplicates(filename):
 
 
 def check_for_selected_xmldir_lineup(selected_mgfdir, xmldir):
+	print "mgfdir: " + selected_mgfdir
+	print "xmldir: " + xmldir
 	if not os.path.isdir(selected_mgfdir):
 		return False, "Selected mgf directory doesn't exist"
 	if not os.path.isdir(xmldir):
@@ -708,12 +302,11 @@ def combine_plain_parsed_xml_mgf(selected_mgfdir, xmldir, timestamp):
 				mgf.sort_index()
 				testing_filename = mgf_txt_filename.split('.reporter')[0] + '_duplicate_sorted' + '.reporter'
 				mgf.to_csv(testing_filename, sep='\t')
-				add_a_or_b_label_to_sorted_mfg_txt_file(testing_filename)
+				add_a_or_b_label_to_sorted_mfg_txt_file(testing_filename, False)
 				mgf = pd.read_table(testing_filename, index_col=['filename','scan','charge'])
 				xml = pd.read_table(xml_filename, index_col=['filename','scan','charge'])
 				dfc=pd.merge(mgf,xml, left_index=True, right_index=True)
 				dfc_=dfc.dropna()
-				dfc_=dfc_.drop("labeling",1)
 				csv_filename = join(xmldir, filename + '_nocal_table.txt')
 				dfc_.to_csv(csv_filename,sep='\t')
 				os.remove(testing_filename)
@@ -722,7 +315,7 @@ def combine_plain_parsed_xml_mgf(selected_mgfdir, xmldir, timestamp):
 				data.to_csv(this_filename,sep='\t',index=False)
 
 		first=1
-		outfile_name = join(selected_mgfdir, parent_xml_filename + '_' + timestamp + '.txt')
+		outfile_name = join(selected_mgfdir, parent_xml_filename.replace("_fast_parse", "_plain_parse") + '_' + timestamp + '.txt')
 		with open(outfile_name, 'w') as outfile:
 			for filename in os.listdir(xmldir):
 				if filename.endswith('_nocal_table_corrected.txt'):
@@ -741,7 +334,6 @@ def finish_fast_parse(xmldir, timestamp):
 	try:
 		this_dir = os.path.dirname(os.path.realpath(__file__))	
 
-
 		xmldir = join(xmldir,"")
 		basedir, gpmname = os.path.split(xmldir)
 		actualbasedir, blah = os.path.split(basedir)
@@ -754,21 +346,19 @@ def finish_fast_parse(xmldir, timestamp):
 		parsed_pd = parsed_pd.sort_index()
 		temporary_file = parsed_xml_txt+".temp"
 		parsed_pd.to_csv(temporary_file, sep='\t')
-		add_a_or_b_label_to_fast_parse(temporary_file)
+		add_a_or_b_label_to_sorted_mfg_txt_file(temporary_file, True)
 		parsed_pd = pd.read_table(temporary_file)
 		cols = parsed_pd.columns.tolist()
-		cols.insert(3, cols.pop(24))
-
+		cols.insert(3, cols.pop(22))
 		parsed_pd = parsed_pd[cols]
 		parsed_pd.set_index(['filename','scan','charge'], inplace=True)
 		parsed_pd.to_csv(temporary_file, sep='\t')
 
-		first=1
 		outfile_name = join(basedir+"_fast_parse", parent_xml_filename + '_' + timestamp + '.txt')
 		
 		os.remove(parsed_xml_txt)
 		os.rename(temporary_file, outfile_name)
-		add_c_labels_to_duplicate_marker_column_quick_parse(outfile_name)
+		add_c_labels_to_duplicate_marker_column(outfile_name)
 		
 		return
 	except Exception as err:
@@ -839,7 +429,7 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 				mgf.sort_index()
 				testing_filename = mgf_txt_filename.split('.reporter')[0] + '_duplicate_sorted' + '.reporter'
 				mgf.to_csv(testing_filename, sep='\t')
-				add_a_or_b_label_to_sorted_mfg_txt_file(testing_filename)
+				add_a_or_b_label_to_sorted_mfg_txt_file(testing_filename, False)
 				#read mgf table
 				mgf = pd.read_table(testing_filename, index_col=['filename','scan','charge'])
 				xml = pd.read_table(xml_filename, index_col=['filename','scan','charge'])

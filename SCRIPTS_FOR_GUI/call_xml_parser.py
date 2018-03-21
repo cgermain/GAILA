@@ -66,7 +66,7 @@ def parse_xtandem_fast(full_path_to_xml, error_threshold, genefile, unacceptable
 
 	perl_call_array=['perl', join(this_dir, 'quick_parse_xtandem.pl'), full_path_to_xml, \
 		xml_dir_name, str(error_threshold), full_path_to_genefile, \
-		mass_val_literal, mod_val_literal, reporter_mods_literal]
+		mass_val_literal, mod_val_literal]
 
 	a = subprocess.call(perl_call_array)
 
@@ -100,13 +100,12 @@ def parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, reporter_t
 
 
 def plain_parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, genefile, selected_mgfdir, unacceptable_mods, timestamp):
-	#TMT0 is a placeholder.  Column is dropped since plain_parsing.
-	resp = parse_xtandem_new(full_path_to_xml, error_threshold, "TMT0", genefile, unacceptable_mods)
+	resp = parse_xtandem_fast(full_path_to_xml, error_threshold, genefile, unacceptable_mods)
 	if resp:
-		print "from plain_parse_xtandem_combine_with_mgf, error detected in parse_xtandem_new: " + str(resp)
+		print "from plain_parse_xtandem_combine_with_mgf, error detected in parse_xtandem_fast: " + str(resp)
 		return resp
 
-	xml_dir_name = utility.xml_dirname_from_filename(full_path_to_xml)
+	xml_dir_name = utility.xml_dirname_from_filename_fast_parse(full_path_to_xml)
 	resp_2 = combine_plain_parsed_xml_mgf(selected_mgfdir, xml_dir_name, timestamp)
 	if resp_2:
 		print "from plain_parse_xtandem_combine_with_mgf, error in combine_plain_parsed_xml_mgf: " + str(resp_2)
