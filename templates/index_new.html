@@ -227,6 +227,9 @@
 	    function(err, result){
 	      if (err){
 	      	console.log(err);
+      		if (typeof result == "undefined"){
+                alert("Check to make sure IDEAA server is running.");
+            }
       		if (err){
         		rightSide.append('<h3 style="color:red">' + err + '</h3>')	
         	}

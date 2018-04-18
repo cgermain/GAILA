@@ -421,7 +421,10 @@
       }
     ],function(err, result){
       console.log("in final waterfall catcher");
-      if (err){
+      if (typeof result == "undefined"){
+        alert("Check to see if IDEAA server is running.");
+      }
+      else{
         alert(err)
       }
       var difference = new Date() - startTime;

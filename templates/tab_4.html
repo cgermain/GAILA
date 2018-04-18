@@ -184,6 +184,10 @@
           },
           error: function(response, textStatus, HTTPError){
             console.log(response.responseText);
+            if (response.responseText == "undefined"){
+                alert("Check to make sure IDEAA server is running.");
+                return callback("error: Check to make sure IDEAA server is running.");
+            }
             rightSide.append('<div style="color:red">' + response.responseText + '</div>')
             return callback("error: " + response.responseText)
           }
@@ -191,7 +195,10 @@
       }
     ],function(err, result){
       console.log("in final waterfall catcher");
-      if (err){
+      if (typeof result == "undefined"){
+        alert("Check to see if IDEAA server is running.");
+      }
+      else{
         alert(err)
       }
       var difference = new Date() - startTime;
