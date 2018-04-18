@@ -87,7 +87,7 @@ if ($error==0)
 	my $proteins="";
 	my $start="";
 	my $end="";
-	my $expect="";
+	my $expect=1;
 	my $pre="";
 	my $post="";
 	my $peptide="";
@@ -97,7 +97,6 @@ if ($error==0)
 	my $missed="";
 	my $unacceptable="N";
 	my %protein_expect=();
-	my $index_protein_start="";
 	my $bioml_mgf="";
 	my $bioml_mgf_sans_mgf="";
 
@@ -109,17 +108,6 @@ if ($error==0)
 			my $protein_name=$2;
 			$protein_expect{$protein_name}=$protein_expect;
 			if($protein_name!~/\:reversed$/) { $proteins.="#$protein_name#"; }	
-			$start="";
-			$end="";
-			$expect=1;
-			$pre="";
-			$post="";
-			$peptide="";
-			$title="";
-			$modifications="";
-			$tryptic="";
-			$missed="";
-			$unacceptable="N";
 		}
 
 		#this line checks if the mgf was from a single file search
@@ -134,7 +122,6 @@ if ($error==0)
 		if ($line=~/\<domain\s+id="([0-9\.edED\+\-]+)".*start="([0-9]+)".*end="([0-9]+)".*expect="([0-9\.edED\+\-]+)".*mh="([0-9\.edED\+\-]+)".*delta="([0-9\.edED\+\-]+)".*pre="(.*)".*post="(.*)".*seq="([A-Z]+)".*missed_cleavages="([0-9]+)"/)
 		{
 			my $start_=$2;
-			if (!$index_protein_start) { $index_protein_start=$start_; }
 			my $end_=$3;
 			my $expect_=$4;
 			my $pre_=$7;
@@ -432,14 +419,14 @@ if($line=~/<GAML:attribute type="charge">([0-9]+)<\/GAML:attribute>/)
           $f_name_sans_mgf = $bioml_mgf_sans_mgf;
         }
 
-        print OUT qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$index_protein_start\t$expect\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
+        print OUT qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$start\t$expect\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
         open (OUT_,qq!>>$xmlfile_/$f_name_sans_mgf.reporter!) || die "Could not open $xmlfile_/$filename.reporter\n";
         if ($filenames{$filename}!~/\w/)
         {
           $filenames{$filename}=1;
           print OUT_ qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tlabeling\ttryptic\tmissed\tflagged modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
         }
-        print OUT_ qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$index_protein_start\t$expect\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
+        print OUT_ qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$start\t$expect\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
         close(OUT_);
       }
       $mh="";
@@ -451,7 +438,7 @@ if($line=~/<GAML:attribute type="charge">([0-9]+)<\/GAML:attribute>/)
       $proteins="";
       $start="";
       $end="";
-      $expect="";
+      $expect=1;
       $pre="";
       $post="";
       $peptide="";
@@ -460,7 +447,6 @@ if($line=~/<GAML:attribute type="charge">([0-9]+)<\/GAML:attribute>/)
       $tryptic="";
       $missed="";
       $unacceptable="N";
-      $index_protein_start="";
     }
 	}
 	close(IN);
