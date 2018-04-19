@@ -40,14 +40,14 @@
 
     <div class="input-group" style="margin: 1%">
       <span class="input-group-addon" id="basic-addon1">Minimum Intensity per reporter</span>
-      <input type="text" class="form-control" id="minIntensity" value="1000">
+      <input type="text" class="form-control" id="minIntensity" value="0">
       <span class="input-group-btn">
         <button class="btn btn-info" onclick="alert('Part of the filtering process. For a reporter ion to be considered present in a given run, it must appear in total this many times')">?</button>
       </span>
     </div>
     <div class="input-group" style="margin: 1%">
       <span class="input-group-addon" id="basic-addon1">Minimum number of Reporters with said intensity</span>
-      <input type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' class="form-control" id="minReporters" value="2">
+      <input type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' class="form-control" id="minReporters" value="0">
       <span class="input-group-btn">
         <button class="btn btn-info" onclick="alert('Part of the filtering process. For a run to be selected as valid, this many runs must appear with at least the prescribed intensity')">?</button>
       </span>
@@ -57,15 +57,15 @@
     <div class="input-group" style="margin: 1%">
       <span class="input-group-addon" id="basic-addon1">Perform largest-reporter recalibration</span>
       <select class='form-control' id="performRecalibration">
-        <option value="1">Perform recalibration</option>
         <option value="0">DO NOT Perform recalibration</option>
+        <option value="1">Perform recalibration</option>
       </select>
       <!-- <span class="input-group-btn">
         <button class="btn btn-info" onclick="alert('Option to perform reporter-ion mass-recalibration before selecting runs. Provides more accuracy as a slight tradeoff for speed')">?</button>
       </span> -->
     </div>
 
-    <div id="options_if_recalibrating">
+    <div id="options_if_recalibrating" style="display: none">
       <div class="input-group" style="margin: 1%">
         <span class="input-group-addon" id="basic-addon1">&nbspm/z error to select maximum reporter for recalibration (ppm) &nbsp</span>
         <input type="text" class="form-control" id="mzErrorInitialRun" value="20">
@@ -82,7 +82,7 @@
         </span>
       </div>
     </div>
-    <div id="options_if_not_recalibrating" style="display: none">
+    <div id="options_if_not_recalibrating">
       <div class="input-group" style="margin: 1%">
         <span class="input-group-addon" id="basic-addon1">&nbsp m/z error (ppm) &nbsp</span>
         <input type="text" class="form-control" id="mzError" value="20">
@@ -110,14 +110,12 @@
   </div>
   <script>
   $('div[id="tab_1"]').find("#mgfOperationToPerform").change(function(e){
-    console.log("Yo");
     console.log(e.target.value);
     var value = e.target.value;
   });
   </script>
   <script>
   $('div[id="tab_1"]').find("#performRecalibration").change(function(e){
-    console.log("Yippie");
     console.log(e.target.value);
     var value = e.target.value;
     if (value == '1'){
