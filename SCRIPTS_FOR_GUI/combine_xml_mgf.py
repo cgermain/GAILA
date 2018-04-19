@@ -70,7 +70,7 @@ def add_a_or_b_label_to_sorted_mfg_txt_file(filename, quickparsing):
 
 	first_line = a.readline()
 	
-	if quickparsing:
+	if not quickparsing:
 		first_line = transform_firstline_for_n_and_c(first_line)
 
 	temp_file.write(first_line.strip() + "\treplicate_spec_flag\n")
