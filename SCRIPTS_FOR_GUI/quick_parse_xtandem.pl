@@ -14,6 +14,7 @@ my $unacceptable_mass_array_string="";
 my $unacceptable_mod_array_string="";
 my @unacceptable_mass_array=();
 my @unacceptable_mod_array=();
+my $plain_parsing="";
 
 if (defined $ARGV[0]) { $xmlfile=$ARGV[0];} else { exit 1; }
 if (defined $ARGV[1]) { $xmldir=$ARGV[1];} else { exit 2; }
@@ -21,6 +22,7 @@ if (defined $ARGV[2]) { $threshold=$ARGV[2];} else { exit 3; }
 if (defined $ARGV[3]) { $genefile=$ARGV[3];} else { exit 5; }
 if (defined $ARGV[4]) { $unacceptable_mass_array_string=$ARGV[4];} else { exit 6; }
 if (defined $ARGV[5]) { $unacceptable_mod_array_string=$ARGV[5];} else { exit 7; }
+if (defined $ARGV[6]) { $plain_parsing=$ARGV[6];} else { exit 8; }
 
 @unacceptable_mass_array=split /,/,$unacceptable_mass_array_string;
 @unacceptable_mod_array=split /,/,$unacceptable_mod_array_string;
@@ -354,14 +356,17 @@ if ($error==0)
 			}
 
 			print OUT qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$start\t$expect\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
-			open (OUT_,qq!>>$xmlfile_/$f_name_sans_mgf.reporter!) || die "Could not open $xmlfile_/$filename.reporter\n";
-			if ($filenames{$filename}!~/\w/)
-			{
-			  $filenames{$filename}=1;
-			  print OUT_ qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\ttryptic\tmissed\tflagged modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
+			if ($plain_parsing){
+				open (OUT_,qq!>>$xmlfile_/$f_name_sans_mgf.reporter!) || die "Could not open $xmlfile_/$filename.reporter\n";
+				if ($filenames{$filename}!~/\w/)
+				{
+				  $filenames{$filename}=1;
+				  print OUT_ qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\ttryptic\tmissed\tflagged modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
+				}
+				print OUT_ qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$start\t$expect\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
+				close(OUT_);
 			}
-			print OUT_ qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$start\t$expect\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
-			close(OUT_);
+
 		  }
 
 		  $mh="";
