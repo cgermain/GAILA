@@ -301,11 +301,11 @@ def plainCountProteins():
 		return validation_error, 500
 
 	plain_parsed_file = request.form['plainParseReadPath']
-	count_uniques = request.form['countUniques']
+	# count_uniques = request.form['countUniques']
 	timestamp = request.form['timestamp']
 	output_dir = request.form['outDirPath']
 
-	result, error = plaincount.count_proteins(plain_parsed_file, count_uniques,output_dir, timestamp)
+	result, error = plaincount.count_proteins(plain_parsed_file, output_dir, timestamp)
 	if not error:
 		return result, 400
 	else:

@@ -5,7 +5,7 @@ from datetime import datetime
 TIME_FORMAT = "%Y-%m-%d_%H-%M-%S"
 HEADER = ("Filename", "Protein", "Gene Name", "Count")
 
-def count_proteins(plain_parse_file, unique_protein_option, output_dir, timestamp):
+def count_proteins(plain_parse_file, output_dir, timestamp):
 	#file_tree[filename][protein][gene_name] = count
 	file_tree = defaultdict(lambda:defaultdict(lambda:defaultdict(lambda:0)))
 
@@ -27,19 +27,16 @@ def count_proteins(plain_parse_file, unique_protein_option, output_dir, timestam
 			filename_index = header.index("filename")
 			protein_index = header.index("protein")
 			gene_index = header.index("gene")
-			unique_index = header.index("unique peptides")
 
-			if filename_index != -1 and protein_index != -1 and gene_index != -1 and unique_index != -1:
+			if filename_index != -1 and protein_index != -1 and gene_index != -1:
 				print "Total lines in plain parse file: " + str(total_line_count)
 				print "Reading plain parse file..."
 				for row in csvreader:
 					current_line_count += 1
-					if (unique_protein_option == "1" and row[unique_index] == "1") \
-					or (unique_protein_option == "0" and (row[unique_index]=="1" or row[unique_index].endswith("A"))):
-						filename = row[filename_index]
-						protein = row[protein_index]
-						gene_name = row[gene_index]
-						file_tree[filename][protein][gene_name] += 1
+					filename = row[filename_index]
+					protein = row[protein_index]
+					gene_name = row[gene_index]
+					file_tree[filename][protein][gene_name] += 1
 					
 					percentage_complete = 100*current_line_count/total_line_count
 					if percentage_complete > previous_percentage_complete:
