@@ -73,7 +73,7 @@ if ($error==0)
 	}
 	open (IN,qq!$xmlfile!) || die "Could not open $xmlfile\n";
 	open (OUT,qq!>$xmlfile.txt!) || die "Could not open $xmlfile\n";
-	print OUT qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tlabeling\ttryptic\tmissed\tunacceptable modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
+	print OUT qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tlabeling\ttryptic\tmissed\tunacceptable modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tbroad_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
 	my $xmlfile_=$xmldir;
 
 	my %filenames=();
@@ -402,16 +402,32 @@ if($line=~/<GAML:attribute type="charge">([0-9]+)<\/GAML:attribute>/)
         $labeling/=1.0*$complete_labeling;
         if ($modifications!~/\w/) { $modifications="N"; }
         if ($protein_other!~/\w/) { $protein_other="N"; }
-        my $gene=$genes{$protein_};
-        if ($gene!~/\w/) { $gene="None - ".$protein_; }
         if ($other_genes!~/\w/) { $other_genes="None"; }
-        my $gene_id=$gene_ids{$protein_};
-        if ($gene_id!~/\w/) { $gene_id="None - ".$protein_; }
         if ($other_gene_ids!~/\w/) { $other_gene_ids="None"; }
-        my $protein_description=$protein_descriptions{$protein_};
-        if ($protein_description!~/\w/) { $protein_description="None"; }
         if ($other_protein_descriptions!~/\w/) { $other_protein_descriptions="None"; }
         
+        my $gene=$genes{$protein_};
+		if ($gene!~/\w/) { $gene="Not found"; }
+		my $gene_id=$gene_ids{$protein_};
+		if ($gene_id!~/\w/) { $gene_id="Not found"; }
+		my $protein_description=$protein_descriptions{$protein_};
+		if ($protein_description!~/\w/) { $protein_description="None"; }
+
+		# find the broadest description (gene -> gene_id -> protein)
+		my $broad_id="";
+		if ($gene eq "Not found"){
+			$gene = $gene_id;
+			if ($gene_id eq "Not found"){
+				$broad_id = $protein_ . " (protein)";
+			}
+			else{
+				$broad_id = $gene_id . " (gene id)";
+			}
+		}
+		else{
+			$broad_id = $gene . " (gene name)";
+		}
+
         #this only happens if the mgf file is a single search and not from mudpit
         if ($filename eq "")
         {
@@ -419,14 +435,14 @@ if($line=~/<GAML:attribute type="charge">([0-9]+)<\/GAML:attribute>/)
           $f_name_sans_mgf = $bioml_mgf_sans_mgf;
         }
 
-        print OUT qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$start\t$expect\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
+        print OUT qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$start\t$expect\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$broad_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
         open (OUT_,qq!>>$xmlfile_/$f_name_sans_mgf.reporter!) || die "Could not open $xmlfile_/$filename.reporter\n";
         if ($filenames{$filename}!~/\w/)
         {
           $filenames{$filename}=1;
-          print OUT_ qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tlabeling\ttryptic\tmissed\tflagged modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
+          print OUT_ qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tlabeling\ttryptic\tmissed\tflagged modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tbroad_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
         }
-        print OUT_ qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$start\t$expect\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
+        print OUT_ qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$start\t$expect\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$broad_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
         close(OUT_);
       }
       $mh="";
