@@ -22,7 +22,7 @@ def count_proteins(plain_parse_file, output_dir, timestamp):
 		total_line_count = buffered_line_count(plain_parse_file)
 		with open(plain_parse_file, "rb") as in_file:
 			previous_percentage_complete = 0
-			csvreader =asdfasdfasdf csv.reader(in_file, delimiter='\t')
+			csvreader = csv.reader(in_file, delimiter='\t')
 			header = next(csvreader) #skip header
 			filename_index = header.index("filename")
 			protein_index = header.index("protein")
