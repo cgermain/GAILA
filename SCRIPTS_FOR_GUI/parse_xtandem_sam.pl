@@ -416,7 +416,6 @@ if($line=~/<GAML:attribute type="charge">([0-9]+)<\/GAML:attribute>/)
 		# find the broadest description (gene -> gene_id -> protein)
 		my $broad_id="";
 		if ($gene eq "Not found"){
-			$gene = $gene_id;
 			if ($gene_id eq "Not found"){
 				$broad_id = $protein_ . " (protein)";
 			}
