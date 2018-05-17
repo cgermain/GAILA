@@ -98,7 +98,14 @@
         <span class="input-group-btn">
           <button class="btn btn-info" onclick="alert('On windows, open windows explorer and navigate to your output directory. Clicking on your url bar will highlight the directory path, copy paste that into this text box.  Will default to the IDEAA/Archive folder.')">?</button>
         </span>
-      </div>
+    </div>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">Perform largest-reporter recalibration</span>
+      <select class='form-control' id="concat">
+        <option value="0">DO NOT concatenate reporter files</option>
+        <option value="1">Concatenate reporter files</option>
+      </select>
+    </div>
 
     <br>
     <button id="tab_1_button" class="btn btn-primary">Click to submit</button>
@@ -209,6 +216,7 @@
         console.log(err);
       }
       else{
+        concatReporters(rightSide, serializedForm, function(err){});
         rightSide.append('<h3 style="color:green">Sucessfully parsed all MGF files</h3>');
         writeSummaryToFile(rightSide, serializedForm, function(err){});
       }

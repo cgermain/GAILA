@@ -257,6 +257,20 @@
 	    });
 	  }
 
+	  function concatReporters(rightSide, serializedForm, callbackOuter) {
+	    $.ajax({
+	      type: "POST",
+	      url: "concatReporters",
+	      data: serializedForm,
+	      success: function(result) {
+	      },
+	      error: function(response, textStatus, HTTPError) {
+	        var responseText = (response && response.responseText) ?
+	          response.responseText : "ERROR IN JOINING REPORTERS";
+	      }
+	    });
+	  }
+
 	  </script>
 
 	</body>
