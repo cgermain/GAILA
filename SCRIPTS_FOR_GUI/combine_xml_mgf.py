@@ -133,29 +133,33 @@ def add_c_labels_to_duplicate_marker_column(filename):
 	first = True
 	most_recent = (None, None)
 	for line in a:
-		line_arr = line.split("\t")
-		curr_scan = line_arr[scan_index]
-		curr_filename = line_arr[filename_index]
-		curr_replicate_spec_flag = line_arr[duplicate_index]
-		tup = (curr_filename, curr_scan)
-		if (not first) and (not (most_recent[1] == tup[1])):
-			if len(scan_list) == 0:
-				# continue even if the scan list is empty
-				pass 
-				# raise Exception("Shouldn't be zero")
-			elif len(scan_list) == 1:
-				temp_file.write("\t".join(scan_list[0]))
-			else:
-				new_list = [(float(l[log_e_index]), l) for l in scan_list]
-				new_list = sorted(new_list)
-				for i in range(len(new_list)):
-					arr = new_list[i][1]
-					arr[duplicate_index] = "C" + str(i + 1)
-					temp_file.write("\t".join(arr)) 
-			scan_list = []
-		scan_list.append(line_arr)
-		most_recent = tup
-		first = False
+		if "--" not in line:
+			line_arr = line.split("\t")
+			curr_scan = line_arr[scan_index]
+			curr_filename = line_arr[filename_index]
+			curr_replicate_spec_flag = line_arr[duplicate_index]
+			tup = (curr_filename, curr_scan)
+			if (not first) and (not (most_recent[1] == tup[1])):
+				if len(scan_list) == 0:
+					# continue even if the scan list is empty
+					pass 
+					# raise Exception("Shouldn't be zero")
+				elif len(scan_list) == 1:
+					temp_file.write("\t".join(scan_list[0]))
+				else:
+					new_list = [(float(l[log_e_index]), l) for l in scan_list]
+					new_list = sorted(new_list)
+					for i in range(len(new_list)):
+						arr = new_list[i][1]
+						arr[duplicate_index] = "C" + str(i + 1)
+						temp_file.write("\t".join(arr)) 
+				scan_list = []
+			scan_list.append(line_arr)
+			most_recent = tup
+			first = False
+		else:
+			temp_file.write(line)
+
 	if len(scan_list) == 0:
 		# continue even if the scan list is empty
 		pass
@@ -364,7 +368,7 @@ def finish_fast_parse(xmldir, timestamp):
 		return "Error combining xml and mgf in plain parse"
 
 
-def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize_intensities, timestamp):
+def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize_intensities, timestamp, keep_na):
 	try:
 		this_dir = os.path.dirname(os.path.realpath(__file__))
 		#checking reporter ion type
@@ -432,16 +436,22 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 				mgf = pd.read_table(testing_filename, index_col=['filename','scan','charge'])
 				xml = pd.read_table(xml_filename, index_col=['filename','scan','charge'])
 				try:
-					dfc=pd.merge(mgf,xml, left_index=True, right_index=True)
+					#left keeps the rows that weren't matched with XML entries
+					dfc=pd.merge(mgf,xml,how='left', left_index=True, right_index=True)
 				#if one of the dataframes we are attempting to merge is empty, create a new empty df
 				except Exception as err:
 					new_columns = ['filename', 'scan', 'charge']+list(mgf) + list(xml)
 					dfc = pd.DataFrame(data=None, columns=new_columns)
 					dfc.set_index(['filename','scan','charge'], inplace=True)
-				dfc_=dfc.dropna()
+
 				csv_filename = join(xmldir, filename + '_nocal_table.txt')
-				#writing to csv
-				dfc_.to_csv(csv_filename,sep='\t')
+
+				#if we're not keeping the unmatched rows
+				#drop them now so they are not included in normalization
+				if keep_na != "1":
+					dfc = dfc.dropna()
+
+				dfc.to_csv(csv_filename,sep='\t')
 				os.remove(testing_filename)
 				data = pd.read_table(csv_filename)
 
@@ -470,7 +480,10 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 							data.ix[k,start_col+"_norm_total":end_col+"_norm_total"] = normalized_temp_intensities
 				
 				this_filename = join(xmldir, filename + '_nocal_table_corrected.txt')
+				if keep_na == "1":
+					data.fillna("--", inplace=True)
 				data.to_csv(this_filename,sep='\t',index=False)
+				# only_na.to_csv(na_filename,sep='\t',index=False)
 
 		first=1
 		outfile_name = join(selected_mgfdir, parent_xml_filename + '_' + timestamp + '.txt')

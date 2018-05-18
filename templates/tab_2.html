@@ -183,6 +183,16 @@
         <button class="btn btn-info" onclick="alert('Reporter ion normalizations are included in the final output file')">?</button>
       </span>
     </div>
+    <div class="input-group" style="margin: 1%">
+      <span class="input-group-addon" id="basic-addon1">Write unassigned spectra</span>
+      <select class='form-control' id="writeAllSpectra">
+        <option value="0">No</option>
+        <option value="1">Yes</option>
+      </select>
+      <span class="input-group-btn">
+        <button class="btn btn-info" onclick="alert('Selecting yes writes out all spectra including those without XML assignments.')">?</button>
+      </span>
+    </div>
     <br>
 
     <div id="option_if_RemoveReporters">

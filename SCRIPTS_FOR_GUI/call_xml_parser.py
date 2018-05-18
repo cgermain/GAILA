@@ -76,14 +76,14 @@ def parse_xtandem_fast(full_path_to_xml, error_threshold, genefile, unacceptable
 		#Perl script exectued
 		return 0
 
-def parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, reporter_type, genefile, selected_mgfdir, unacceptable_mods, normalize_intensities, timestamp):
+def parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, reporter_type, genefile, selected_mgfdir, unacceptable_mods, normalize_intensities, timestamp, keep_na):
 	resp = parse_xtandem_new(full_path_to_xml, error_threshold, reporter_type, genefile, unacceptable_mods)
 	if resp:
 		print "from parse_xtandem_combine_with_mgf, error detected in parse_xtandem_new: " + str(resp)
 		return resp
 
 	xml_dir_name = utility.xml_dirname_from_filename(full_path_to_xml)
-	resp_2 = combine_parsed_xml_mgf(selected_mgfdir, xml_dir_name, reporter_type, normalize_intensities, timestamp)
+	resp_2 = combine_parsed_xml_mgf(selected_mgfdir, xml_dir_name, reporter_type, normalize_intensities, timestamp, keep_na)
 	if resp_2:
 		print "from parse_xtandem_combine_with_mgf, error in combine_parsed_xml_mgf: " + str(resp_2)
 		return resp_2

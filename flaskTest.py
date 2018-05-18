@@ -153,6 +153,7 @@ def tab_2_helper_function():
 	unacceptable_mods = request.form.getlist('unacceptableMods[]')
 	normalize_intensities = request.form.getlist('normalizeIntensities')
 	timestamp = request.form['timestamp']
+	keep_na = request.form['writeAllSpectra']
 
 	if request.form['mgfOperationToPerform'] == '1':
 		mgf_txt_foldername = makeFolderNames.construct_reporter_folder_path(request.form)
@@ -167,7 +168,7 @@ def tab_2_helper_function():
 	if should_use_unacceptable == "1":
 		unacceptable_mods = []
 
-	a = call_xml_parser.parse_xtandem_combine_with_mgf(xml_read_path, log_error_threshold, reporter_type, geneFile, mgf_txt_foldername, unacceptable_mods, normalize_intensities, timestamp)
+	a = call_xml_parser.parse_xtandem_combine_with_mgf(xml_read_path, log_error_threshold, reporter_type, geneFile, mgf_txt_foldername, unacceptable_mods, normalize_intensities, timestamp, keep_na)
 
 	if a:
 		print "Error in tab 2. Cleaning up."
@@ -556,6 +557,11 @@ def get_detailed_summary(option, value):
 		inv_path = join(this_dir, "SCRIPTS_FOR_GUI", "inverse_files", value + "-inv.txt")
 		inverses = pd.read_table(inv_path, index_col=0)
 		return ion_type_and_inverse + inverses.to_string() + "\n"
+	elif option == "writeAllSpectra":
+		if value == "0":
+			return option + " - No"
+		else:
+			return option + " - Yes"
 	else:
 		return option + " - " + value+'\n'
 
