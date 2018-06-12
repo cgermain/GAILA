@@ -98,7 +98,7 @@ IF %ERRORLEVEL% NEQ 0 (
 )
 
 echo upgrading pip
-pip install --upgrade pip
+python -m pip install -U pip
 echo pip upgraded, upgrading setuptools
 pip install --upgrade setuptools
 echo setuptools upgraded
