@@ -363,7 +363,10 @@ def writeSummary():
 					continue
 				else:
 					list_of_mods = request.form.getlist('unacceptableMods[]')
-					out_file.write(get_detailed_summary(option, list_of_mods))
+					if len(list_of_mods) == 0:
+						out_file.write("unacceptableMods - None selected\n")
+					else:
+						out_file.write(get_detailed_summary(option, list_of_mods))
 			elif option.startswith("mgfOperationToPerform") and "fast_parse" in request.form:
 				continue
 			elif option.startswith("mgfOperationToPerform") and "plain_parse" in request.form:
