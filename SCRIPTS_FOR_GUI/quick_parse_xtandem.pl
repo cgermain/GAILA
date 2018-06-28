@@ -67,7 +67,7 @@ if ($error==0)
 	}
 	open (IN,qq!$xmlfile!) || die "Could not open $xmlfile\n";
 	open (OUT,qq!>$xmlfile.txt!) || die "Could not open $xmlfile\n";
-	print OUT qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\ttryptic\tmissed\tunacceptable modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tbroad_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
+	print OUT qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tmh\ttryptic\tmissed\tunacceptable modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tbroad_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
 	my $xmlfile_=$xmldir;
 
 	my %filenames=();
@@ -82,6 +82,7 @@ if ($error==0)
 	my $start="";
 	my $end="";
 	my $expect=1;
+	my $mh_val="";
 	my $pre="";
 	my $post="";
 	my $peptide="";
@@ -113,7 +114,7 @@ if ($error==0)
 			#if the line contains a full path, truncate down to just the mgf filename
 			if($bioml_mgf=~/^.*[\/\\]([^\/\\]+.mgf)/)
 			{
-				bioml_mgf=$1
+				$bioml_mgf=$1
 			}
 			@f_name_array_to_hold_stuff=split(".mgf",$bioml_mgf);
 			$bioml_mgf_sans_mgf=$f_name_array_to_hold_stuff[0];
@@ -124,6 +125,7 @@ if ($error==0)
 			my $start_=$2;
 			my $end_=$3;
 			my $expect_=$4;
+			my $mh_val_=$5;
 			my $pre_=$7;
 			my $post_=$8;
 			my $peptide_=$9;
@@ -133,6 +135,7 @@ if ($error==0)
 				$start=$start_;
 				$end=$end_;
 				$expect=$expect_;
+				$mh_val=$mh_val_;
 				$pre=$pre_;
 				$post=$post_;
 				$peptide=$peptide_;
@@ -238,6 +241,7 @@ if ($error==0)
 			}
 		}
 
+		#check if we should be using this
 		if($line=~/<GAML\:attribute type=\"M\+H\">(.*)<\/GAML\:attribute>/)
 		{
 			$mh=$1;   
@@ -376,15 +380,15 @@ if ($error==0)
 			  $f_name_sans_mgf = $bioml_mgf_sans_mgf;
 			}
 
-			print OUT qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$start\t$expect\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$broad_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
+			print OUT qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$start\t$expect\t$mh_val\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$broad_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
 			if ($plain_parsing){
 				open (OUT_,qq!>>$xmlfile_/$f_name_sans_mgf.reporter!) || die "Could not open $xmlfile_/$filename.reporter\n";
 				if ($filenames{$filename}!~/\w/)
 				{
 				  $filenames{$filename}=1;
-				  print OUT_ qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\ttryptic\tmissed\tflagged modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tbroad id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
+				  print OUT_ qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tmh\ttryptic\tmissed\tflagged modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tbroad id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
 				}
-				print OUT_ qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$start\t$expect\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$broad_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
+				print OUT_ qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$start\t$expect\t$mh_val\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$broad_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
 				close(OUT_);
 			}
 
@@ -400,6 +404,7 @@ if ($error==0)
 		  $start="";
 		  $end="";
 		  $expect=1;
+		  $mh_val="";
 		  $pre="";
 		  $post="";
 		  $peptide="";

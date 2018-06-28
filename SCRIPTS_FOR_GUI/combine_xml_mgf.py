@@ -351,7 +351,7 @@ def finish_fast_parse(xmldir, timestamp):
 		add_a_or_b_label_to_sorted_mfg_txt_file(temporary_file, True)
 		parsed_pd = pd.read_table(temporary_file)
 		cols = parsed_pd.columns.tolist()
-		cols.insert(3, cols.pop(23))
+		cols.insert(3, cols.pop(24))
 		parsed_pd = parsed_pd[cols]
 		parsed_pd.set_index(['filename','scan','charge'], inplace=True)
 		parsed_pd.to_csv(temporary_file, sep='\t')
