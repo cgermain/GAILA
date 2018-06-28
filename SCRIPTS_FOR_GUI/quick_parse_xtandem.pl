@@ -106,10 +106,15 @@ if ($error==0)
 		}
 
 		#this line checks if the mgf was from a single file search
-		if($line=~/<bioml xmlns:GAML=.*label=\"(.*mgf)'\">/)
+		#.mgf does not appear in a multi-file search
+		if($line=~/<bioml xmlns:GAML=.+from '(.+\.mgf)'\">/)
 		{
 			$bioml_mgf=$1;
-			$bioml_mgf=~s/^.*[\/\\]([^\/\\]+)$/$1/;
+			#if the line contains a full path, truncate down to just the mgf filename
+			if($bioml_mgf=~/^.*[\/\\]([^\/\\]+.mgf)/)
+			{
+				bioml_mgf=$1
+			}
 			@f_name_array_to_hold_stuff=split(".mgf",$bioml_mgf);
 			$bioml_mgf_sans_mgf=$f_name_array_to_hold_stuff[0];
 		}
