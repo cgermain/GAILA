@@ -397,6 +397,8 @@ def writeSummary():
 				continue
 			elif option == "timestamp":
 				continue
+			elif option == "concat":
+				continue
 			else:
 				out_file.write(get_detailed_summary(option, value))
 
@@ -555,11 +557,15 @@ def get_detailed_summary(option, value):
 		else:
 			return ""
 	elif option == "reporterIonType":
-		ion_type_and_inverse = option + " - " + value + "\n" "Inverse Values\n"
+		return option + " - " + value + "\n"
+
+	elif option == "reporterInverseFiles":
+		ion_type_and_inverse = "InverseFile - " + value + "\n" "Inverse Values\n"
 		this_dir = os.path.dirname(os.path.realpath(__file__))
-		inv_path = join(this_dir, "SCRIPTS_FOR_GUI", "inverse_files", value + "-inv.txt")
+		inv_path = join(this_dir, "SCRIPTS_FOR_GUI", "inverse_files", value)
 		inverses = pd.read_table(inv_path, index_col=0)
 		return ion_type_and_inverse + inverses.to_string() + "\n"
+
 	elif option == "writeAllSpectra":
 		if value == "0":
 			return option + " - No"
