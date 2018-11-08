@@ -327,6 +327,9 @@ def combine_plain_parsed_xml_mgf(selected_mgfdir, xmldir, timestamp):
 								first = 0
 								outfile.write(line)
 		add_c_labels_to_duplicate_marker_column(outfile_name)
+
+		print "Finished!"
+
 		return
 	except Exception as err:
 		print err
@@ -362,6 +365,8 @@ def finish_fast_parse(xmldir, timestamp):
 		os.rename(temporary_file, outfile_name)
 		add_c_labels_to_duplicate_marker_column(outfile_name)
 		
+		print "Finished!"
+
 		return
 	except Exception as err:
 		print err
@@ -496,6 +501,9 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 								first = 0
 								outfile.write(line)
 		add_c_labels_to_duplicate_marker_column(outfile_name)
+
+		print "Finished!"
+
 		return
 	except Exception as err:
 		print err
