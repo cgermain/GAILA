@@ -386,7 +386,7 @@ if ($error==0)
 				if ($filenames{$filename}!~/\w/)
 				{
 				  $filenames{$filename}=1;
-				  print OUT_ qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tmh\ttryptic\tmissed\tflagged modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tbroad id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
+				  print OUT_ qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tmh\ttryptic\tmissed\tflagged modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tbroad_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
 				}
 				print OUT_ qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$start\t$expect\t$mh_val\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$broad_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
 				close(OUT_);
