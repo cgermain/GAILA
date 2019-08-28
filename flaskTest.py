@@ -403,8 +403,9 @@ def writeSummary():
 				out_file.write(get_detailed_summary(option, value))
 
 		reporters = ""
+		intensity_totals = []
 		if os.path.isfile(mgf_txt_write_dir_path+'intensity_summary.txt'):
-			out_file.write("\nTotal Reporter Ion Intensities\n----------\n")
+			out_file.write("\nTotal Reporter Ion and MS1 Intensities per MGF file\n----------\n")
 			line_found = False	
 			with open (mgf_txt_write_dir_path+'intensity_summary.txt') as summary_file:
 				for summary_line in summary_file:
@@ -418,19 +419,27 @@ def writeSummary():
 						if reporters == "TMT11-126\tTMT11-127\tTMT11-127\tTMT11-128\tTMT11-128\tTMT11-129\tTMT11-129\tTMT11-130\tTMT11-130\tTMT11-131\tTMT11-131\n":
 							reporters = "TMT11-126\tTMT11-127N\tTMT11-127C\tTMT11-128N\tTMT11-128C\tTMT11-129N\tTMT11-129C\tTMT11-130N\tTMT11-130C\tTMT11-131N\tTMT11-131C\n"
 							summary_line = reporters
-					if summary_line != "" or summary_line != "\n":
-						out_file.write(summary_line)
+						num_reporters = len(reporters.split("\t"))
+						#initialize the intensity_totals array to all zeros
+						intensity_totals = [0 for i in range(num_reporters)]
+
 			os.remove(mgf_txt_write_dir_path+'intensity_summary.txt')
 		
 		if os.path.isfile(mgf_txt_write_dir_path+'mgf_summary.txt'):
-			out_file.write("\n\nTotal Reporter Ion and MS1 Intensities per MGF file\n----------\n")
 			out_file.write("MGF File\tMS1 Intensity\t"+reporters)
 			with open (mgf_txt_write_dir_path+'mgf_summary.txt') as mgf_summary_file:
 				for mgf_line in mgf_summary_file:
 					if mgf_line != "" or mgf_line != "\n":
 						out_file.write(mgf_line)
-
-			os.remove(mgf_txt_write_dir_path+'mgf_summary.txt')
+						#skip the mgf name and ms1 intensity and create a list of the intensities for this mgf
+						numeric_intensities = [long(n) for n in mgf_line.split('\t')[2:]]
+						#add each of these intensities to the total intensity
+						intensity_totals = [x+y for x,y in zip(intensity_totals, numeric_intensities)]
+				out_file.write("\nTotal Reporter Ion Intensities\n----------\n")
+				out_file.write(reporters)
+				out_file.write('\t'.join([str(val) for val in intensity_totals]))
+	
+		os.remove(mgf_txt_write_dir_path+'mgf_summary.txt')
 
 	makeFolderNames.rename_folders(request.form)
 	return "Summary complete."

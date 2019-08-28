@@ -374,10 +374,7 @@ if (open (IN, "$read_file_path"))
 		my @rounded_total_intensity = map{int($_ + 0.5)} @total_intensity;
 
 		print TOTAL_INTENSITY_TABLE "\n",  join("\t", @rounded_combined_intensity);
-		if ($previous_summary_exists){
-			print MGF_TABLE "\n";
-		}
-		print MGF_TABLE $parsed_filename, "\t", int($total_ms1 + 0.5), "\t", join("\t", @rounded_total_intensity);
+		print MGF_TABLE $parsed_filename, "\t", int($total_ms1 + 0.5), "\t", join("\t", @rounded_total_intensity),"\n";
 		close(OUT_TABLE);
 		close(TOTAL_INTENSITY_TABLE);
 		close(MGF_TABLE);
