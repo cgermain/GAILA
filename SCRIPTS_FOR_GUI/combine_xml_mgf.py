@@ -422,7 +422,7 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 		xmldir = join(xmldir,"")
 		parent_xml_filename = os.path.basename(os.path.normpath(xmldir))
 		# if first loop through
-		summary_file = selected_mgfdir+"\intensity_summary.txt"
+		summary_file = selected_mgfdir+"\mgf_summary.txt"
 
 		normalized_intensities = read_intensities_from_summary_and_normalize(summary_file)
 
@@ -512,14 +512,28 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 
 def read_intensities_from_summary_and_normalize(filename):
 	try:
-		summary = open(filename, "r")
-		summary.readline() #skip the header
-		intensities = [float(intensity) for intensity in summary.readline().split("\t")]
-		sum_int = sum(intensities)
+		intensity_read = False
+		intensity_totals = []
+		with open(filename, "r") as summary:
+			for mgf_line in summary:
+				if mgf_line != "" or mgf_line != "\n":
+					#skip the mgf name and ms1 intensity and create a list of the intensities for this mgf
+					numeric_intensities = [long(n) for n in mgf_line.split('\t')[2:]]
+					#initialize the total intensity list to zeros
+					if intensity_read == False:
+						intensity_read = True
+						intensity_totals = [0 for i in range(len(numeric_intensities))]
+
+					#add each of these intensities to the total intensity
+					intensity_totals = [x+y for x,y in zip(intensity_totals, numeric_intensities)]
+
+		print "Intensity Totals\n" + str(intensity_totals)			
+		sum_int = sum(intensity_totals)
+
 		if sum_int != 0:
-			return [intensity/sum_int for intensity in intensities]
+			return [intensity/sum_int for intensity in intensity_totals]
 		else:
-			return intensities
+			return intensity_totals
 	except Exception as err:
 		print "Error reading from intensity file"
 		print err
