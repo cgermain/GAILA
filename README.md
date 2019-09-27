@@ -4,10 +4,9 @@
 ## FOR WINDOWS
 
 ### Prerequisites:
-#### Download python:
-https://www.python.org/downloads/release/python-2710/
-(Click "Windows x86-64 MSI installer" if you have 64 bit windows, and "Windows x86 MSI installer" if you have 32 bit windows (all newer computers run 64 bit windows))
-Then follow installation instructions
+#### Download Python:
+https://www.python.org/downloads/release/python-370/
+IDEAA expects Python to be installed at C:\Python37. If it is in another location, please change these references in /INSTALLATION/install.bat
 
 #### Make sure Perl is installed (min v5.12):
 http://www.activestate.com/activeperl/downloads
@@ -44,8 +43,5 @@ The /plaincount/plaincount.exe executable file was created with py2exe.  Microso
 GUI: Drag and drop a plain parsed file onto the plaincount.exe application icon.  Make sure to drag the file onto the icon itself and not in the command line window.
 
 Command Line: python plaincount.py plain_parse_filename
-
-## FOR MAC / LINUX
-Currently a work in progress.
 
 ### If there are any issues with installation, the web interface, or the scripts themselves, please email germain@cabm.rutgers.edu.
