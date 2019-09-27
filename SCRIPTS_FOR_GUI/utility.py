@@ -1,3 +1,4 @@
+from __future__ import print_function
 import re
 import os
 import shutil
@@ -202,48 +203,48 @@ def inverse_array_is_correct():
 
 def xml_dirname_from_filename(full_path_to_xml):
 	if not full_path_to_xml:
-		print "bad, no full_path_to_xml"
+		print("bad, no full_path_to_xml")
 		return False
 	almost_xml_dir_name = full_path_to_xml.partition('.xml')[0]
 	if not almost_xml_dir_name:
-		print "bad, no almost_xml_dir_name"
+		print("bad, no almost_xml_dir_name")
 		return False
 	# check to make sure we don't delete the home directory or something crazy.
 	after_slash = almost_xml_dir_name.rpartition(os.sep)[2]
 	if not after_slash:
-		print "passed in something like aaa/.xml, that's dangerous"
+		print("passed in something like aaa/.xml, that's dangerous")
 		return False
 	xml_dir_name = os.path.join(almost_xml_dir_name, '')
 	return xml_dir_name
 
 def xml_dirname_from_filename_plain_parse(full_path_to_xml):
 	if not full_path_to_xml:
-		print "bad, no full_path_to_xml"
+		print("bad, no full_path_to_xml")
 		return False
 	almost_xml_dir_name = full_path_to_xml.partition('.xml')[0]
 	if not almost_xml_dir_name:
-		print "bad, no almost_xml_dir_name"
+		print("bad, no almost_xml_dir_name")
 		return False
 	# check to make sure we don't delete the home directory or something crazy.
 	after_slash = almost_xml_dir_name.rpartition(os.sep)[2]
 	if not after_slash:
-		print "passed in something like aaa/.xml, that's dangerous"
+		print("passed in something like aaa/.xml, that's dangerous")
 		return False
 	xml_dir_name = os.path.join(almost_xml_dir_name,'')
 	return xml_dir_name
 
 def xml_dirname_from_filename_fast_parse(full_path_to_xml):
 	if not full_path_to_xml:
-		print "bad, no full_path_to_xml"
+		print("bad, no full_path_to_xml")
 		return False
 	almost_xml_dir_name = full_path_to_xml.partition('.xml')[0]
 	if not almost_xml_dir_name:
-		print "bad, no almost_xml_dir_name"
+		print("bad, no almost_xml_dir_name")
 		return False
 	# check to make sure we don't delete the home directory or something crazy.
 	after_slash = almost_xml_dir_name.rpartition(os.sep)[2]
 	if not after_slash:
-		print "passed in something like aaa/.xml, that's dangerous"
+		print("passed in something like aaa/.xml, that's dangerous")
 		return False
 	xml_dir_name = os.path.join(almost_xml_dir_name+"_fast_parse",'')
 	return xml_dir_name

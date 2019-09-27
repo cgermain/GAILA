@@ -1,3 +1,5 @@
+from __future__ import print_function
+from __future__ import absolute_import
 import os
 from os.path import join
 import subprocess
@@ -5,7 +7,7 @@ from pyteomics import mgf
 import csv
 import re
 import pandas as pd
-import utility
+from . import utility
 
 debug = False
 # debug = True
@@ -36,7 +38,7 @@ def select_only_one(mgf_read_path, mgf_write_path, mgf_txt_write_path, mz_error,
 
 	if debug:
 		output = subprocess.check_output(perl_array)
-		print output
+		print(output)
 		return output
 	else:
 		a = subprocess.call(perl_array)
@@ -69,7 +71,7 @@ def select_only_one_recalibrate(mgf_read_path, mgf_write_path, mgf_txt_write_pat
 
 	if debug:
 		output = subprocess.check_output(perl_array)
-		print output
+		print(output)
 		return output
 	else:
 		a = subprocess.call(perl_array)
@@ -85,7 +87,7 @@ def plain_parse(mgf_read_path, mgf_txt_write_path):
 	if os.path.isfile(mgf_txt_write_path):
 		return "mgf_txt_write_path is already a file"
 
-	with open(mgf_txt_write_path,'wb') as mgf_csv:
+	with open(mgf_txt_write_path,'w') as mgf_csv:
 		with mgf.read(mgf_read_path) as mgf_reader:
 			csv_writer = csv.writer(mgf_csv, delimiter='\t')
 			csv_writer.writerow(['filename', 'scan', 'charge', 'rt', 'ms1 intensity'])

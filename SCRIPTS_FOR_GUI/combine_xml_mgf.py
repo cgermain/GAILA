@@ -1,8 +1,10 @@
+from __future__ import print_function
+from __future__ import absolute_import
 from pandas import Series, DataFrame
 import pandas as pd
 import numpy as np
 import sys, os, shutil
-import utility
+from . import utility
 from os.path import join
 from datetime import datetime
 #from collections import defaultdict
@@ -22,19 +24,19 @@ def remove_duplicate_lines(filename):
 			outfile.write(line)
 			lines_seen.add(line)
 		else:
-			print "duplicate line removed: " + str(line)
+			print("duplicate line removed: " + str(line))
 	outfile.close()
 	os.remove(filename)
 	os.rename(write_dest, filename)
 
 
 def clear_directory_of_files(directory):
-	print "clearing dir of files"
+	print("clearing dir of files")
 	for item in os.listdir(directory):
 		if os.path.isfile(item):
 			toRemove = directory + os.sep + item
 			os.remove(directory + os.sep + item)
-			print toRemove + " removed"
+			print(toRemove + " removed")
 
 
 def transform_firstline_for_n_and_c(firstline):
@@ -48,10 +50,10 @@ def transform_firstline_for_n_and_c(firstline):
 		if second.endswith('.1'):
 			pre_end = second.partition('.1')[0]
 			if pre_end != first:
-				print "Changeing first line so rep. ions end in N or C instead of .1. " +\
+				print("Changeing first line so rep. ions end in N or C instead of .1. " +\
 							" This should only happen when two rep. ions have the same integer-mass." +\
-							" For some reason it is happening elsewhere. Printing old first line for debugging."
-				print firstline
+							" For some reason it is happening elsewhere. Printing old first line for debugging.")
+				print(firstline)
 				raise Exception("very strange these headers are not equal, they should be.")
 			new_first = pre_end + "N"
 			new_second = pre_end + "C"
@@ -211,9 +213,9 @@ def take_in_file_sorted_by_filename_scan_output_file_with_duplicate_marker_colum
 			elif len(lines) == 1:
 				for i in range(len(lines)):
 					#needed?
-					print i
+					print(i)
 			else:
-				print "line length > 1"
+				print("line length > 1")
 
 
 def remove_log_e_duplicates(filename):
@@ -290,24 +292,30 @@ def combine_plain_parsed_xml_mgf(selected_mgfdir, xmldir, timestamp):
 		# I should check here to make sure the files line up.
 		linesup, message = check_for_selected_xmldir_lineup(selected_mgfdir, xmldir)
 		if not linesup:
-			print "XML doesn't line up in plain parse"
+			print("XML doesn't line up in plain parse")
 			return message
 
 		xmldir = join(xmldir,"")
 		parent_xml_filename = os.path.basename(os.path.normpath(xmldir))
 		for filename in os.listdir(xmldir):
 			if filename.endswith('.reporter'):
-				print "Processing: " + filename
+				print("Processing: " + filename)
 				xml_filename = join(xmldir, filename)
 				mgf_txt_filename = join(selected_mgfdir, filename)
 				mgf = pd.read_table(mgf_txt_filename, index_col=['filename','scan','charge'])
+				print(mgf.to_string())
 				mgf.sort_index()
 				testing_filename = mgf_txt_filename.split('.reporter')[0] + '_duplicate_sorted' + '.reporter'
 				mgf.to_csv(testing_filename, sep='\t')
 				add_a_or_b_label_to_sorted_mfg_txt_file(testing_filename, False)
 				mgf = pd.read_table(testing_filename, index_col=['filename','scan','charge'])
+				# print("\n------\n")
+				# print(mgf.to_string()) 
 				xml = pd.read_table(xml_filename, index_col=['filename','scan','charge'])
-				dfc=pd.merge(mgf,xml, left_index=True, right_index=True)
+				dfc=pd.merge(mgf,xml, how='left', left_index=True, right_index=True)
+				dfc.sort_index()
+				# print("\n------\n")
+				# print(dfc.to_string()) 
 				dfc_=dfc.dropna()
 				csv_filename = join(xmldir, filename + '_nocal_table.txt')
 				dfc_.to_csv(csv_filename,sep='\t')
@@ -328,11 +336,11 @@ def combine_plain_parsed_xml_mgf(selected_mgfdir, xmldir, timestamp):
 								outfile.write(line)
 		add_c_labels_to_duplicate_marker_column(outfile_name)
 
-		print "Finished!"
+		print("Finished!")
 
 		return
 	except Exception as err:
-		print err
+		print(err)
 		return "Error combining xml and mgf in plain parse"
 
 def finish_fast_parse(xmldir, timestamp):
@@ -365,11 +373,11 @@ def finish_fast_parse(xmldir, timestamp):
 		os.rename(temporary_file, outfile_name)
 		add_c_labels_to_duplicate_marker_column(outfile_name)
 		
-		print "Finished!"
+		print("Finished!")
 
 		return
 	except Exception as err:
-		print err
+		print(err)
 		return "Error combining xml and mgf in plain parse"
 
 
@@ -410,13 +418,13 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 			end_col=reporter_ion_type+'-131C'
 			label_mass_int=229
 		else:
-			print "bad reporter ion type"
+			print("bad reporter ion type")
 			return "BAD REPORTER ION TYPE"
 
 		# I should check here to make sure the files line up.
 		linesup, message = check_for_selected_xmldir_lineup(selected_mgfdir, xmldir)
 		if not linesup:
-			print "XML doesn't line up"
+			print("XML doesn't line up")
 			return message
 
 		xmldir = join(xmldir,"")
@@ -429,7 +437,7 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 		# Problem is that it's an empty folder!
 		for filename in os.listdir(xmldir):
 			if filename.endswith('.reporter'):
-				print "Processing: " + filename
+				print("Processing: " + filename)
 				xml_filename = join(xmldir, filename)
 				mgf_txt_filename = join(selected_mgfdir, filename)
 				mgf = pd.read_table(mgf_txt_filename, index_col=['filename','scan','charge'])
@@ -473,16 +481,16 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 					# only need to loop through for normalizing total intensities
 					for k in range(len(data)):
 						# this next line gets the kth row, and the start_col to end_col columns, which are strings like iTRAQ-115.
-						temp = data.ix[k,start_col:end_col]
+						temp = data.loc[k,start_col:end_col]
 						temp_intensities = [float(intensity)/norm if norm != 0 else 0 for intensity, norm in zip(temp, normalized_intensities)]
 						if sum(temp_intensities) == 0:
 							normalized_temp_intensities = temp_intensities
 						else:
 							normalized_temp_intensities = [float(intensity)/sum(temp_intensities) for intensity in temp_intensities]
 						if len(normalized_temp_intensities) == 1:
-							data.ix[k,start_col+"_norm_total":end_col+"_norm_total"] = normalized_temp_intensities[0]
+							data.loc[k,start_col+"_norm_total":end_col+"_norm_total"] = normalized_temp_intensities[0]
 						else:
-							data.ix[k,start_col+"_norm_total":end_col+"_norm_total"] = normalized_temp_intensities
+							data.loc[k,start_col+"_norm_total":end_col+"_norm_total"] = normalized_temp_intensities
 				
 				this_filename = join(xmldir, filename + '_nocal_table_corrected.txt')
 				if keep_na == "1":
@@ -502,11 +510,11 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 								outfile.write(line)
 		add_c_labels_to_duplicate_marker_column(outfile_name)
 
-		print "Finished!"
+		print("Finished!")
 
 		return
 	except Exception as err:
-		print err
+		print(err)
 		return "Error combining xml and mgf"
 
 
@@ -518,7 +526,7 @@ def read_intensities_from_summary_and_normalize(filename):
 			for mgf_line in summary:
 				if mgf_line != "" or mgf_line != "\n":
 					#skip the mgf name and ms1 intensity and create a list of the intensities for this mgf
-					numeric_intensities = [long(n) for n in mgf_line.split('\t')[2:]]
+					numeric_intensities = [int(n) for n in mgf_line.split('\t')[2:]]
 					#initialize the total intensity list to zeros
 					if intensity_read == False:
 						intensity_read = True
@@ -527,7 +535,7 @@ def read_intensities_from_summary_and_normalize(filename):
 					#add each of these intensities to the total intensity
 					intensity_totals = [x+y for x,y in zip(intensity_totals, numeric_intensities)]
 
-		print "Intensity Totals\n" + str(intensity_totals)			
+		#print("Intensity Totals\n" + str(intensity_totals))			
 		sum_int = sum(intensity_totals)
 
 		if sum_int != 0:
@@ -535,7 +543,7 @@ def read_intensities_from_summary_and_normalize(filename):
 		else:
 			return intensity_totals
 	except Exception as err:
-		print "Error reading from intensity file"
-		print err
+		print("Error reading from intensity file")
+		print(err)
 		return "Error in intensity file"
 						

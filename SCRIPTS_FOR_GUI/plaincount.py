@@ -1,3 +1,4 @@
+from __future__ import print_function
 import csv, sys, os
 from collections import defaultdict
 from datetime import datetime
@@ -20,7 +21,7 @@ def count_proteins(plain_parse_file, output_dir, timestamp):
 
 	try:
 		total_line_count = buffered_line_count(plain_parse_file)
-		with open(plain_parse_file, "rb") as in_file:
+		with open(plain_parse_file, "r") as in_file:
 			previous_percentage_complete = 0
 			csvreader = csv.reader(in_file, delimiter='\t')
 			header = next(csvreader) #skip header
@@ -29,8 +30,8 @@ def count_proteins(plain_parse_file, output_dir, timestamp):
 			broad_index = header.index("broad_id")
 
 			if filename_index != -1 and protein_index != -1 and broad_index != -1:
-				print "Total lines in plain parse file: " + str(total_line_count)
-				print "Reading plain parse file..."
+				print("Total lines in plain parse file: " + str(total_line_count))
+				print("Reading plain parse file...")
 				for row in csvreader:
 					current_line_count += 1
 					filename = row[filename_index]
@@ -55,10 +56,10 @@ def count_proteins(plain_parse_file, output_dir, timestamp):
 		os.makedirs(os.path.join(output_dir, "protein_count_"+timestamp))
 		
 	out_filename = os.path.join(output_dir, "protein_count_"+timestamp, gpm_filename+"_count_"+timestamp+".txt")
-	print "\n"
-	print "Writing..."
+	print("\n")
+	print("Writing...")
 	try:
-		with open(out_filename, 'wb') as out_file:
+		with open(out_filename, 'w') as out_file:
 			previous_percentage_complete = 0
 			current_line_count = 0
 			csvwriter = csv.writer(out_file, delimiter='\t')
@@ -76,7 +77,7 @@ def count_proteins(plain_parse_file, output_dir, timestamp):
 					previous_percentage_complete = percentage_complete
 					sys.stdout.write(".")
 
-		print "\nSaved: " + out_filename + "\n"
+		print("\nSaved: " + out_filename + "\n")
 		return out_filename, 1
 	except IOError as e:
 		return "Error opening output file.", 0
@@ -100,6 +101,6 @@ if __name__ == "__main__":
 	if len(sys.argv) == 2 and sys.argv[1].endswith(".txt"):
 		main(sys.argv[1])
 	else:
-		print "Usage: python plaincount.py plain_parse_file.txt"
-		print "or drop plain_parse_file.txt onto the plaincount.exe icon"
+		print("Usage: python plaincount.py plain_parse_file.txt")
+		print("or drop plain_parse_file.txt onto the plaincount.exe icon")
 	raw_input("press ENTER to exit")

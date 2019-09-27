@@ -1,3 +1,4 @@
+from __future__ import print_function
 import re
 import os
 
@@ -31,5 +32,5 @@ def check_which_version(filename):
       if regex_for_type_2.match(line):
         return "2"
 
-    print "Cannot figure out mgf file version, even after reading the ENTIRE file!"
+    print("Cannot figure out mgf file version, even after reading the ENTIRE file!")
     raise Exception("Cannot figure out mgf file version, even after reading the ENTIRE file!")

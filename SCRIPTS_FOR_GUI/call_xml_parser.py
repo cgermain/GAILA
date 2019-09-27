@@ -1,12 +1,14 @@
+from __future__ import print_function
+from __future__ import absolute_import
 import os
 from os.path import join
 import shutil
-from combine_xml_mgf import combine_parsed_xml_mgf 
-from combine_xml_mgf import combine_plain_parsed_xml_mgf
-from combine_xml_mgf import finish_fast_parse
-import utility
+from .combine_xml_mgf import combine_parsed_xml_mgf 
+from .combine_xml_mgf import combine_plain_parsed_xml_mgf
+from .combine_xml_mgf import finish_fast_parse
+from . import utility
 import subprocess
-import makeFolderNames
+from . import makeFolderNames
 
 
 def parse_xtandem_new(full_path_to_xml, error_threshold, reporter_type, genefile, unacceptable_mods):
@@ -18,17 +20,17 @@ def parse_xtandem_new(full_path_to_xml, error_threshold, reporter_type, genefile
 
 	label_mass = convert_reporter_to_label_mass(reporter_type)
 	if not label_mass:
-		print "bad label mass returned"
+		print("bad label mass returned")
 		return "reporter type not valid"
 
 	xml_dir_name = utility.xml_dirname_from_filename(full_path_to_xml)
 	if os.path.isdir(xml_dir_name):
-		print "xml directory already exists here, if you don't need it anymore try deleting it and running again"
+		print("xml directory already exists here, if you don't need it anymore try deleting it and running again")
 		return "xml directory already exists here, if you don't need it anymore try deleting it and running again"
 
 	xml_txt_filename = full_path_to_xml + '.txt'
 	if os.path.isfile(xml_txt_filename):
-		print "xml txt file already exists there, either you've already run this in the past or you have a residual file you don't want. Consider deleting or moving that file"
+		print("xml txt file already exists there, either you've already run this in the past or you have a residual file you don't want. Consider deleting or moving that file")
 		return "xml txt file already exists there, either you've already run this in the past or you have a residual file you don't want. Consider deleting or moving that file"
 
 	os.mkdir(xml_dir_name)
@@ -54,12 +56,12 @@ def parse_xtandem_fast(full_path_to_xml, error_threshold, genefile, unacceptable
 
 	xml_dir_name = utility.xml_dirname_from_filename_fast_parse(full_path_to_xml)
 	if os.path.isdir(xml_dir_name):
-		print "xml directory already exists here, if you don't need it anymore try deleting it and running again"
+		print("xml directory already exists here, if you don't need it anymore try deleting it and running again")
 		return "xml directory already exists here, if you don't need it anymore try deleting it and running again"
 
 	xml_txt_filename = full_path_to_xml + '.txt'
 	if os.path.isfile(xml_txt_filename):
-		print "xml txt file already exists there, either you've already run this in the past or you have a residual file you don't want. Consider deleting or moving that file"
+		print("xml txt file already exists there, either you've already run this in the past or you have a residual file you don't want. Consider deleting or moving that file")
 		return "xml txt file already exists there, either you've already run this in the past or you have a residual file you don't want. Consider deleting or moving that file"
 
 	os.mkdir(xml_dir_name)
@@ -79,13 +81,13 @@ def parse_xtandem_fast(full_path_to_xml, error_threshold, genefile, unacceptable
 def parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, reporter_type, genefile, selected_mgfdir, unacceptable_mods, normalize_intensities, timestamp, keep_na):
 	resp = parse_xtandem_new(full_path_to_xml, error_threshold, reporter_type, genefile, unacceptable_mods)
 	if resp:
-		print "from parse_xtandem_combine_with_mgf, error detected in parse_xtandem_new: " + str(resp)
+		print("from parse_xtandem_combine_with_mgf, error detected in parse_xtandem_new: " + str(resp))
 		return resp
 
 	xml_dir_name = utility.xml_dirname_from_filename(full_path_to_xml)
 	resp_2 = combine_parsed_xml_mgf(selected_mgfdir, xml_dir_name, reporter_type, normalize_intensities, timestamp, keep_na)
 	if resp_2:
-		print "from parse_xtandem_combine_with_mgf, error in combine_parsed_xml_mgf: " + str(resp_2)
+		print("from parse_xtandem_combine_with_mgf, error in combine_parsed_xml_mgf: " + str(resp_2))
 		return resp_2
 
 	#cleaning up XML directory
@@ -95,20 +97,20 @@ def parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, reporter_t
 		os.remove(xml_txt_filename)
 		return 0
 	except:
-		print "trouble deleting the directory afterwards."
+		print("trouble deleting the directory afterwards.")
 		return "Trouble deleting xml directory afterwards"
 
 
 def plain_parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, genefile, selected_mgfdir, unacceptable_mods, timestamp):
 	resp = parse_xtandem_fast(full_path_to_xml, error_threshold, genefile, unacceptable_mods, "1")
 	if resp:
-		print "from plain_parse_xtandem_combine_with_mgf, error detected in parse_xtandem_fast: " + str(resp)
+		print("from plain_parse_xtandem_combine_with_mgf, error detected in parse_xtandem_fast: " + str(resp))
 		return resp
 
 	xml_dir_name = utility.xml_dirname_from_filename_fast_parse(full_path_to_xml)
 	resp_2 = combine_plain_parsed_xml_mgf(selected_mgfdir, xml_dir_name, timestamp)
 	if resp_2:
-		print "from plain_parse_xtandem_combine_with_mgf, error in combine_plain_parsed_xml_mgf: " + str(resp_2)
+		print("from plain_parse_xtandem_combine_with_mgf, error in combine_plain_parsed_xml_mgf: " + str(resp_2))
 		return resp_2
 
 	#Cleaning up XML directory
@@ -117,7 +119,7 @@ def plain_parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, gene
 		xml_txt_filename = full_path_to_xml + '.txt'
 		os.remove(xml_txt_filename)
 	except:
-		print "trouble deleting the directory afterwards."
+		print("trouble deleting the directory afterwards.")
 		return "Trouble deleting xml directory afterwards"
 
 	#cleaning up reporter files
@@ -127,7 +129,7 @@ def plain_parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, gene
 			if os.path.isfile(full_name) and full_name.endswith('.reporter'):
 				os.remove(full_name)
 	except:
-		print "trouble removing reporters"
+		print("trouble removing reporters")
 		return "trouble removing reporters"
 
 	return 0
@@ -135,13 +137,13 @@ def plain_parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, gene
 def fast_parse_xtandem(full_path_to_xml, error_threshold, genefile, unacceptable_mods, timestamp):
 	resp = parse_xtandem_fast(full_path_to_xml, error_threshold, genefile, unacceptable_mods, "0")
 	if resp:
-		print "from fast_parse_xtandem, error detected in parse_xtandem_fast: " + str(resp)
+		print("from fast_parse_xtandem, error detected in parse_xtandem_fast: " + str(resp))
 		return resp
 
 	xml_dir_name = utility.xml_dirname_from_filename(full_path_to_xml)
 	resp_2 = finish_fast_parse(xml_dir_name, timestamp)
 	if resp_2:
-		print "from plain_parse_xtandem_combine_with_mgf, error in combine_plain_parsed_xml_mgf: " + str(resp_2)
+		print("from plain_parse_xtandem_combine_with_mgf, error in combine_plain_parsed_xml_mgf: " + str(resp_2))
 		return resp_2
 
 	return 0

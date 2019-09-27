@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, make_response, jsonify
+from __future__ import print_function
+from flask import Flask, render_template, request, make_response, jsonify 
 from functools import update_wrapper
 app = Flask(__name__)
 from time import time
@@ -30,9 +31,9 @@ TIME_FORMAT =  "%Y-%m-%d_%H-%M-%S"
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 
-print "Welcome to IDEAA"
-print "Currently running at http://127.0.0.1:5000/"
-print "Press Ctrl+C to quit"
+print("Welcome to IDEAA")
+print("Currently running at http://127.0.0.1:5000/")
+print("Press Ctrl+C to quit")
 
 def nocache(f):
 	def new_func(*args, **kwargs):
@@ -90,7 +91,7 @@ def tab_4_helper_function():
 	error = mgf_select_one.plain_parse(mgf_read_path, mgf_txt_write_path)
 
 	if error:
-		print "error in plain_parse"
+		print("error in plain_parse")
 		return error, 500
 	else:
 		return "mgf_select plain parse ran successfully"
@@ -109,7 +110,7 @@ def plain_parse_xtandem_combine_with_mgf():
 	a = call_xml_parser.plain_parse_xtandem_combine_with_mgf(xml_read_path, log_error_threshold, geneFile, mgf_txt_foldername, unacceptable_mods, timestamp)
 
 	if a:
-		print "Error in tab 4. Trying cleanup now, either way returning error"
+		print("Error in tab 4. Trying cleanup now, either way returning error")
 		try:
 			clean_up_after_tab_2()
 		finally: #In case it breaks
@@ -131,9 +132,9 @@ def fast_parse():
 	a = call_xml_parser.fast_parse_xtandem(xml_read_path, log_error_threshold, geneFile, unacceptable_mods, timestamp)
 
 	if a:
-		print "Error in tab 7. Trying cleanup now, either way returning error"
+		print("Error in tab 7. Trying cleanup now, either way returning error")
 		try:
-			print "Cleaning up"
+			print("Cleaning up")
 		finally: #In case it breaks
 			return a, 500
 	else:
@@ -171,7 +172,7 @@ def tab_2_helper_function():
 	a = call_xml_parser.parse_xtandem_combine_with_mgf(xml_read_path, log_error_threshold, reporter_type, geneFile, mgf_txt_foldername, unacceptable_mods, normalize_intensities, timestamp, keep_na)
 
 	if a:
-		print "Error in tab 2. Cleaning up."
+		print("Error in tab 2. Cleaning up.")
 		try:
 			clean_up_after_tab_2()
 		finally: #In case it breaks
@@ -183,7 +184,7 @@ def tab_2_helper_function():
 def tab_1_helper_function():
 	valid, validation_error = validation.validate_tab_1(request.form)
 	if not valid:
-		print "Not valid: error is " + str(validation_error)
+		print("Not valid: error is " + str(validation_error))
 		return validation_error, 500
 
 	mgf_read_dir_path = request.form['mgfReadDirPath']
@@ -235,7 +236,7 @@ def tab_1_helper_function():
 			reporter_type, inverse_file, min_intensity, min_reporters, should_select, \
 			mz_error_recalibration)
 		if error:
-			print "error in mgf_select_with_recalibrate"
+			print("error in mgf_select_with_recalibrate")
 			return error, 500
 		else:
 			return "mgf_select run with recalibration"
@@ -246,7 +247,7 @@ def tab_1_helper_function():
 			mgf_write_path, mgf_txt_write_path, mz_error, reporter_type, \
 			inverse_file, min_intensity, min_reporters, should_select)
 		if error:
-			print "error in mgf_select_no_recalibrate"
+			print("error in mgf_select_no_recalibrate")
 			return error, 500
 		else:
 			return "mgf_select without recalibration run successfully"
@@ -265,7 +266,7 @@ def check_if_gpm_merge_already_exists():
 		write_destination_filename = makeFolderNames.construct_merged_gpm_reporter_filename(request.form)
 		
 		if os.path.isfile(write_destination_filename):
-			print "There is an existing merged GPM-reporter ion file.  Please delete or rename existing file in selected reporter ion folder and run again."
+			print("There is an existing merged GPM-reporter ion file.  Please delete or rename existing file in selected reporter ion folder and run again.")
 			return "There is an existing merged GPM-reporter ion file.  Please delete or rename existing file in selected reporter ion folder and run again.", 500 
 		else:
 			return "Does not already exist." #That means true
@@ -432,14 +433,14 @@ def writeSummary():
 					if mgf_line != "" or mgf_line != "\n":
 						out_file.write(mgf_line)
 						#skip the mgf name and ms1 intensity and create a list of the intensities for this mgf
-						numeric_intensities = [long(n) for n in mgf_line.split('\t')[2:]]
+						numeric_intensities = [int(n) for n in mgf_line.split('\t')[2:]]
 						#add each of these intensities to the total intensity
 						intensity_totals = [x+y for x,y in zip(intensity_totals, numeric_intensities)]
 				out_file.write("\nTotal Reporter Ion Intensities\n----------\n")
 				out_file.write(reporters)
 				out_file.write('\t'.join([str(val) for val in intensity_totals]))
-	
-		os.remove(mgf_txt_write_dir_path+'mgf_summary.txt')
+				
+			os.remove(mgf_txt_write_dir_path+'mgf_summary.txt')
 
 	makeFolderNames.rename_folders(request.form)
 	return "Summary complete."
@@ -451,7 +452,7 @@ def get_inverse_filenames_from_ion_type():
 	return json.dumps(utility.get_inverse_filenames_from_ion_type(ion_type))
 
 def clean_up_after_tab_2():
-	print "cleaning up possible leaked files if there was an error."
+	print("cleaning up possible leaked files if there was an error.")
 	# tempdest = filename + "_with_duplicates_deleted" is a line in combine_xml_mgf where
 	# we make temporary files.
 	# testing_filename = mgf_txt_filename.split('.reporter')[0] + '_duplicate_sorted' + '.reporter'
@@ -459,7 +460,7 @@ def clean_up_after_tab_2():
 	xml_read_path = request.form['xmlReadPath']
 	xml_directory_path = utility.xml_dirname_from_filename(xml_read_path)
 	if not xml_directory_path:
-		print "Problem with XML directory while cleaning tab 2"
+		print("Problem with XML directory while cleaning tab 2")
 		return
 	if (os.path.isfile(xml_read_path + '.txt')):
 		os.remove(xml_read_path + '.txt')
@@ -468,7 +469,7 @@ def clean_up_after_tab_2():
 		try:
 			shutil.rmtree(xml_directory_path)
 		except Exception:
-			print "Error removing all files.  Possibly read-only files in folder."
+			print("Error removing all files.  Possibly read-only files in folder.")
 
 	mgf_txt_foldername = None
 	if request.form['mgfOperationToPerform'] == '1':
@@ -482,7 +483,7 @@ def clean_up_after_tab_2():
 
 	for item in os.listdir(mgf_txt_foldername):
 		full_name = os.path.join(mgf_txt_foldername, item)
-		print "Cleaning up: " + full_name
+		print("Cleaning up: " + full_name)
 		if os.path.isfile(full_name):
 			if full_name.ends_with('_with_duplicates_deleted'):
 				os.remove(full_name)
@@ -612,5 +613,7 @@ def concat_reporters():
 	return "Finished concat check."
 
 if __name__ == "__main__":
+	cli = sys.modules['flask.cli']
+	cli.show_server_banner = lambda *x: None
 	app.debug = False
 	app.run()

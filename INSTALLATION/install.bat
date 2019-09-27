@@ -12,10 +12,10 @@ rem exit successfully
 
 echo beginning setup ...
 
-WHERE /r "c:\Python27" "python"
+WHERE /r "c:\Python37" "python"
 IF %ERRORLEVEL% NEQ 0 (
 	echo "python is not installed, install python 2.7 for windows and then try again"
-	echo "this installation expects a computer with vanilla python, if your computer has Anaconda or another python package, open install.bat in notepad and change all instances of c:\Python27 to the folder with your python executable"
+	echo "this installation expects a computer with vanilla python, if your computer has Anaconda or another python package, open install.bat in notepad and change all instances of c:\Python37 to the folder with your python executable"
 	echo exiting . . .
 	pause
 	exit 1
@@ -30,14 +30,14 @@ IF %ERRORLEVEL% NEQ 0 (
 )
 
 
-WHERE /r "c:\Python27\Scripts" "pip"
+WHERE /r "c:\Python37\Scripts" "pip"
 IF %ERRORLEVEL% NEQ 0 (
 	ECHO "NO PIP INSTALLED"
 	echo installing pip now...
 	VERIFY
-	c:\Python27\Scripts get-pip.py
+	c:\Python37\Scripts get-pip.py
 	ECHO "pip should be installed"
-	WHERE /r "c:\Python27\Scripts" "pip"
+	WHERE /r "c:\Python37\Scripts" "pip"
 	IF %ERRORLEVEL% NEQ 0 (
 		ECHO "PIP INSTALLATION FAILED!"
 		echo exiting . . .
@@ -51,30 +51,31 @@ IF %ERRORLEVEL% NEQ 0 (
 )
 
 
-WHERE /r "c:\Python27\Scripts" "virtualenv"
-IF %ERRORLEVEL% NEQ 0 (
-	ECHO no virtualenv installed
-	rem GOTO INSTALLVENV
-	echo installing virtualenv now . . .
-	verify
-	c:\Python27\Scripts\pip install virtualenv
-	echo virtualenv should be installed
-	WHERE /r "c:\Python27\Scripts" "virtualenv"
-	IF %ERRORLEVEL% NEQ 0 (
-		echo "VIRTUALENV INSTALLATION FAILED!"
-		echo exiting . . .
-		pause
-		exit 1
-	) ELSE (
-		echo Installation worked!
-	)
-) else (
-	virtualenv found
-)
+rem WHERE /r "c:\Python37\Scripts" "virtualenv"
+rem IF %ERRORLEVEL% NEQ 0 (
+rem 	ECHO no virtualenv installed
+rem 	rem GOTO INSTALLVENV
+rem 	echo installing virtualenv now . . .
+rem 	verify
+rem 	c:\Python37\Scripts\pip install virtualenv --no-warn-script-location
+rem 	echo virtualenv should be installed
+rem 	WHERE /r "c:\Python37\Scripts" "virtualenv"
+rem 	IF %ERRORLEVEL% NEQ 0 (
+rem 		echo "VIRTUALENV INSTALLATION FAILED!"
+rem 		echo exiting . . .
+rem 		pause
+rem 		exit 1
+rem 	) ELSE (
+rem 		echo Installation worked!
+rem 	)
+rem ) else (
+rem 	virtualenv found
+rem )
 
 
-echo "creating a virtualenv for this project, creatively naming it venv."
-C:\Python27\Scripts\virtualenv ..\VENV
+echo "creating an IDEAA venv"
+c:\Python37\python -m venv ..\IDEAAVENV
+rem C:\Python37\Scripts\VIRTUALENVualenv ..\IDEAAVENV
 IF %ERRORLEVEL% NEQ 0 (
 	echo error creating venv. installation failed.
 	echo exiting . . .
@@ -85,8 +86,8 @@ IF %ERRORLEVEL% NEQ 0 (
 echo "created virtualenv sucessfully"
 
 echo "activating venv"
-echo activating venv
-CALL ..\VENV\Scripts\activate
+echo activating 
+CALL ..\IDEAAVENV\Scripts\activate
 echo "activated venv"
 
 where deactivate
@@ -103,7 +104,7 @@ echo pip upgraded, upgrading setuptools
 pip install --upgrade setuptools
 echo setuptools upgraded
 
-echo "installing all modules (flask, pandas, numpy)"
+echo "installing all modules (flask, pandas, numpy, pyteomics)"
 echo installing flask
 pip install flask
 IF %ERRORLEVEL% NEQ 0 (
@@ -114,6 +115,23 @@ IF %ERRORLEVEL% NEQ 0 (
 )
 
 echo FLASK INSTALLED SUCESSFULLY
+
+
+echo .
+echo .
+echo .
+echo .
+
+echo installing waitress
+pip install waitress
+IF %ERRORLEVEL% NEQ 0 (
+	echo error installing waitress. installation failed.
+	echo exiting . . . 
+	pause
+	exit 1
+)
+
+echo WAITRESS INSTALLED SUCESSFULLY
 
 
 echo .
@@ -192,7 +210,7 @@ echo deactivating venv
 call deactivate
 
 
-ECHO call VENV\Scripts\activate > ..\startup.bat
+ECHO call IDEAAVENV\Scripts\activate > ..\startup.bat
 ECHO python flasktest.py >> ..\startup.bat
 echo finished sucessfully!
 

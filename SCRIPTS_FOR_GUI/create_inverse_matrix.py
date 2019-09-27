@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 from pandas import Series, DataFrame
 import pandas as pd
@@ -15,21 +16,21 @@ def create_inverse(full_path_to_crossover):
 	firstline = firstline.strip()
 	firstline_arr = firstline.split('\t')
 	matrix = np.loadtxt(full_path_to_crossover, skiprows=1)
-	print "matrix: "
-	print matrix
+	print("matrix: ")
+	print(matrix)
 	row_sums = matrix.sum(axis=1)
 	normalized_matrix = matrix / row_sums[:, np.newaxis]
-	print "normalized matrix: "
-	print normalized_matrix
+	print("normalized matrix: ")
+	print(normalized_matrix)
 	omitted = []
 	for row in normalized_matrix:
 		new_row = row[0:len(row)-1]
 		omitted.append(new_row)
-	print "omitted:"
-	print omitted
+	print("omitted:")
+	print(omitted)
 	new_matrix = np.matrix(omitted)
 	inverse = np.linalg.inv(new_matrix)
 	new_path = full_path_to_crossover + '-inverse'
 	np.savetxt(new_path, inverse, delimiter='\t')
-	print "inverse matrix: "
-	print inverse
+	print("inverse matrix: ")
+	print(inverse)
