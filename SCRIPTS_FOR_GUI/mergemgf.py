@@ -180,7 +180,7 @@ def save_mgf_output(merge_result, ms2_file, output_dir, timestamp):
 
 	merged_mgf_filename = generate_output_merged_mgf_name(ms2_file, output_dir, timestamp)
 	print("\nWriting merged MGF: " + merged_mgf_filename)
-	mgf.write(merge_result["merged_mgf"], output=merged_mgf_filename, use_numpy=True)
+	mgf.write(merge_result["merged_mgf"], output=merged_mgf_filename, use_numpy=True, write_charges=False, fragment_format='%.4f %.4f')
 	
 def print_merge_stats(merge_result):
 	print("MS2 Count  : " + str(merge_result["ms2_count"]))
