@@ -420,6 +420,9 @@ def writeSummary():
 						if reporters == "TMT11-126\tTMT11-127\tTMT11-127\tTMT11-128\tTMT11-128\tTMT11-129\tTMT11-129\tTMT11-130\tTMT11-130\tTMT11-131\tTMT11-131\n":
 							reporters = "TMT11-126\tTMT11-127N\tTMT11-127C\tTMT11-128N\tTMT11-128C\tTMT11-129N\tTMT11-129C\tTMT11-130N\tTMT11-130C\tTMT11-131N\tTMT11-131C\n"
 							summary_line = reporters
+						if reporters == "TMT16-126\tTMT16-127\tTMT16-127\tTMT16-128\tTMT16-128\tTMT16-129\tTMT16-129\tTMT16-130\tTMT16-130\tTMT16-131\tTMT16-131\tTMT16-132\tTMT16-132\tTMT16-133\tTMT16-133\tTMT16-134":
+							reporters = "TMT16-126\tTMT16-127N\tTMT16-127C\tTMT16-128N\tTMT16-128C\tTMT16-129N\tTMT16-129C\tTMT16-130N\tTMT16-130C\tTMT16-131N\tTMT16-131C\tTMT16-132N\tTMT16-132C\tTMT16-133N\tTMT16-133C\tTMT16-134N"
+							summary_line = reporters
 						num_reporters = len(reporters.split("\t"))
 						#initialize the intensity_totals array to all zeros
 						intensity_totals = [0 for i in range(num_reporters)]

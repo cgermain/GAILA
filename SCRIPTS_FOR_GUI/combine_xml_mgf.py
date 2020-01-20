@@ -417,6 +417,10 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 			start_col=reporter_ion_type+'-126'
 			end_col=reporter_ion_type+'-131C'
 			label_mass_int=229
+		elif reporter_ion_type=='TMT16':
+			start_col=reporter_ion_type+'-126'
+			end_col=reporter_ion_type+'-134'
+			label_mass_int=304
 		else:
 			print("bad reporter ion type")
 			return "BAD REPORTER ION TYPE"
@@ -433,7 +437,7 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 		summary_file = selected_mgfdir+"\mgf_summary.txt"
 
 		normalized_intensities = read_intensities_from_summary_and_normalize(summary_file)
-		
+
 		# Problem is that it's an empty folder!
 		for filename in os.listdir(xmldir):
 			if filename.endswith('.reporter'):
