@@ -1,6 +1,5 @@
 ECHO OFF
 
-rem pseudocode:
 rem if theres no pip, install pip
 rem if theres no venv, install venv
 rem create venv
@@ -10,72 +9,33 @@ rem deactivate from venv
 rem exit successfully
 
 
-echo beginning setup ...
-
-WHERE /r "c:\Python37" "python"
+echo Starting IDEAA installation ...
+ 
+py -3 --version > NUL
 IF %ERRORLEVEL% NEQ 0 (
-	echo "python is not installed, install python 2.7 for windows and then try again"
-	echo "this installation expects a computer with vanilla python, if your computer has Anaconda or another python package, open install.bat in notepad and change all instances of c:\Python37 to the folder with your python executable"
+	echo Python is not installed, install Python 3 for Windows and then try again.
+	echo Please make sure that Python is in your PATH.
 	echo exiting . . .
 	pause
 	exit 1
 )
 
-WHERE perl
+WHERE perl > NUL
 IF %ERRORLEVEL% NEQ 0 (
-	echo "perl is not installed, install perl for windows and then try again"
+	echo Perl is not installed.  Install Perl for windows and then try again.
+	echo Please make sure that Perl is in your PATH.
 	echo exiting . . .
 	pause
 	exit 1
 )
 
-
-WHERE /r "c:\Python37\Scripts" "pip"
+pip --version > NUL
 IF %ERRORLEVEL% NEQ 0 (
-	ECHO "NO PIP INSTALLED"
-	echo installing pip now...
-	VERIFY
-	c:\Python37\Scripts get-pip.py
-	ECHO "pip should be installed"
-	WHERE /r "c:\Python37\Scripts" "pip"
-	IF %ERRORLEVEL% NEQ 0 (
-		ECHO "PIP INSTALLATION FAILED!"
-		echo exiting . . .
-		pause
-		exit 1
-	) ELSE (
-		echo Installation worked!
-	)
-) ELSE (
-	echo pip found
+	echo The Python package manager Pip is not installed.  Please download and try the IDEAA installation again.
 )
 
-
-rem WHERE /r "c:\Python37\Scripts" "virtualenv"
-rem IF %ERRORLEVEL% NEQ 0 (
-rem 	ECHO no virtualenv installed
-rem 	rem GOTO INSTALLVENV
-rem 	echo installing virtualenv now . . .
-rem 	verify
-rem 	c:\Python37\Scripts\pip install virtualenv --no-warn-script-location
-rem 	echo virtualenv should be installed
-rem 	WHERE /r "c:\Python37\Scripts" "virtualenv"
-rem 	IF %ERRORLEVEL% NEQ 0 (
-rem 		echo "VIRTUALENV INSTALLATION FAILED!"
-rem 		echo exiting . . .
-rem 		pause
-rem 		exit 1
-rem 	) ELSE (
-rem 		echo Installation worked!
-rem 	)
-rem ) else (
-rem 	virtualenv found
-rem )
-
-
-echo "creating an IDEAA venv"
-c:\Python37\python -m venv ..\IDEAAVENV
-rem C:\Python37\Scripts\VIRTUALENVualenv ..\IDEAAVENV
+echo Creating an IDEAA virtual environment.
+python -m venv ..\IDEAA_VENV
 IF %ERRORLEVEL% NEQ 0 (
 	echo error creating venv. installation failed.
 	echo exiting . . .
@@ -83,16 +43,15 @@ IF %ERRORLEVEL% NEQ 0 (
 	exit 1
 )
 
-echo "created virtualenv sucessfully"
+echo \IDEAA_VENV created sucessfully
 
-echo "activating venv"
 echo activating 
-CALL ..\IDEAAVENV\Scripts\activate
-echo "activated venv"
+CALL ..\IDEAA_VENV\Scripts\activate
+echo Activated IDEAAVENV.
 
 where deactivate
 IF %ERRORLEVEL% NEQ 0 (
-	echo error activating virtualenv, exiting so that nothing gets installed where it shouldn't.
+	echo Error activating virtualenv, exiting.
 	echo exiting . . .
 	pause
 	exit 1
@@ -104,17 +63,17 @@ echo pip upgraded, upgrading setuptools
 pip install --upgrade setuptools
 echo setuptools upgraded
 
-echo "installing all modules (flask, pandas, numpy, pyteomics)"
+echo Installing all modules (Flask, Waitress, Pandas, Numpy, Pyteomics)
 echo installing flask
 pip install flask
 IF %ERRORLEVEL% NEQ 0 (
-	echo error installing flask. installation failed.
+	echo Error installing Flask. Installation failed.
 	echo exiting . . . 
 	pause
 	exit 1
 )
 
-echo FLASK INSTALLED SUCESSFULLY
+echo Flask installed successfully.
 
 
 echo .
@@ -122,7 +81,7 @@ echo .
 echo .
 echo .
 
-echo installing waitress
+echo Installing Waitress.
 pip install waitress
 IF %ERRORLEVEL% NEQ 0 (
 	echo error installing waitress. installation failed.
@@ -131,7 +90,7 @@ IF %ERRORLEVEL% NEQ 0 (
 	exit 1
 )
 
-echo WAITRESS INSTALLED SUCESSFULLY
+echo Waitress installed successfully.
 
 
 echo .
@@ -139,7 +98,7 @@ echo .
 echo .
 echo .
 
-echo installing numpy. IT TAKES A VERY LONG TIME TO INSTALL, BE PREPARED!
+echo Installing Numpy.  This can take awhile, so please be patient.
 TIMEOUT 5
 pip install numpy -v
 IF %ERRORLEVEL% NEQ 0 (
@@ -149,7 +108,7 @@ IF %ERRORLEVEL% NEQ 0 (
 	exit 1
 )
 
-echo numpy installed
+echo Numpy installed successfully.
 
 
 echo .
@@ -158,7 +117,7 @@ echo .
 echo .
 
 
-echo installing pandas
+echo Installing Pandas.
 pip install pandas
 IF %ERRORLEVEL% NEQ 0 (
 	echo error installing pandas. Installation failed.
@@ -166,7 +125,7 @@ IF %ERRORLEVEL% NEQ 0 (
 	pause
 	exit 1
 )
-
+echo Pandas installed successfully.
 
 echo .
 echo .
@@ -174,7 +133,7 @@ echo .
 echo .
 
 
-echo installing pyteomics
+echo Installing Pyteomics.
 pip install pyteomics
 IF %ERRORLEVEL% NEQ 0 (
 	echo error installing pyteomics. Installation failed.
@@ -183,13 +142,14 @@ IF %ERRORLEVEL% NEQ 0 (
 	exit 1
 )
 
+echo Pyteomics installed successfully.
 echo .
 echo .
 echo .
 echo .
 
 
-echo installing MatrixReal
+echo Installing MatrixReal.
 call ppm install Math::MatrixReal
 IF %ERRORLEVEL% NEQ 0 (
 	echo error installing MatrixReal. Installation failed.
@@ -198,25 +158,21 @@ IF %ERRORLEVEL% NEQ 0 (
 	exit 1
 )
 
+echo MatrixReal installed successfully.
 echo .
 echo .
 echo .
 echo .
 
-echo everything should be installed
-
-
-echo deactivating venv
 call deactivate
 
 
 ECHO call IDEAAVENV\Scripts\activate > ..\startup.bat
 ECHO python flasktest.py >> ..\startup.bat
-echo finished sucessfully!
 
-
+echo IDEAA installation successful.
+echo Start the server by running startup.bat
 
 
 :END
-echo exiting script
 pause
