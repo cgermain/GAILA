@@ -433,7 +433,7 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 		summary_file = selected_mgfdir+"\mgf_summary.txt"
 
 		normalized_intensities = read_intensities_from_summary_and_normalize(summary_file)
-
+		
 		# Problem is that it's an empty folder!
 		for filename in os.listdir(xmldir):
 			if filename.endswith('.reporter'):
@@ -524,6 +524,9 @@ def read_intensities_from_summary_and_normalize(filename):
 		intensity_totals = []
 		with open(filename, "r") as summary:
 			for mgf_line in summary:
+				if "Total Reporter Ion Intensities" in mgf_line:
+					break
+
 				if mgf_line != "" or mgf_line != "\n":
 					#skip the mgf name and ms1 intensity and create a list of the intensities for this mgf
 					numeric_intensities = [int(n) for n in mgf_line.split('\t')[2:]]
@@ -534,12 +537,12 @@ def read_intensities_from_summary_and_normalize(filename):
 
 					#add each of these intensities to the total intensity
 					intensity_totals = [x+y for x,y in zip(intensity_totals, numeric_intensities)]
-
-		#print("Intensity Totals\n" + str(intensity_totals))			
+	
 		sum_int = sum(intensity_totals)
 
 		if sum_int != 0:
-			return [intensity/sum_int for intensity in intensity_totals]
+			normalized_totals = [intensity/sum_int for intensity in intensity_totals]
+			return normalized_totals
 		else:
 			return intensity_totals
 	except Exception as err:

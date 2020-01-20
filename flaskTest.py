@@ -511,15 +511,13 @@ def check_if_previous_summary_exists_and_get_reporter_type(reporter_folder):
 					open(reporter_folder+"\mgf_summary.txt","w") as mgf_summary:
 					for count, line in enumerate(summary_lines):
 						ion_type_search = re.search("reporterIonType - (.*)", line)
-						if start_writing_out and line.strip():
-							mgf_summary.write(line)
-						elif "--------" in line:
-							mgf_line_found = True
-						elif mgf_line_found and "MGF File" in line:
-							start_writing_out = True
-						elif "Total Reporter Ion Intensities" in line:
+						if "Total Reporter Ion Intensities" in line and start_writing_out:
 							intensity_summary.write(summary_lines[count+2])
-							intensity_summary.write(summary_lines[count+3].strip())
+							break
+						elif start_writing_out and line.strip():
+							mgf_summary.write(line)
+						elif "MGF File\tMS1 Intensity" in line:
+							start_writing_out = True
 						elif ion_type_search:
 							ion_type = ion_type_search.group(1)
 						else:
