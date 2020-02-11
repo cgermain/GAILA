@@ -9,7 +9,7 @@ rem deactivate from venv
 rem exit successfully
 
 
-echo Starting IDEAA installation ...
+echo Starting GAILA installation ...
  
 py -3 --version > NUL
 IF %ERRORLEVEL% NEQ 0 (
@@ -31,11 +31,11 @@ IF %ERRORLEVEL% NEQ 0 (
 
 pip --version > NUL
 IF %ERRORLEVEL% NEQ 0 (
-	echo The Python package manager Pip is not installed.  Please download and try the IDEAA installation again.
+	echo The Python package manager Pip is not installed.  Please download and try the GAILA installation again.
 )
 
-echo Creating an IDEAA virtual environment.
-python -m venv ..\IDEAA_VENV
+echo Creating an GAILA virtual environment.
+python -m venv ..\GAILA_VENV
 IF %ERRORLEVEL% NEQ 0 (
 	echo error creating venv. installation failed.
 	echo exiting . . .
@@ -43,11 +43,11 @@ IF %ERRORLEVEL% NEQ 0 (
 	exit 1
 )
 
-echo \IDEAA_VENV created sucessfully
+echo \GAILA_VENV created sucessfully
 
 echo activating 
-CALL ..\IDEAA_VENV\Scripts\activate
-echo Activated IDEAAVENV.
+CALL ..\GAILA_VENV\Scripts\activate
+echo Activated GAILAVENV.
 
 where deactivate
 IF %ERRORLEVEL% NEQ 0 (
@@ -167,11 +167,11 @@ echo .
 call deactivate
 
 
-ECHO call IDEAAVENV\Scripts\activate > ..\startup.bat
-ECHO python flasktest.py >> ..\startup.bat
+ECHO call GAILA_VENV\Scripts\activate > ..\start_gaila.bat
+ECHO python gaila_server.py >> ..\start_gaila.bat
 
-echo IDEAA installation successful.
-echo Start the server by running startup.bat
+echo GAILA installation successful.
+echo Start the server by running start_gaila.bat
 
 
 :END
