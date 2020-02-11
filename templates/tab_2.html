@@ -1,7 +1,8 @@
 <div>
   <div style="float:left;width:60%" id="leftSide">
-    <h2 style="margin:1%">PARSE XML FILE AND COMBINE WITH MGF</h2>
-    <div class="input-group" style="margin: 1%">
+    <h2 style="margin:1%">MERGE PSMs (GPM .xml) WITH REPORTER IONS (.mgf)</h2>
+    <input type="hidden" id="mgfOperationToPerform" value="1">
+    <!-- <div class="input-group" style="margin: 1%">
       <span class="input-group-addon" id="basic-addon1">Operation to perform</span>
       <select class='form-control' id="mgfOperationToPerform">
         <option value="1">Select reporter ions from unfiltered .mgf files</option>
@@ -10,7 +11,7 @@
       <span class="input-group-btn">
         <button class="btn btn-info" onclick="alert('If you don\'t have the .reporter files you used for the GPM search, you can re-select them here.')">?</button>
       </span>
-    </div>
+    </div> -->
     <div id="options_if_selecting">
       <div class="input-group" style="margin: 1%">
         <span class="input-group-addon" id="basic-addon1">FULL PATH to MGF DIRECTORY</span>
@@ -197,24 +198,24 @@
 
     <div id="option_if_RemoveReporters">
     <div class="input-group" style="margin: 1%">
-      <span class="input-group-addon" id="basic-addon1">Remove temporary MGF files</span>
+      <span class="input-group-addon" id="basic-addon1">Save filtered mgf files</span>
       <select class='form-control' id="removeMGF">
-        <option value="0">Yes, remove the temporary files</option>
-        <option value="1">Keep the temporary files</option>
+        <option value="0">No, remove the filtered MGF files</option>
+        <option value="1">Yes, keep the filtered MGF files</option>
       </select>
       <span class="input-group-btn">
-        <button class="btn btn-info" onclick="alert('Remove MGF files created during processing')">?</button>
+        <button class="btn btn-info" onclick="alert('Save MGF files created during processing')">?</button>
       </span>
     </div>
     
       <div class="input-group" style="margin: 1%">
-        <span class="input-group-addon" id="basic-addon1">Remove temporary reporter files</span>
+        <span class="input-group-addon" id="basic-addon1">Save temporary reporter files</span>
         <select class='form-control' id="removeReporters">
-          <option value="0">Yes, remove the temporary files</option>
-          <option value="1">Keep the temporary files</option>
+          <option value="0">No, remove the temporary reporter files</option>
+          <option value="1">Yes, Keep the temporary reporter files</option>
         </select>
         <span class="input-group-btn">
-          <button class="btn btn-info" onclick="alert('Remove reporter files created during processing')">?</button>
+          <button class="btn btn-info" onclick="alert('Save reporter files created during processing')">?</button>
         </span>
       </div>
     </div>
