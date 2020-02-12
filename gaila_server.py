@@ -445,6 +445,15 @@ def writeSummary():
 				
 			os.remove(mgf_txt_write_dir_path+'mgf_summary.txt')
 
+	if 'concat' in request.form:
+		concat = request.form['concat']
+		if concat == "1":
+			mgf_directory = makeFolderNames.construct_reporter_folder_path(request.form)
+			all_files = glob.glob(os.path.join(mgf_directory, "*.reporter"))
+			df_from_each_file = (pd.read_csv(f) for f in all_files)
+			concatenated_df = pd.concat(df_from_each_file, ignore_index=True)
+			concatenated_df.to_csv(os.path.join(mgf_directory, "rep_sel_"+timestamp+".reporter"), index=False)
+
 	makeFolderNames.rename_folders(request.form)
 	return "Summary complete."
 
@@ -598,20 +607,6 @@ def multiple_select_to_two_arrays(unacceptable_mods):
 	mass_val_arr = [j[0] for j in two_d_array]
 	mod_val_arr = [k[1] for j in two_d_array]
 	return mass_val_arr, mod_val_arr
-
-@app.route("/concatReporters", methods=['POST'])
-@nocache
-def concat_reporters():
-	timestamp = request.form['timestamp']
-	concat = request.form['concat']
-
-	if concat == "1":
-		mgf_directory = makeFolderNames.construct_reporter_folder_path(request.form)
-		all_files = glob.glob(os.path.join(mgf_directory, "*.reporter"))
-		df_from_each_file = (pd.read_csv(f) for f in all_files)
-		concatenated_df = pd.concat(df_from_each_file, ignore_index=True)
-		concatenated_df.to_csv(os.path.join(mgf_directory, "rep_sel_"+timestamp+".reporter"), index=False)
-	return "Finished concat check."
 
 if __name__ == "__main__":
 	cli = sys.modules['flask.cli']

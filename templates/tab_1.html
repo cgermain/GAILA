@@ -216,7 +216,6 @@
         console.log(err);
       }
       else{
-        concatReporters(rightSide, serializedForm, function(err){});
         rightSide.append('<h3 style="color:green">Sucessfully parsed all MGF files</h3>');
         writeSummaryToFile(rightSide, serializedForm, function(err){});
       }
