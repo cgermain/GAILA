@@ -95,7 +95,6 @@ def construct_merged_gpm_reporter_filename(form):
 def rename_filtered_files(folder_name, extension, min_int, num_rep):
 	folder_files=os.listdir(folder_name)
 	for filename in folder_files:
-		print("Renaming: " + filename)
 		if filename.endswith(extension):
 			new_filename = join(folder_name, filename.split(".")[0]+"_filtered_minint_"+str(min_int)+"_numrep_"+str(num_rep)+extension)
 			os.rename(join(folder_name, filename), new_filename)
@@ -113,7 +112,6 @@ def rename_folders(form):
 				new_reporter_folder_name = join(form['outDirPath'], "rep_sel_"+timestamp, '')
 			shutil.copytree(reporter_folder_name, new_reporter_folder_name)
 			rename_filtered_files(new_reporter_folder_name, ".reporter", form['minIntensity'], form['minReporters'])
-			print("In xmlreadpath not in form.  removing: " + reporter_folder_name)
 			shutil.rmtree(reporter_folder_name)
 			return
 		#tab 2 - use pre extracted reporters
