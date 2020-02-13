@@ -134,13 +134,30 @@ if (open (IN, "$read_file_path"))
 		
 		print OUT_TABLE qq!filename\tscan\tcharge\trt\tMS1_intensity!;
 		
+		my $reporters_string = "";
 		foreach my $reporter (@reporters)
 		{
 			my $reporter_=int($reporter);
-			print OUT_TABLE qq!\t$type-$reporter_!;
-			print TOTAL_INTENSITY_TABLE qq!\t$type-$reporter_!;
+			$reporters_string .= $type . "-" . $reporter_ . "\t";
 		}
-		print OUT_TABLE qq!\t$type-sum\n!;
+
+		if ($type eq "TMT10")
+		{
+			$reporters_string = "TMT10-126\tTMT10-127N\tTMT10-127C\tTMT10-128N\tTMT10-128C\tTMT10-129N\tTMT10-129C\tTMT10-130N\tTMT10-130C\tTMT10-131\t";
+		}
+		if ($type eq "TMT11")
+		{
+			$reporters_string = "TMT11-126\tTMT11-127N\tTMT11-127C\tTMT11-128N\tTMT11-128C\tTMT11-129N\tTMT11-129C\tTMT11-130N\tTMT11-130C\tTMT11-131N\tTMT11-131C\t";
+		}
+		if ($type eq "TMT16")
+		{
+			$reporters_string = "TMT16-126\tTMT16-127N\tTMT16-127C\tTMT16-128N\tTMT16-128C\tTMT16-129N\tTMT16-129C\tTMT16-130N\tTMT16-130C\tTMT16-131N\tTMT16-131C\tTMT16-132N\tTMT16-132C\tTMT16-133N\tTMT16-133C\tTMT16-134N\t";
+		}
+
+		print TOTAL_INTENSITY_TABLE qq!\t$reporters_string!;
+		$reporters_string .= $type . "-sum\n";
+		print OUT_TABLE qq!\t$reporters_string!;
+		
 
 		my $pepmass=0;
 		my $ms1_intensity="";

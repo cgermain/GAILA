@@ -419,7 +419,7 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 			label_mass_int=229
 		elif reporter_ion_type=='TMT16':
 			start_col=reporter_ion_type+'-126'
-			end_col=reporter_ion_type+'-134'
+			end_col=reporter_ion_type+'-134N'
 			label_mass_int=304
 		else:
 			print("bad reporter ion type")
