@@ -20,7 +20,7 @@ def merge_ms2_ms3(ms2_ms3_directory, mz_cutoff_string, output_dir, timestamp):
 	filenames = listdir_fullpath(ms2_ms3_directory)
 	mgf_files = [filename for filename in filenames if os.path.isfile(filename) and filename.endswith(".mgf")]
 
-	if output_dir == 'Default IDEAA Archive':
+	if output_dir == 'Default GAILA Archive':
 		output_dir = os.path.join(sys.path[0], "Archive", "")
 	
 	#the chunker and merging require an even number of MGF files

@@ -1,4 +1,4 @@
-# IDEAA - Isobaric Data Extractor and Annotator Assistant
+# GAILA - GPM and Isobaric Label Assistant
 
 
 ## FOR WINDOWS
@@ -6,7 +6,7 @@
 ### Prerequisites:
 #### Download Python:
 https://www.python.org/downloads/release/python-370/
-IDEAA expects Python to be installed at C:\Python37. If it is in another location, please change these references in /INSTALLATION/install.bat
+GAILA expects Python to be installed at C:\Python37. If it is in another location, please change these references in /INSTALLATION/install.bat
 
 #### Make sure Perl is installed (min v5.12):
 http://www.activestate.com/activeperl/downloads
@@ -32,7 +32,7 @@ To use the interface, open your web browser (firefox or chrome) and type localho
 
 ### PLAINCOUNT
 
-This script counts proteins in MGF files that have been "plain parsed" using [IDEAA](https://github.com/cgermain/IDEAA).
+This script counts proteins in MGF files that have been "plain parsed" using [GAILA](https://github.com/cgermain/GAILA).
 
 ## Installation on Windows
 

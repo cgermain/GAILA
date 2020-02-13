@@ -92,9 +92,9 @@
 
     <div class="input-group" style="margin: 1%">
         <span class="input-group-addon" id="basic-addon1">Output directory</span>
-        <input type="text" class="form-control" id="outDirPath" value="Default IDEAA Archive">
+        <input type="text" class="form-control" id="outDirPath" value="Default GAILA Archive">
         <span class="input-group-btn">
-          <button class="btn btn-info" onclick="alert('On windows, open windows explorer and navigate to your output directory. Clicking on your url bar will highlight the directory path, copy paste that into this text box.  Will default to the IDEAA/Archive folder.')">?</button>
+          <button class="btn btn-info" onclick="alert('On windows, open windows explorer and navigate to your output directory. Clicking on your url bar will highlight the directory path, copy paste that into this text box.  Will default to the GAILA/Archive folder.')">?</button>
         </span>
       </div>
       <br>
@@ -185,8 +185,8 @@
           error: function(response, textStatus, HTTPError){
             console.log(response.responseText);
             if (response.responseText == "undefined"){
-                alert("Check to make sure IDEAA server is running.");
-                return callback("error: Check to make sure IDEAA server is running.");
+                alert("Check to make sure GAILA server is running.");
+                return callback("error: Check to make sure GAILA server is running.");
             }
             rightSide.append('<div style="color:red">' + response.responseText + '</div>')
             return callback("error: " + response.responseText)
@@ -197,7 +197,7 @@
       console.log("in final waterfall catcher");
       if(err){
         if (err == "error: undefined"){
-          alert("Check to see if IDEAA server is running.");
+          alert("Check to see if GAILA server is running.");
         }
         else{
           alert(err);

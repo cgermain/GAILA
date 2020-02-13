@@ -2,7 +2,7 @@
 <html lang="en">
  
 	<head>
-	  <title>Isobaric Data Extractor and Annotator Assistant </title>
+	  <title>GPM and Isobaric Label Assistant</title>
 	  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap.min.css') }}">
 	  <script src="{{ url_for('static', filename='jquery.js') }}"> </script>
 	  <script src="{{ url_for('static', filename='async.js') }}"> </script>
@@ -229,7 +229,7 @@
 	      if (err){
 	      	console.log(err);
       		if (typeof result == "undefined"){
-                alert("Check to make sure IDEAA server is running.");
+                alert("Check to make sure GAILA server is running.");
             }
       		if (err){
         		rightSide.append('<h3 style="color:red">' + err + '</h3>')	

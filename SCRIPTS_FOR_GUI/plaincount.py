@@ -16,7 +16,7 @@ def count_proteins(plain_parse_file, output_dir, timestamp):
 	total_line_count = 0
 	current_line_count = 0
 
-	if output_dir == 'Default IDEAA Archive':
+	if output_dir == 'Default GAILA Archive':
 		output_dir = os.path.join(sys.path[0], "Archive", "")
 
 	try:

@@ -31,7 +31,7 @@ TIME_FORMAT =  "%Y-%m-%d_%H-%M-%S"
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 
-print("Welcome to IDEAA")
+print("Welcome to GAILA")
 print("Currently running at http://127.0.0.1:5000/")
 print("Press Ctrl+C to quit")
 
@@ -355,8 +355,8 @@ def writeSummary():
 		else:
 			mgf_txt_write_dir_path = makeFolderNames.construct_reporter_folder_path(request.form)
 
-	with open(mgf_txt_write_dir_path+'IDEAA_summary_'+timestamp+'.txt', 'w') as out_file:
-		out_file.write("IDEAA Summary\n")
+	with open(mgf_txt_write_dir_path+'GAILA_summary_'+timestamp+'.txt', 'w') as out_file:
+		out_file.write("GAILA Summary\n")
 		out_file.write(timestamp+"\n\n")
 		for option, value in request.form.items():
 			if option.startswith("unacceptableMods"):
@@ -516,7 +516,7 @@ def check_if_previous_summary_exists_and_get_reporter_type(reporter_folder):
 	mgf_line_found = False
 	start_writing_out = False
 	for item in os.listdir(reporter_folder):
-		if os.path.splitext(item)[0].startswith("IDEAA_summary"):
+		if os.path.splitext(item)[0].startswith("GAILA_summary"):
 			with open(reporter_folder+"\\"+item, "r") as summary:
 				summary_lines = summary.readlines()
 				with open(reporter_folder+"\intensity_summary.txt","w") as intensity_summary, \
