@@ -134,7 +134,7 @@ if ($error==0)
 			my $pre_=$7;
 			my $post_=$8;
 			my $peptide_=$9;
-			if ($expect_<$expect)
+			if ($expect_<=$expect)
 			{
 				$start=$start_;
 				$end=$end_;
