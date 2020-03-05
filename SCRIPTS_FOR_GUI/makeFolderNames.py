@@ -161,7 +161,7 @@ def rename_folders(form):
 			#check if in tab 1, if so, move the MGF
 			if 'xmlReadPath' not in form:
 				shutil.copytree(mgf_folder_name, new_mgf_folder_name)
-				rename_filtered_files(new_reporter_folder_name, ".mgf", form['minIntensity'], form['minReporters'])
+				rename_filtered_files(new_mgf_folder_name, ".mgf", form['minIntensity'], form['minReporters'])
 				shutil.rmtree(mgf_folder_name)
 
 			elif 'removeMGF' in form:
