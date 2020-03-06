@@ -274,7 +274,23 @@ if ($error==0)
 if($line=~/<GAML:attribute type="charge">([0-9]+)<\/GAML:attribute>/)
     {
       $charge=$1;
-      $mz=($mh+(($charge-1)*$proton_mass))/$charge; 
+      $mz=($mh+(($charge-1)*$proton_mass))/$charge;
+
+      #this only happens if the mgf file is a single search and not from mudpit
+      if ($filename eq "")
+      {
+       $filename=$bioml_mgf;
+       $f_name_sans_mgf = $bioml_mgf_sans_mgf;
+      }
+
+      #we are writing the header for this file now in case expect<threshold for every line.
+      open (OUT_,qq!>>$xmlfile_/$f_name_sans_mgf.reporter!) || die "Could not open $xmlfile_/$filename.reporter\n";
+	  if ($filenames{$filename}!~/\w/)
+	  {
+	    $filenames{$filename}=1;
+	    print OUT_ qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tmh\tlabeling\ttryptic\tmissed\tflagged modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tbroad_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
+	  }
+
       if($expect<$threshold)
       {
         my $protein_="";
@@ -436,20 +452,8 @@ if($line=~/<GAML:attribute type="charge">([0-9]+)<\/GAML:attribute>/)
 			$broad_id = $gene . " (gene name)";
 		}
 
-        #this only happens if the mgf file is a single search and not from mudpit
-        if ($filename eq "")
-        {
-          $filename=$bioml_mgf;
-          $f_name_sans_mgf = $bioml_mgf_sans_mgf;
-        }
-
         print OUT qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$start\t$expect\t$mh_val\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$broad_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
-        open (OUT_,qq!>>$xmlfile_/$f_name_sans_mgf.reporter!) || die "Could not open $xmlfile_/$filename.reporter\n";
-        if ($filenames{$filename}!~/\w/)
-        {
-          $filenames{$filename}=1;
-          print OUT_ qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tmh\tlabeling\ttryptic\tmissed\tflagged modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tbroad_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
-        }
+        
         print OUT_ qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$start\t$expect\t$mh_val\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$broad_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
         close(OUT_);
       }
