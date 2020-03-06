@@ -130,7 +130,7 @@ if ($error==0)
 			my $post_=$8;
 			my $peptide_=$9;
 
-			if ($expect_<=$expect)
+			if ($expect_<$expect)
 			{
 				$start=$start_;
 				$end=$end_;
@@ -269,7 +269,7 @@ if ($error==0)
 				}
 			}
 
-		  if($expect<$threshold)
+		  if($expect<=$threshold)
 			{
 			my $protein_="";
 			my $protein_expect="";

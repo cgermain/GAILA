@@ -134,7 +134,7 @@ if ($error==0)
 			my $pre_=$7;
 			my $post_=$8;
 			my $peptide_=$9;
-			if ($expect_<=$expect)
+			if ($expect_<$expect)
 			{
 				$start=$start_;
 				$end=$end_;
@@ -291,7 +291,7 @@ if($line=~/<GAML:attribute type="charge">([0-9]+)<\/GAML:attribute>/)
 	    print OUT_ qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tmh\tlabeling\ttryptic\tmissed\tflagged modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tbroad_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
 	  }
 
-      if($expect<$threshold)
+      if($expect<=$threshold)
       {
         my $protein_="";
         my $protein_expect="";
