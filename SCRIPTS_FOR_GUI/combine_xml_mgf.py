@@ -7,6 +7,7 @@ import sys, os, shutil
 from . import utility
 from os.path import join
 from datetime import datetime
+import traceback
 #from collections import defaultdict
 
 TIME_FORMAT =  "%Y-%m-%d_%H-%M-%S"
@@ -340,7 +341,7 @@ def combine_plain_parsed_xml_mgf(selected_mgfdir, xmldir, timestamp):
 
 		return
 	except Exception as err:
-		print(err)
+		print(traceback.format_exc())
 		return "Error combining xml and mgf in plain parse"
 
 def finish_fast_parse(xmldir, timestamp):
@@ -377,7 +378,7 @@ def finish_fast_parse(xmldir, timestamp):
 
 		return
 	except Exception as err:
-		print(err)
+		print(traceback.format_exc())
 		return "Error combining xml and mgf in plain parse"
 
 
@@ -434,9 +435,12 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 		xmldir = join(xmldir,"")
 		parent_xml_filename = os.path.basename(os.path.normpath(xmldir))
 		# if first loop through
-		summary_file = selected_mgfdir+"\mgf_summary.txt"
+		summary_file = os.path.join(selected_mgfdir, "mgf_summary.txt")
 
 		normalized_intensities = read_intensities_from_summary_and_normalize(summary_file)
+		if isinstance(normalize_intensities, str): # This means error
+			print("Error in read_intensities_from_summary_and_normalize", normalize_intensities)
+			return normalize_intensities
 
 		# Problem is that it's an empty folder!
 		for filename in os.listdir(xmldir):
@@ -518,7 +522,7 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 
 		return
 	except Exception as err:
-		print(err)
+		print(traceback.format_exc())
 		return "Error combining xml and mgf"
 
 
@@ -551,6 +555,5 @@ def read_intensities_from_summary_and_normalize(filename):
 			return intensity_totals
 	except Exception as err:
 		print("Error reading from intensity file")
-		print(err)
+		print(traceback.format_exc())
 		return "Error in intensity file"
-						

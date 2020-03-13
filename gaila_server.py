@@ -46,8 +46,8 @@ def nocache(f):
 @nocache
 def main():
 	#generate the default Archive folder on first run if none exists
-	if not os.path.isdir(os.path.join(sys.path[0], "Archive")):
-		os.makedirs(os.path.join(sys.path[0], "Archive"))
+	if not os.path.isdir(join(sys.path[0], "Archive")):
+		os.makedirs(join(sys.path[0], "Archive"))
 	
 	#TODO check inverse directory for proper naming
 	# if not utility.inverse_array_is_correct():
@@ -345,17 +345,17 @@ def writeSummary():
 		if 'plain_parse' in request.form and request.form['plain_parse'] == "1":
 			mgf_txt_write_dir_path = makeFolderNames.construct_plain_parse_reporter_folder_path(request.form)
 		elif 'fast_parse' in request.form and request.form['fast_parse'] == "1":
-			mgf_txt_write_dir_path = makeFolderNames.construct_fast_parse_folder_path(request.form)+'\\'
+			mgf_txt_write_dir_path = makeFolderNames.construct_fast_parse_folder_path(request.form)
 		else:
 			mgf_txt_write_dir_path = makeFolderNames.construct_reporter_folder_path(request.form)
 
 	else:
 		if 'xmlReadPath' in request.form:
-			mgf_txt_write_dir_path = request.form['mgfTxtReadDirPath']+"\\"
+			mgf_txt_write_dir_path = request.form['mgfTxtReadDirPath']
 		else:
 			mgf_txt_write_dir_path = makeFolderNames.construct_reporter_folder_path(request.form)
 
-	with open(mgf_txt_write_dir_path+'GAILA_summary_'+timestamp+'.txt', 'w') as out_file:
+	with open(join(mgf_txt_write_dir_path, 'GAILA_summary_'+timestamp+'.txt'), 'w') as out_file:
 		out_file.write("GAILA Summary\n")
 		out_file.write(timestamp+"\n\n")
 		for option, value in request.form.items():
@@ -405,10 +405,10 @@ def writeSummary():
 
 		reporters = ""
 		intensity_totals = []
-		if os.path.isfile(mgf_txt_write_dir_path+'intensity_summary.txt'):
+		if os.path.isfile(join(mgf_txt_write_dir_path, 'intensity_summary.txt')):
 			out_file.write("\nTotal Reporter Ion and MS1 Intensities per MGF file\n----------\n")
 			line_found = False	
-			with open (mgf_txt_write_dir_path+'intensity_summary.txt') as summary_file:
+			with open (join(mgf_txt_write_dir_path, 'intensity_summary.txt')) as summary_file:
 				for summary_line in summary_file:
 					if not line_found:
 						line_found = True
@@ -427,11 +427,11 @@ def writeSummary():
 						#initialize the intensity_totals array to all zeros
 						intensity_totals = [0 for i in range(num_reporters)]
 
-			os.remove(mgf_txt_write_dir_path+'intensity_summary.txt')
+			os.remove(join(mgf_txt_write_dir_path, 'intensity_summary.txt'))
 		
-		if os.path.isfile(mgf_txt_write_dir_path+'mgf_summary.txt'):
+		if os.path.isfile(join(mgf_txt_write_dir_path, 'mgf_summary.txt')):
 			out_file.write("MGF File\tMS1 Intensity\t"+reporters)
-			with open (mgf_txt_write_dir_path+'mgf_summary.txt') as mgf_summary_file:
+			with open(join(mgf_txt_write_dir_path, 'mgf_summary.txt')) as mgf_summary_file:
 				for mgf_line in mgf_summary_file:
 					if mgf_line != "" or mgf_line != "\n":
 						out_file.write(mgf_line)
@@ -443,16 +443,16 @@ def writeSummary():
 				out_file.write(reporters)
 				out_file.write('\t'.join([str(val) for val in intensity_totals]))
 				
-			os.remove(mgf_txt_write_dir_path+'mgf_summary.txt')
+			os.remove(join(mgf_txt_write_dir_path, 'mgf_summary.txt'))
 
 	if 'concat' in request.form:
 		concat = request.form['concat']
 		if concat == "1":
 			mgf_directory = makeFolderNames.construct_reporter_folder_path(request.form)
-			all_files = glob.glob(os.path.join(mgf_directory, "*.reporter"))
+			all_files = glob.glob(join(mgf_directory, "*.reporter"))
 			df_from_each_file = (pd.read_csv(f) for f in all_files)
 			concatenated_df = pd.concat(df_from_each_file, ignore_index=True)
-			concatenated_df.to_csv(os.path.join(mgf_directory, "rep_sel_"+timestamp+".reporter"), index=False)
+			concatenated_df.to_csv(join(mgf_directory, "rep_sel_"+timestamp+".reporter"), index=False)
 
 	makeFolderNames.rename_folders(request.form)
 	return "Summary complete."
@@ -494,7 +494,7 @@ def clean_up_after_tab_2():
 		return
 
 	for item in os.listdir(mgf_txt_foldername):
-		full_name = os.path.join(mgf_txt_foldername, item)
+		full_name = join(mgf_txt_foldername, item)
 		print("Cleaning up: " + full_name)
 		if os.path.isfile(full_name):
 			if full_name.ends_with('_with_duplicates_deleted'):
@@ -517,10 +517,10 @@ def check_if_previous_summary_exists_and_get_reporter_type(reporter_folder):
 	start_writing_out = False
 	for item in os.listdir(reporter_folder):
 		if os.path.splitext(item)[0].startswith("GAILA_summary"):
-			with open(reporter_folder+"\\"+item, "r") as summary:
+			with open(join(reporter_folder, item), "r") as summary:
 				summary_lines = summary.readlines()
-				with open(reporter_folder+"\intensity_summary.txt","w") as intensity_summary, \
-					open(reporter_folder+"\mgf_summary.txt","w") as mgf_summary:
+				with open(join(reporter_folder, "intensity_summary.txt"),"w") as intensity_summary, \
+					open(join(reporter_folder, "mgf_summary.txt"),"w") as mgf_summary:
 					for count, line in enumerate(summary_lines):
 						ion_type_search = re.search("reporterIonType - (.*)", line)
 						if "Total Reporter Ion Intensities" in line and start_writing_out:
