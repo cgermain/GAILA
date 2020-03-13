@@ -137,6 +137,7 @@
 
     var rightSide = $(this).parent().siblings("#rightSide").first()
     rightSide.append("<div>Executing Function Now</div>")
+    rightSide.scrollTop(rightSide[0].scrollHeight);
     var startTime = new Date();
 
     // async.waterfall([
@@ -159,17 +160,20 @@
           error: function(response, textStatus, HTTPError){
             console.log(response.responseText);
             rightSide.append('<h3 style="color:red">' + response.responseText + '</h3>');
+            rightSide.scrollTop(rightSide[0].scrollHeight);
             return callback("error: " + response.responseText);
           }
         })
       },
       function slectMGFPlainParse(callback){
         rightSide.append("<div>Need to grab MGF files, doing that now</div>");
+        rightSide.scrollTop(rightSide[0].scrollHeight);
         return givenRightsideAndDataObjSelectMGF(rightSide, serializedForm, callback);
       },
       function plainParseXMLandCombineWithMGF(callback){
         rightSide.append("<div>Parsing XML file with MGF files</div>");
         rightSide.append('<div style="color:blue">Please be patient as this may take a while.  Progress can be viewed in the command line window.</div>');
+        rightSide.scrollTop(rightSide[0].scrollHeight);
         $.ajax({
           type:"POST",
           url:"plain_parse_xtandem_combine_with_mgf",
@@ -179,6 +183,7 @@
           success : function(result){
             console.log(result);
             rightSide.append('<h3 style="color:green">XML parsed successfully. You can find the parsed xml the specified output folder.</h3>');
+            rightSide.scrollTop(rightSide[0].scrollHeight);
             writeSummaryToFile(rightSide, serializedForm, function(err){});
             return callback(null);
           },
@@ -189,6 +194,7 @@
                 return callback("error: Check to make sure GAILA server is running.");
             }
             rightSide.append('<div style="color:red">' + response.responseText + '</div>')
+            rightSide.scrollTop(rightSide[0].scrollHeight);
             return callback("error: " + response.responseText)
           }
         })
@@ -205,6 +211,7 @@
       }
       var difference = new Date() - startTime;
       rightSide.append("<div>MILLISECONDS TAKEN: " + difference + " <div>")
+      rightSide.scrollTop(rightSide[0].scrollHeight);
       that.attr('disabled', false);
       that.text('Click to submit');
     })

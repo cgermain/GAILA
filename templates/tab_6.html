@@ -53,6 +53,7 @@
 
     var rightSide = $(this).parent().siblings("#rightSide").first()
     rightSide.append("<div><br>Starting ms2/ms3 file merge.  Status available in terminal window.</div>")
+    rightSide.scrollTop(rightSide[0].scrollHeight);
     var startTime = new Date();
 
     async.waterfall([
@@ -65,11 +66,13 @@
             console.log("MS2/MS3 merge complete.");
             console.log(result);
             rightSide.append("<h3 style=color:green>Merge complete. </h3><br><div>" + result + "</div>");
+            rightSide.scrollTop(rightSide[0].scrollHeight);
             return callback(null);
           },
           error: function(response, textStatus, HTTPError){
             console.log(response.responseText);
             rightSide.append('<h3 style="color:red">' + response.responseText + '</h3>');
+            rightSide.scrollTop(rightSide[0].scrollHeight);
             return callback("error: " + response.responseText);
           }
         })
@@ -86,6 +89,7 @@
       }
       var difference = new Date() - startTime;
       rightSide.append("<div>MILLISECONDS TAKEN: " + difference + " <div>")
+      rightSide.scrollTop(rightSide[0].scrollHeight);
       that.attr('disabled', false);
       that.text('Click to submit');
     })
