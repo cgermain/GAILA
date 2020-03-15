@@ -485,20 +485,7 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 						data[ion_type+"_norm_total"] = ""
 
 				if normalize_intensities[0] == "0":
-					# crossover correction now happens during selection
-					# only need to loop through for normalizing total intensities
-					for k in range(len(data)):
-						# this next line gets the kth row, and the start_col to end_col columns, which are strings like iTRAQ-115.
-						temp = data.loc[k,start_col:end_col]
-						temp_intensities = [float(intensity)/norm if norm != 0 else 0 for intensity, norm in zip(temp, normalized_intensities)]
-						if sum(temp_intensities) == 0:
-							normalized_temp_intensities = temp_intensities
-						else:
-							normalized_temp_intensities = [float(intensity)/sum(temp_intensities) for intensity in temp_intensities]
-						if len(normalized_temp_intensities) == 1:
-							data.loc[k,start_col+"_norm_total":end_col+"_norm_total"] = normalized_temp_intensities[0]
-						else:
-							data.loc[k,start_col+"_norm_total":end_col+"_norm_total"] = normalized_temp_intensities
+					set_normalized_intensities_columns(data, normalized_intensities, start_col, end_col)
 				
 				this_filename = join(xmldir, filename + '_nocal_table_corrected.txt')
 				if keep_na == "1":
@@ -524,6 +511,32 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 	except Exception as err:
 		print(traceback.format_exc())
 		return "Error combining xml and mgf"
+
+
+def set_normalized_intensities_columns(data, normalized_intensities, start_col, end_col):
+	"""
+	This function first normalizes each reporter ion w.r.t global intensity, and then normalizes each
+	row w.r.t. itself. It's fast because it's all numpy.
+	"""
+	temp = data.loc[:,start_col:end_col]
+	temp = np.array(temp)
+
+	if len(temp) == 0:
+		print("Nothing in temp, so not doing normalization")
+		return
+
+	for_dividing = np.array(normalized_intensities)[None,...] # Makes it one row by n cols.
+	for_dividing[for_dividing == 0] = np.inf # makes it so dividing by the zeros just gives you zero
+	temp_intensities = temp / for_dividing
+	intensity_sums = np.sum(temp_intensities, axis=1, keepdims=True)
+	intensity_sums[intensity_sums == 0] = 1
+	normalized_intensities = temp_intensities / intensity_sums
+
+	if normalized_intensities.shape[1] == 1:
+		data.loc[:,start_col+"_norm_total":end_col+"_norm_total"] = normalized_intensities[:,0]
+	else:
+		data.loc[:,start_col+"_norm_total":end_col+"_norm_total"] = normalized_intensities
+	return
 
 
 def read_intensities_from_summary_and_normalize(filename):
