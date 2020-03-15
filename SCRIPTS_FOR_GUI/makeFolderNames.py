@@ -107,9 +107,9 @@ def rename_folders(form):
 		if 'xmlReadPath' not in form:
 			reporter_folder_name = construct_reporter_folder_path(form)
 			if form['outDirPath'] == 'Default GAILA Archive':
-				new_reporter_folder_name = join(sys.path[0], "Archive", "rep_sel_"+timestamp, '')
+				new_reporter_folder_name = join(sys.path[0], "Archive", "ss_rep_sel_"+timestamp, '')
 			else:
-				new_reporter_folder_name = join(form['outDirPath'], "rep_sel_"+timestamp, '')
+				new_reporter_folder_name = join(form['outDirPath'], "ss_rep_sel_"+timestamp, '')
 			shutil.copytree(reporter_folder_name, new_reporter_folder_name)
 			rename_filtered_files(new_reporter_folder_name, ".reporter", form['minIntensity'], form['minReporters'])
 			shutil.rmtree(reporter_folder_name)
@@ -117,7 +117,7 @@ def rename_folders(form):
 		#tab 2 - use pre extracted reporters
 		#filter new results out of previous reporter select folder
 		else:
-			output_suffix = "rep_sel_"
+			output_suffix = "wpm_rep_sel_"
 			previous_reporter_folder_name = form['mgfTxtReadDirPath']
 			if form['outDirPath'] == 'Default GAILA Archive':
 				new_reporter_folder_name = join(sys.path[0], "Archive", output_suffix+timestamp, '')
@@ -152,7 +152,11 @@ def rename_folders(form):
 		else:
 			mgf_folder_name = construct_selected_mgf_path(form)
 			reporter_folder_name = construct_reporter_folder_path(form)
-			output_suffix = "rep_sel_"
+			if 'xmlReadPath' not in form:
+				output_suffix = "ss_rep_sel"
+			else:
+				output_suffix = "wpm_rep_sel_"
+			# output_suffix = "wpm_rep_sel_"
 			if form['outDirPath'] == 'Default GAILA Archive':
 				new_mgf_folder_name = join(sys.path[0], "Archive", "mgf_sel_"+timestamp, '')
 			else:
