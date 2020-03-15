@@ -79,6 +79,9 @@
       }
     ],function(err, result){
       console.log("in final waterfall catcher");
+      var difference = new Date() - startTime;
+      rightSide.append("<div>MILLISECONDS TAKEN: " + difference + " <div>")
+      rightSide.scrollTop(rightSide[0].scrollHeight);
       if(err){
         if (err == "error: undefined"){
           alert("Check to see if GAILA server is running.");
@@ -87,9 +90,6 @@
           alert(err);
         }
       }
-      var difference = new Date() - startTime;
-      rightSide.append("<div>MILLISECONDS TAKEN: " + difference + " <div>")
-      rightSide.scrollTop(rightSide[0].scrollHeight);
       that.attr('disabled', false);
       that.text('Click to submit');
     })
