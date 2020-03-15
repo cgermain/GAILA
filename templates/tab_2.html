@@ -125,7 +125,7 @@
     </div>
 
     <div class="input-group" style="margin: 1%">
-      <span class="input-group-addon" id="basic-addon1">Include spectra peptide expectation &#8804 </span>
+      <span class="input-group-addon" id="basic-addon1">Write PSMs with peptide expectation &#8804 </span>
       <input type="text" class="form-control" id="logErrorThreshold" value="0.1">
       <span class="input-group-btn">
         <button class="btn btn-info" onclick="alert('GPM outputs an match probability for each spectra. This filters out spectra with higher error than the value given. Must be a number between 0 and 1, written in either decimal form or scientific notation (1.3e-5)')">?</button>
@@ -413,7 +413,7 @@
         }
       },
       function parseXML(callback){
-        rightSide.append("<div>Parsing XML file with MGF files or pre-selected reporters</div>");
+        rightSide.append("<div>Parsing files</div>");
         rightSide.append('<div style="color:blue">Please be patient as this may take a while.  Progress can be viewed in the command line window.</div>');
         rightSide.scrollTop(rightSide[0].scrollHeight);
         $.ajax({

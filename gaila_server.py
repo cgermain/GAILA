@@ -552,7 +552,7 @@ def get_detailed_summary(option, value):
 		if value == "0":
 			return option + " - Normalize each report ion to its own total intensity\n"
 		else:
-			return option + " - Do not normalize report ions"
+			return option + " - Do not normalize report ions\n"
 	elif option == "unacceptableMods[]":
 		mods = [utility.get_modification_dict()[mod] for mod in value]
 		return "unacceptableMods - " + ", ".join(mods)+"\n"
@@ -573,7 +573,7 @@ def get_detailed_summary(option, value):
 			return ""
 	elif option == "fast_parse":
 		if value =="1":
-			return option+ " - Fast parse XML without MGF"
+			return option+ " - Fast parse XML without MGF\n"
 		else:
 			return ""
 	elif option == "reporterIonType":
@@ -588,9 +588,24 @@ def get_detailed_summary(option, value):
 
 	elif option == "writeAllSpectra":
 		if value == "0":
-			return option + " - No"
+			return "WriteAllSpectra - No\n"
 		else:
-			return option + " - Yes"
+			return "WriteAllSpectra - Yes\n"
+
+	elif option == "logErrorThreshold":
+		return "WritePSMsPeptideExpectation <= " + value + "\n"
+
+	elif option=="removeMGF":
+		if value == "1":
+			return "SaveFilteredMGF - Yes\n"
+		else:
+			return "SaveFilteredMGF - No\n"
+
+	elif option == "removeReporters":
+		if value == "1":
+			return "SaveTemporaryReporterFiles - Yes\n"
+		else:
+			return "SaveTemporaryReporterFiles - No\n"
 	else:
 		return option + " - " + value+'\n'
 
