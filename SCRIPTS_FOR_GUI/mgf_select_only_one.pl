@@ -36,8 +36,12 @@ if ($ARGV[8]=~/\w/) { $inverse_string=$ARGV[8];} else { exit 1;}
 
 $parsed_filename=basename($read_file_path);
 my $directory = dirname($write_txt_file_path);
-my $summary_path = $directory."\\intensity_summary.txt";
-my $mgf_path = $directory."\\mgf_summary.txt";
+
+# Windows/Unix Compatibility
+my $dirsep = ($^O eq "MSWin32" or $^O eq "cygwin") ? "\\" : "/";
+my $summary_path = $directory.$dirsep."intensity_summary.txt";
+my $mgf_path = $directory.$dirsep."mgf_summary.txt";
+
 my @previous_intensity = ();
 my $previous_summary_exists = 0;
 
