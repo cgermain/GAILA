@@ -914,6 +914,7 @@
 
     var rightSide = $(this).parent().siblings("#rightSide").first()
     rightSide.append("<div>Executing Function Now</div>")
+    rightSide.scrollTop(rightSide[0].scrollHeight);
     var startTime = new Date();
     givenRightsideAndDataObjSelectMGF(rightSide, serializedForm, function(err){
       if (err){
@@ -922,6 +923,7 @@
       }
       else{
         rightSide.append('<h3 style="color:green">Sucessfully parsed all MGF files</h3>')
+        rightSide.scrollTop(rightSide[0].scrollHeight);
       }
       that.attr('disabled', false);
       that.text('Click to submit');

@@ -373,6 +373,7 @@
 
     var rightSide = $(this).parent().siblings("#rightSide").first()
     rightSide.append("<div>Executing Function Now</div>")
+    rightSide.scrollTop(rightSide[0].scrollHeight);
     var startTime = new Date();
     // async.waterfall([
 
@@ -394,6 +395,7 @@
           error: function(response, textStatus, HTTPError){
             console.log(response.responseText);
             rightSide.append('<h3 style="color:red">' + response.responseText + '</h3>');
+            rightSide.scrollTop(rightSide[0].scrollHeight);
             return callback("error: " + response.responseText);
           }
         })
@@ -401,16 +403,19 @@
       function maybeSelectMGF(callback){
         if (serializedForm.mgfOperationToPerform == '1'){
           rightSide.append("<div>Need to select from MGF files, doing that now</div>");
+          rightSide.scrollTop(rightSide[0].scrollHeight);
           return givenRightsideAndDataObjSelectMGF(rightSide, serializedForm, callback);
         }
         else{
           rightSide.append("<div>No need to select from MGF files, moving on</div>");
+          rightSide.scrollTop(rightSide[0].scrollHeight);
           return callback(null)
         }
       },
       function parseXML(callback){
         rightSide.append("<div>Parsing XML file with MGF files or pre-selected reporters</div>");
         rightSide.append('<div style="color:blue">Please be patient as this may take a while.  Progress can be viewed in the command line window.</div>');
+        rightSide.scrollTop(rightSide[0].scrollHeight);
         $.ajax({
           type:"POST",
           url:"tab_2_helper_function",
@@ -420,18 +425,23 @@
           success : function(result){
             console.log(result);
             rightSide.append('<h3 style="color:green">XML parsed successfully. You can find the parsed xml in the specified output folder</h3>');
+            rightSide.scrollTop(rightSide[0].scrollHeight);
             writeSummaryToFile(rightSide, serializedForm, function(err){});
             return callback(null);
           },
           error: function(response, textStatus, HTTPError){
             console.log(response.responseText);
             rightSide.append('<div style="color:red">' + response.responseText + '</div>')
+            rightSide.scrollTop(rightSide[0].scrollHeight);
             return callback("error: " + response.responseText)
           }
         })
       }
     ],function(err, result){
       console.log("in final waterfall catcher");
+      var difference = new Date() - startTime;
+      rightSide.append("<div>MILLISECONDS TAKEN: " + difference + " <div>")
+      rightSide.scrollTop(rightSide[0].scrollHeight);
       if(err){
         if (err == "error: undefined"){
           alert("Check to see if GAILA server is running.");
@@ -440,8 +450,6 @@
           alert(err);
         }
       }
-      var difference = new Date() - startTime;
-      rightSide.append("<div>MILLISECONDS TAKEN: " + difference + " <div>")
       that.attr('disabled', false);
       that.text('Click to submit');
     })
