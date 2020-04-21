@@ -8,13 +8,12 @@ import sys
 TIME_FORMAT = "%Y-%m-%d_%H-%M-%S"
 FUZZY_RT_VALUE = 5
 
-def merge_ms2_ms3(ms2_ms3_directory, mz_cutoff_string, output_dir, timestamp):
+def merge_ms2_ms3(ms2_ms3_directory, mz_cutoff_string, ms2_suffix, ms3_suffix, output_dir, timestamp):
 
 	mz_cutoff = float(mz_cutoff_string)
-
+	
 	if not os.path.isdir(ms2_ms3_directory):
-		print("Please check that you are passing in the MS2/MS3 directory.")
-		return
+		return "Please check that you are passing in the MS2/MS3 directory.", 0
 
 	#get the full path to the MGF files
 	filenames = listdir_fullpath(ms2_ms3_directory)
@@ -24,23 +23,22 @@ def merge_ms2_ms3(ms2_ms3_directory, mz_cutoff_string, output_dir, timestamp):
 		output_dir = os.path.join(sys.path[0], "Archive", "")
 	
 	#the chunker and merging require an even number of MGF files
-	if len(mgf_files) % 2 == 0:
+	if len(mgf_files) == 0 or len(mgf_files) == 1:
+		return "Directory must contain at least 2 MGF files.", 0
+	elif len(mgf_files) % 2 == 0:
 		#mgf_files.sort(key=str.lower)
 		mgf_files.sort()
-	elif len(mgf_files) == 0:
-		print("Directory must contain at least 2 MGF files.")
 	else:
-		print("Directory must contain an even number of MGF files to merge.")
-		return
+		return "Directory must contain an even number of MGF files to merge.", 0
 
 	#run through the pairs once to make sure the MS2/MS3 filenames match
 	for ms2_ms3_pair in chunker(mgf_files,2):
-		if ms2_ms3_file_pair_mismatch(ms2_ms3_pair):
+		if ms2_ms3_file_pair_mismatch(ms2_ms3_pair, ms2_suffix, ms3_suffix):
 			print("MS2/MS3 file mismatch:")
 			print(ms2_ms3_pair[0])
 			print(ms2_ms3_pair[1])
 			print("Please check the file names.")
-			return "MS2/MS3 file mismatch, please check file names.", 0
+			return "MS2/MS3 file mismatch, please check file names and suffixes.", 0
 		if output_file_exists(ms2_ms3_pair):
 			print("Merged MS2/MS3 file already exists in directory.")
 			print("Remove and rerun.")
@@ -152,14 +150,15 @@ def chunker(sequence, size):
 	return (sequence[index:index + size] for index in range(0, len(sequence), size))
 
 #checking to make sure that the ms2 and ms3 filenames match properly
-def ms2_ms3_file_pair_mismatch(chunk):
+def ms2_ms3_file_pair_mismatch(chunk, ms2_suffix, ms3_suffix):
 	ms2_file = os.path.basename(chunk[0])
 	ms3_file = os.path.basename(chunk[1])
 
+	ms2_index = ms2_file.find(ms2_suffix)
+	ms3_index = ms3_file.find(ms3_suffix)
+
 	try:	
-		return not ("MS2" in ms2_file and
-			"MS3" in ms3_file and
-			ms2_file.split("MS2")[0] == ms3_file.split("MS3")[0])
+		return not (ms2_file[:ms2_index] == ms3_file[:ms3_index])
 	except:
 		return True
 

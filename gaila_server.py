@@ -324,10 +324,12 @@ def mergeMS2MS3():
 
 	ms2_ms3_directory = request.form['ms2ms3directory']
 	mz_cutoff = request.form['mzCutoff']
+	ms2_suffix = request.form['ms2Suffix']
+	ms3_suffix = request.form['ms3Suffix']
 	output_dir = request.form['outDirPath']
 	timestamp = request.form['timestamp']
 
-	result, error = mergemgf.merge_ms2_ms3(ms2_ms3_directory, mz_cutoff, output_dir, timestamp)
+	result, error = mergemgf.merge_ms2_ms3(ms2_ms3_directory, mz_cutoff, ms2_suffix, ms3_suffix, output_dir, timestamp)
 
 	if not error:
 		return result, 400
