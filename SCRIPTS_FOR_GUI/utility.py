@@ -41,8 +41,8 @@ def validate_gene_file(genefile):
 
 def validate_error_input(error_input):
 	strnum = str(error_input)
-	re_1 = '^\d+\.?\d*$'
-	re_2 = '^\d+\.?\d*[eE]\-\d+'
+	re_1 = '^\d*\.?\d*$'
+	re_2 = '^\d*\.?\d*[eE]\-\d+'
 	if (re.match(re_1, strnum) or re.match(re_2, strnum)):
 		return float(error_input)>0 and float(error_input)<1
 	else:
