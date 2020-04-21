@@ -190,6 +190,7 @@ def rename_folders(form):
 			new_reporter_folder_name = join(form['outDirPath'], output_suffix+timestamp, '')
 
 		shutil.copytree(reporter_folder_name, new_reporter_folder_name)
-		rename_filtered_files(new_reporter_folder_name, ".reporter", form['minIntensity'], form['minReporters'])
+		if 'minIntensity' in form:
+			rename_filtered_files(new_reporter_folder_name, ".reporter", form['minIntensity'], form['minReporters'])
 		shutil.rmtree(reporter_folder_name)
 		return
