@@ -90,6 +90,17 @@
     }
 	</script>
 
+
+ 	<script type="text/javascript">
+ 		//Remove quotes from all form text input
+		$.valHooks.text = {
+		  get: function( elem ) {
+		  	console.log("removing quotes")
+		    return elem.value.replace(/"/g, "");
+		  }
+		};
+	</script>
+
 	  <script type="text/javascript">
 	  $('[name=tab_body]').each(function(index){
 	  	console.log(index)
@@ -129,7 +140,9 @@
 	  };
 	  </script>
 
+
 	  <script type="text/javascript">
+
 	  //adding the timestamp to every form click
 	  function serializeForm(elem, timestamp){
 	  	// return;
