@@ -11,7 +11,7 @@ import subprocess
 from . import makeFolderNames
 
 
-def parse_xtandem_new(full_path_to_xml, error_threshold, reporter_type, genefile, unacceptable_mods):
+def parse_xtandem_new(full_path_to_xml, error_threshold, reporter_type, genefile, unacceptable_mods, mgf_list):
 	this_dir = os.path.dirname(os.path.realpath(__file__))
 	full_path_to_genefile = join(this_dir, 'gene_files', genefile)
 
@@ -37,7 +37,7 @@ def parse_xtandem_new(full_path_to_xml, error_threshold, reporter_type, genefile
 
 	perl_call_array=['perl', join(this_dir, 'parse_xtandem_sam.pl'), full_path_to_xml, \
 		xml_dir_name, str(error_threshold), str(label_mass), full_path_to_genefile, \
-		mass_val_literal, mod_val_literal, reporter_mods_literal]
+		mass_val_literal, mod_val_literal, reporter_mods_literal, mgf_list]
 
 	a = subprocess.call(perl_call_array)
 
@@ -47,7 +47,7 @@ def parse_xtandem_new(full_path_to_xml, error_threshold, reporter_type, genefile
 		#Perl script exectued
 		return 0
 
-def parse_xtandem_fast(full_path_to_xml, error_threshold, genefile, unacceptable_mods, plain_parsing):
+def parse_xtandem_fast(full_path_to_xml, error_threshold, genefile, unacceptable_mods, plain_parsing, mgf_list):
 	this_dir = os.path.dirname(os.path.realpath(__file__))
 	full_path_to_genefile = join(this_dir, 'gene_files', genefile)
 
@@ -68,7 +68,7 @@ def parse_xtandem_fast(full_path_to_xml, error_threshold, genefile, unacceptable
 
 	perl_call_array=['perl', join(this_dir, 'quick_parse_xtandem.pl'), full_path_to_xml, \
 		xml_dir_name, str(error_threshold), full_path_to_genefile, \
-		mass_val_literal, mod_val_literal, plain_parsing]
+		mass_val_literal, mod_val_literal, plain_parsing, mgf_list]
 
 	a = subprocess.call(perl_call_array)
 
@@ -78,8 +78,8 @@ def parse_xtandem_fast(full_path_to_xml, error_threshold, genefile, unacceptable
 		#Perl script exectued
 		return 0
 
-def parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, reporter_type, genefile, selected_mgfdir, unacceptable_mods, normalize_intensities, timestamp, keep_na):
-	resp = parse_xtandem_new(full_path_to_xml, error_threshold, reporter_type, genefile, unacceptable_mods)
+def parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, reporter_type, genefile, selected_mgfdir, unacceptable_mods, normalize_intensities, timestamp, keep_na, mgf_list):
+	resp = parse_xtandem_new(full_path_to_xml, error_threshold, reporter_type, genefile, unacceptable_mods, mgf_list)
 	if resp:
 		print("from parse_xtandem_combine_with_mgf, error detected in parse_xtandem_new: " + str(resp))
 		return resp
@@ -101,8 +101,8 @@ def parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, reporter_t
 		return "Trouble deleting xml directory afterwards"
 
 
-def plain_parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, genefile, selected_mgfdir, unacceptable_mods, timestamp):
-	resp = parse_xtandem_fast(full_path_to_xml, error_threshold, genefile, unacceptable_mods, "1")
+def plain_parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, genefile, selected_mgfdir, unacceptable_mods, timestamp, mgf_list):
+	resp = parse_xtandem_fast(full_path_to_xml, error_threshold, genefile, unacceptable_mods, "1", mgf_list)
 	if resp:
 		print("from plain_parse_xtandem_combine_with_mgf, error detected in parse_xtandem_fast: " + str(resp))
 		return resp
@@ -135,7 +135,7 @@ def plain_parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, gene
 	return 0
 
 def fast_parse_xtandem(full_path_to_xml, error_threshold, genefile, unacceptable_mods, timestamp):
-	resp = parse_xtandem_fast(full_path_to_xml, error_threshold, genefile, unacceptable_mods, "0")
+	resp = parse_xtandem_fast(full_path_to_xml, error_threshold, genefile, unacceptable_mods, "0", "")
 	if resp:
 		print("from fast_parse_xtandem, error detected in parse_xtandem_fast: " + str(resp))
 		return resp

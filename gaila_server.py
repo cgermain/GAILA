@@ -107,7 +107,10 @@ def plain_parse_xtandem_combine_with_mgf():
 
 	mgf_txt_foldername = makeFolderNames.construct_plain_parse_reporter_folder_path(request.form)
 
-	a = call_xml_parser.plain_parse_xtandem_combine_with_mgf(xml_read_path, log_error_threshold, geneFile, mgf_txt_foldername, unacceptable_mods, timestamp)
+	mgf_read_dir_path = request.form['mgfReadDirPath']
+	mgf_list = ",".join(utility.get_mgf_files_given_directory(mgf_read_dir_path))
+
+	a = call_xml_parser.plain_parse_xtandem_combine_with_mgf(xml_read_path, log_error_threshold, geneFile, mgf_txt_foldername, unacceptable_mods, timestamp, mgf_list)
 
 	if a:
 		print("Error in tab 4. Trying cleanup now, either way returning error")
@@ -166,10 +169,13 @@ def tab_2_helper_function():
 		if previous_ion_type != reporter_type:
 			return "Ion type from summary does not match current selection.", 500
 
+	mgf_read_dir_path = request.form['mgfReadDirPath']
+	mgf_list = ",".join(utility.get_mgf_files_given_directory(mgf_read_dir_path))
+
 	if should_use_unacceptable == "1":
 		unacceptable_mods = []
 
-	a = call_xml_parser.parse_xtandem_combine_with_mgf(xml_read_path, log_error_threshold, reporter_type, geneFile, mgf_txt_foldername, unacceptable_mods, normalize_intensities, timestamp, keep_na)
+	a = call_xml_parser.parse_xtandem_combine_with_mgf(xml_read_path, log_error_threshold, reporter_type, geneFile, mgf_txt_foldername, unacceptable_mods, normalize_intensities, timestamp, keep_na, mgf_list)
 
 	if a:
 		print("Error in tab 2. Cleaning up.")

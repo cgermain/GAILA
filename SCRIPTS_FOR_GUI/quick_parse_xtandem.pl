@@ -2,6 +2,7 @@
 #
 use strict;
 use File::Basename;
+no warnings 'experimental::smartmatch';
 
 my $error=0;
 my $xmlfile=0;
@@ -16,6 +17,9 @@ my @unacceptable_mass_array=();
 my @unacceptable_mod_array=();
 my $plain_parsing="";
 
+my @mgf_list_array=();
+my $mgf_list_string="";
+
 if (defined $ARGV[0]) { $xmlfile=$ARGV[0];} else { exit 1; }
 if (defined $ARGV[1]) { $xmldir=$ARGV[1];} else { exit 2; }
 if (defined $ARGV[2]) { $threshold=$ARGV[2];} else { exit 3; }
@@ -23,9 +27,12 @@ if (defined $ARGV[3]) { $genefile=$ARGV[3];} else { exit 5; }
 if (defined $ARGV[4]) { $unacceptable_mass_array_string=$ARGV[4];} else { exit 6; }
 if (defined $ARGV[5]) { $unacceptable_mod_array_string=$ARGV[5];} else { exit 7; }
 if (defined $ARGV[6]) { $plain_parsing=$ARGV[6];} else { exit 8; }
+if (defined $ARGV[7]) { $mgf_list_string=$ARGV[7];} else { exit 9; }
 
 @unacceptable_mass_array=split /,/,$unacceptable_mass_array_string;
 @unacceptable_mod_array=split /,/,$unacceptable_mod_array_string;
+
+@mgf_list_array=split /,/,$mgf_list_string;
 
 my $length_of_unacceptable_mass=scalar @unacceptable_mass_array;
 my $length_of_unacceptable_mod=scalar @unacceptable_mod_array;
@@ -259,7 +266,7 @@ if ($error==0)
 			  $f_name_sans_mgf = $bioml_mgf_sans_mgf;
 			}
 
-			if ($plain_parsing){
+			if ($plain_parsing && $filename ~~ @mgf_list_array){
 				#we are writing the header for this file now in case expect<threshold for every line.
 				open (OUT_,qq!>>$xmlfile_/$f_name_sans_mgf.reporter!) || die "Could not open $xmlfile_/$filename.reporter\n";
 				if ($filenames{$filename}!~/\w/)
@@ -269,7 +276,7 @@ if ($error==0)
 				}
 			}
 
-		  if($expect<=$threshold)
+		  if($expect<=$threshold && ($plain_parsing eq "0" || $filename ~~ @mgf_list_array))
 			{
 			my $protein_="";
 			my $protein_expect="";

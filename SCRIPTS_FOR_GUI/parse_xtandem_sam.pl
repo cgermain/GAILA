@@ -2,6 +2,7 @@
 #
 use strict;
 use File::Basename;
+no warnings 'experimental::smartmatch';
 
 my $error=0;
 my $xmlfile=0;
@@ -19,6 +20,9 @@ my @unacceptable_mass_array=();
 my @unacceptable_mod_array=();
 my @unacceptable_label_mod_array=();
 
+my @mgf_list_array=();
+my $mgf_list_string="";
+
 if (defined $ARGV[0]) { $xmlfile=$ARGV[0];} else { exit 1; }
 if (defined $ARGV[1]) { $xmldir=$ARGV[1];} else { exit 2; }
 if (defined $ARGV[2]) { $threshold=$ARGV[2];} else { exit 3; }
@@ -27,11 +31,13 @@ if (defined $ARGV[4]) { $genefile=$ARGV[4];} else { exit 5; }
 if (defined $ARGV[5]) { $unacceptable_mass_array_string=$ARGV[5];} else { exit 6; }
 if (defined $ARGV[6]) { $unacceptable_mod_array_string=$ARGV[6];} else { exit 7; }
 if (defined $ARGV[7]) { $unacceptable_label_mod_string=$ARGV[7];} else { exit 8; }
+if (defined $ARGV[8]) { $mgf_list_string=$ARGV[8];} else { exit 9; }
 
 @unacceptable_mass_array=split /,/,$unacceptable_mass_array_string;
 @unacceptable_mod_array=split /,/,$unacceptable_mod_array_string;
 @unacceptable_label_mod_array=split /,/,$unacceptable_label_mod_string;
 
+@mgf_list_array=split /,/,$mgf_list_string;
 
 my $length_of_unacceptable_mass=scalar @unacceptable_mass_array;
 my $length_of_unacceptable_mod=scalar @unacceptable_mod_array;
@@ -283,15 +289,18 @@ if($line=~/<GAML:attribute type="charge">([0-9]+)<\/GAML:attribute>/)
        $f_name_sans_mgf = $bioml_mgf_sans_mgf;
       }
 
-      #we are writing the header for this file now in case expect<threshold for every line.
-      open (OUT_,qq!>>$xmlfile_/$f_name_sans_mgf.reporter!) || die "Could not open $xmlfile_/$filename.reporter\n";
-	  if ($filenames{$filename}!~/\w/)
-	  {
-	    $filenames{$filename}=1;
-	    print OUT_ qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tmh\tlabeling\ttryptic\tmissed\tflagged modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tbroad_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
+      if ($filename ~~ @mgf_list_array)
+      {
+	      #we are writing the header for this file now in case expect<threshold for every line.
+	      open (OUT_,qq!>>$xmlfile_/$f_name_sans_mgf.reporter!) || die "Could not open $xmlfile_/$filename.reporter\n";
+		  if ($filenames{$filename}!~/\w/)
+		  {
+		    $filenames{$filename}=1;
+		    print OUT_ qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tmh\tlabeling\ttryptic\tmissed\tflagged modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tbroad_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
+		  }
 	  }
-
-      if($expect<=$threshold)
+      
+      if($expect<=$threshold && $filename ~~ @mgf_list_array)
       {
         my $protein_="";
         my $protein_expect="";
@@ -457,6 +466,7 @@ if($line=~/<GAML:attribute type="charge">([0-9]+)<\/GAML:attribute>/)
         print OUT_ qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$start\t$expect\t$mh_val\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$broad_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
         close(OUT_);
       }
+
       $mh="";
       $mz="";
       $filename="";
