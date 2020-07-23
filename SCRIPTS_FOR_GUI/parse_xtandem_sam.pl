@@ -140,6 +140,8 @@ if ($error==0)
 			my $pre_=$7;
 			my $post_=$8;
 			my $peptide_=$9;
+			my $modified_peptide = "";
+
 			if ($expect_<$expect)
 			{
 				$start=$start_;
@@ -149,8 +151,80 @@ if ($error==0)
 				$pre=$pre_;
 				$post=$post_;
 				$peptide=$peptide_;
+				$modified_peptide = $peptide;
 				$modifications="";
 				$missed=0;
+				
+				$unacceptable="N";
+
+				if ($line!~/\<domain[^\>]+\/\>/)
+				{
+					my $labeled_Y_Nterm=0;
+					while ($line!~/\<\/domain\>/)
+					{
+						$line=<IN>;
+						while($line=~s/^\s*\<aa\s+type=\"([A-Z])\"\s+at=\"([0-9]+)\"\s+modified=\"([0-9\.\-\+edED]+)\"\s*//)
+						{
+							my $mod_aa=$1;
+							my $mod_pos=$2;
+							my $mod_mass=$3;
+							my $mod_pm="";
+							my $mod_id="";
+							if ($line=~s/^\s*pm=\"([A-Z])\"\s*id="([^\"]+)"\s*//)
+							{
+								$mod_pm=$1;
+								$mod_id=$2;
+							}
+							$line=~s/^\s*\/\>\s*//;
+							my $mod_pos_=$mod_pos-$start+1;
+
+							$modifications.="$mod_mass\@$mod_aa$mod_pos_->$mod_pm,";
+							
+							#if a mod_pm is found, update the peptide with the alphabetic modificiation
+							#at the location where it was found
+							if($mod_pm ne ""){
+								substr($modified_peptide, $mod_pos_-1, 1) = $mod_pm;
+							}
+
+							my $current_unacc_mass="";
+							my $current_unacc_mod="";
+							for(my $mods=0;$mods<$length_of_unacceptable_mod;$mods++)
+							{
+								$current_unacc_mass=$unacceptable_mass_array[$mods];
+								$current_unacc_mod=$unacceptable_mod_array[$mods];
+
+								if ($mod_aa eq $current_unacc_mod and int((1*$current_unacc_mass) + 0.5)==int((1*$mod_mass) + 0.5))
+								{
+									$unacceptable="Y";
+									last;
+								}
+							}
+							unless ($unacceptable eq "Y")
+							{
+								my $bad_label="";
+								foreach $bad_label (@unacceptable_label_mod_array)
+								{
+									if ($mod_aa eq $bad_label and $mod_pos_!=1 and int($mod_mass+0.5)==$label_mass_int)
+									{
+										$unacceptable="Y";
+										last;
+									}
+									if ($mod_aa eq $bad_label and $mod_pos_==1)
+									{
+										if(int($mod_mass + 0.5)==$label_mass_int){$labeled_Y_Nterm+=1;}
+										if(int($mod_mass + 0.5)==2*$label_mass_int){$labeled_Y_Nterm+=2;}
+									}
+								}
+							}
+						}
+					}
+					if ($labeled_Y_Nterm>1) { $unacceptable="Y"; } 
+				}
+
+				#set the final output peptide to the one that we just made alphabetic modifications to
+				$peptide =$modified_peptide;
+
+				#find missed/trypic based on the modified_peptide
 				my $temp=$peptide;
 				while ($temp=~s/^[^KR]*[KR](.)/$1/)
 				{
@@ -189,66 +263,7 @@ if ($error==0)
 						$tryptic="N";
 					} 
 				}
-				
-				$unacceptable="N";
 
-				if ($line!~/\<domain[^\>]+\/\>/)
-				{
-					my $labeled_Y_Nterm=0;
-					while ($line!~/\<\/domain\>/)
-					{
-						$line=<IN>;
-						while($line=~s/^\s*\<aa\s+type=\"([A-Z])\"\s+at=\"([0-9]+)\"\s+modified=\"([0-9\.\-\+edED]+)\"\s*//)
-						{
-							my $mod_aa=$1;
-							my $mod_pos=$2;
-							my $mod_mass=$3;
-							my $mod_pm="";
-							my $mod_id="";
-							if ($line=~s/^\s*pm=\"([A-Z])\"\s*id="([^\"]+)"\s*//)
-							{
-								$mod_pm=$1;
-								$mod_id=$2;
-							}
-							$line=~s/^\s*\/\>\s*//;
-							my $mod_pos_=$mod_pos-$start+1;
-
-							$modifications.="$mod_mass\@$mod_aa$mod_pos_->$mod_pm,";
-
-							my $current_unacc_mass="";
-							my $current_unacc_mod="";
-							for(my $mods=0;$mods<$length_of_unacceptable_mod;$mods++)
-							{
-								$current_unacc_mass=$unacceptable_mass_array[$mods];
-								$current_unacc_mod=$unacceptable_mod_array[$mods];
-
-								if ($mod_aa eq $current_unacc_mod and int((1*$current_unacc_mass) + 0.5)==int((1*$mod_mass) + 0.5))
-								{
-									$unacceptable="Y";
-									last;
-								}
-							}
-							unless ($unacceptable eq "Y")
-							{
-								my $bad_label="";
-								foreach $bad_label (@unacceptable_label_mod_array)
-								{
-									if ($mod_aa eq $bad_label and $mod_pos_!=1 and int($mod_mass+0.5)==$label_mass_int)
-									{
-										$unacceptable="Y";
-										last;
-									}
-									if ($mod_aa eq $bad_label and $mod_pos_==1)
-									{
-										if(int($mod_mass + 0.5)==$label_mass_int){$labeled_Y_Nterm+=1;}
-										if(int($mod_mass + 0.5)==2*$label_mass_int){$labeled_Y_Nterm+=2;}
-									}
-								}
-							}
-						}
-					}
-					if ($labeled_Y_Nterm>1) { $unacceptable="Y"; } 
-				}
 			}
 		}
 
