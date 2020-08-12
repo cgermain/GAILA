@@ -373,7 +373,7 @@ def writeSummary():
 				else:
 					list_of_mods = request.form.getlist('unacceptableMods[]')
 					if len(list_of_mods) == 0:
-						out_file.write("unacceptableMods - None selected\n")
+						out_file.write("FlaggedMods - None selected\n")
 					else:
 						out_file.write(get_detailed_summary(option, list_of_mods))
 			elif option.startswith("mgfOperationToPerform") and "fast_parse" in request.form:
@@ -563,12 +563,12 @@ def get_detailed_summary(option, value):
 			return option + " - Do not normalize report ions\n"
 	elif option == "unacceptableMods[]":
 		mods = [utility.get_modification_dict()[mod] for mod in value]
-		return "unacceptableMods - " + ", ".join(mods)+"\n"
+		return "FlaggedMods - " + ", ".join(mods)+"\n"
 	elif option == "assignUnacceptableModifications":
 		if value == "0":
-			return option + " - Flag modifications\n"
+			return "Flag modifications – Yes\n"
 		else:
-			return option + " - Do not flag modifications\n"
+			return "Flag modifications – No\n"
 	elif option == "mgfTxtReadDirPath":
 		if value == "":
 			return ""
