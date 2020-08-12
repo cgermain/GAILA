@@ -48,13 +48,6 @@ def main():
 	#generate the default Archive folder on first run if none exists
 	if not os.path.isdir(join(sys.path[0], "Archive")):
 		os.makedirs(join(sys.path[0], "Archive"))
-	
-	#TODO check inverse directory for proper naming
-	# if not utility.inverse_array_is_correct():
-	# 	true_inverse_files = utility.get_true_inverse_array()
-	# 	inverse_file_array = utility.get_inverse_files_array()
-	# 	return render_template('bad_inverse_names.html', true_inverse_files=true_inverse_files,\
-	# 		inverse_file_array=inverse_file_array)
 
 	return render_template('index_new.html')
 

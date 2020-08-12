@@ -340,7 +340,6 @@ while($line=<IN>)
 				my @product_array = $product_matrix->as_list;
 
 				#get the sum of intensities after crossover correction
-				#TODO Remove this since not used
 				my $product_array_sum = 0;
 				for (@product_array) {
 				 	$product_array_sum += $_;

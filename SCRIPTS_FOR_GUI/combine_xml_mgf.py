@@ -190,7 +190,7 @@ def take_in_file_sorted_by_filename_scan_output_file_with_duplicate_marker_colum
 	temp_file.write(first_line.strip() + "\treplicate_spec_flag\n")
 
 	first_line_arr = first_line.split('\t')
-	log_e_index = first_line_arr.index("peptide expectation") #Hopefully it's there
+	log_e_index = first_line_arr.index("peptide expectation")
 	scan_index = first_line_arr.index("scan")
 	filename_index = first_line_arr.index("filename")
 	if scan_index == -1 or filename_index == -1:
@@ -224,7 +224,7 @@ def remove_log_e_duplicates(filename):
 
 	first_line = a.readline()
 	first_line_arr = first_line.split('\t')
-	log_e_index = first_line_arr.index("peptide expectation") #Hopefully it's there
+	log_e_index = first_line_arr.index("peptide expectation")
 	scan_index = first_line_arr.index("scan")
 
 	scan_set = set()
@@ -255,7 +255,7 @@ def remove_log_e_duplicates(filename):
 	first_line = a.readline()
 	b.write(first_line)
 
-	already_written = set() #this is a little annoying, but what if there's two things with the same
+	already_written = set() #if there's two things with the same
 							#scan and the same error? Then we get duplicates. And certainty is worth speed.
 
 	for line in a:
@@ -290,7 +290,6 @@ def combine_plain_parsed_xml_mgf(selected_mgfdir, xmldir, timestamp):
 	try:
 		this_dir = os.path.dirname(os.path.realpath(__file__))	
 
-		# I should check here to make sure the files line up.
 		linesup, message = check_for_selected_xmldir_lineup(selected_mgfdir, xmldir)
 		if not linesup:
 			print("XML doesn't line up in plain parse")
@@ -421,7 +420,6 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 			print("bad reporter ion type")
 			return "BAD REPORTER ION TYPE"
 
-		# I should check here to make sure the files line up.
 		linesup, message = check_for_selected_xmldir_lineup(selected_mgfdir, xmldir)
 		if not linesup:
 			print("XML doesn't line up")

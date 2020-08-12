@@ -10,7 +10,6 @@ import pandas as pd
 from . import utility
 
 debug = False
-# debug = True
 
 #all of the initial files have got to be relative to this directory.
 this_dir = os.path.dirname(os.path.realpath(__file__))

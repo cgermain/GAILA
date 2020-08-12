@@ -47,11 +47,6 @@ my $previous_summary_exists = 0;
 
 my $inverse_matrix = Math::MatrixReal->new_from_string($inverse_string);
 
-#print "PARSED FILENAME: $parsed_filename\n";
-#print "READ FILE PATH: $read_file_path\n";
-#print "WRITE FILE PATH: $write_file_path\n";
-#print "SUMMARY PATH: $summary_path\n";
-
 my $short_filename = basename($read_file_path);
 print "Reading: $short_filename\n";
 
@@ -248,7 +243,6 @@ if (open (IN, "$read_file_path"))
 			}
 			else
 			{
-				#if (($done_reading_fragments==1) 
 				if ($done_reading_fragments==1)
 				{
 					$footer.=$line;
