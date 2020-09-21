@@ -18,14 +18,14 @@
     </div>
     <div class="input-group" style="margin: 1%">
       <span class="input-group-addon" id="basic-addon1">MS2 mgf file suffix</span>
-      <input type="text" class="form-control" id="ms2Suffix" value="_MS2[Node_2]">
+      <input type="text" class="form-control" id="ms2Suffix" value="">
       <span class="input-group-btn">
         <button class="btn btn-info" onclick="alert('Suffix for MS2 file created during the run')">?</button>
       </span>
     </div>
         <div class="input-group" style="margin: 1%">
       <span class="input-group-addon" id="basic-addon1">MS3 mgf file suffix</span>
-      <input type="text" class="form-control" id="ms3Suffix" value="_MS3[Node_5]">
+      <input type="text" class="form-control" id="ms3Suffix" value="">
       <span class="input-group-btn">
         <button class="btn btn-info" onclick="alert('Suffix for MS3 file created during the run')">?</button>
       </span>
@@ -49,7 +49,32 @@
     <ul>
     </ul>
   </div>
-  
+
+
+
+  <script type="text/javascript">
+  function load_ms2_ms3_suffix(){
+        $.ajax({
+            type:"POST",
+            url:"ms2ms3suffix",
+            data:{},
+            success : function(result){
+              ms2ms3_suffix_from_settings = JSON.parse(result);
+              $('div[id="tab_6"]').find('#ms2Suffix').val(ms2ms3_suffix_from_settings[0]);
+              $('div[id="tab_6"]').find('#ms3Suffix').val(ms2ms3_suffix_from_settings[1]);
+            },
+            error: function(response, textStatus, HTTPError){
+              console.log("Error");
+              console.log(response);
+            }
+          })
+    }
+  </script>
+
+  <script type="text/javascript">
+    $(document).ready(load_ms2_ms3_suffix);
+  </script>
+
   <script>$('#tab_6_button').click(function(e){
 
     console.log("clicked");

@@ -333,7 +333,19 @@ def mergeMS2MS3():
 	if not error:
 		return result, 400
 	else:
+		this_dir = os.path.dirname(os.path.realpath(__file__))
+		suffix_path = os.path.join(this_dir, "SCRIPTS_FOR_GUI", "settings_files", "ms2ms3_suffix.txt")
+		with open(suffix_path, "w") as suffix_file:
+			suffix_file.write(ms2_suffix+"\n")
+			suffix_file.write(ms3_suffix)
 		return result
+
+@app.route("/ms2ms3suffix", methods=['POST'])
+@nocache
+def get_ms2_ms3_suffix():
+	ms2_suffix = get_ms2_suffix()
+	ms3_suffix = get_ms3_suffix()
+	return json.dumps([ms2_suffix.rstrip(), ms3_suffix.rstrip()])
 
 @app.route("/writeSummary", methods=['POST'])
 @nocache
@@ -623,6 +635,21 @@ def multiple_select_to_two_arrays(unacceptable_mods):
 	mass_val_arr = [j[0] for j in two_d_array]
 	mod_val_arr = [k[1] for j in two_d_array]
 	return mass_val_arr, mod_val_arr
+
+def get_ms2_suffix():
+	this_dir = os.path.dirname(os.path.realpath(__file__))
+	suffix_path = os.path.join(this_dir, "SCRIPTS_FOR_GUI", "settings_files", "ms2ms3_suffix.txt")
+	with open(suffix_path) as suffix_file:
+		ms2_suffix = suffix_file.readline()
+		return ms2_suffix
+
+def get_ms3_suffix():
+	this_dir = os.path.dirname(os.path.realpath(__file__))
+	suffix_path = os.path.join(this_dir, "SCRIPTS_FOR_GUI", "settings_files", "ms2ms3_suffix.txt")
+	with open(suffix_path) as suffix_file:
+		suffix_file.readline()
+		ms3_suffix = suffix_file.readline()
+		return ms3_suffix
 
 if __name__ == "__main__":
 	cli = sys.modules['flask.cli']
