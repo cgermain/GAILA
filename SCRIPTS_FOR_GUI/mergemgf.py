@@ -61,7 +61,15 @@ def merge_ms2_ms3(ms2_ms3_directory, mz_cutoff_string, ms2_suffix, ms3_suffix, o
 	print("Merging complete")
 	return "Merging complete", 1
 
+
 def merge_mgf_files(ms2_file, ms3_file, mz_cutoff):
+	"""
+	Merges MGF files. Naive merging takes O(N^2), because it
+	at worst has to compare every entry in one to every entry
+	in another. This uses hashing to only do fuzzy-compare
+	on entries that match perfectly on the non-fuzzy parts.
+	"""
+	# All of this could be cleaner. But afterwards.
 	ms2_count = 0
 	ms3_count = 0
 	current_count = 0
@@ -86,18 +94,41 @@ def merge_mgf_files(ms2_file, ms3_file, mz_cutoff):
 			ms3_spectrum_list.append(ms3_temp)
 			ms3_count+=1
 
-	#Loop through all MS2/MS3 spectra looking for fuzzy matches.
+	# Make hashing stuff
+	from collections import defaultdict
+	def _make_default_entry():
+		return {
+			"ms2": [],
+			"ms3": [],
+		}
+
+	spectrum_dict = defaultdict(_make_default_entry)
 	for ms2_spectrum in ms2_spectrum_list:
-		for ms3_index, ms3_spectrum in enumerate(ms3_spectrum_list):
+		key = (ms2_spectrum['params']['pepmass'], tuple(ms2_spectrum['params']['charge']))
+		spectrum_dict[key]['ms2'].append(ms2_spectrum)
+
+	for ms3_spectrum in ms3_spectrum_list:
+		key = (ms3_spectrum['params']['pepmass'], tuple(ms3_spectrum['params']['charge']))
+		spectrum_dict[key]['ms3'].append(ms3_spectrum)
+
+	# Now, we iterate through!
+	for ms2_spectrum in ms2_spectrum_list:
+		key = (ms2_spectrum['params']['pepmass'], tuple(ms2_spectrum['params']['charge']))
+		ms3_spectrum_inner_list = spectrum_dict[key]['ms3']
+		index = 0
+		while index < len(ms3_spectrum_inner_list):
+			ms3_spectrum = ms3_spectrum_inner_list[index]
+
 			if compare_spectrums_with_fuzzy_rt(ms2_spectrum, ms3_spectrum):
 				merged_xy = merge_xy_arrays(ms2_spectrum, ms3_spectrum, mz_cutoff)
 				ms2_spectrum['m/z array'] = merged_xy[0]
 				ms2_spectrum['intensity array'] = merged_xy[1]					
 				merged_count += 1
-				#remove the element we just found from the list to avoid dupes and save time
-				del ms3_spectrum_list[ms3_index]
+				del ms3_spectrum_inner_list[index]
 				break
-		merged_mgf.append(ms2_spectrum) #add no matter if it was merged or not
+			else:
+				index += 1 # Moving on to the next one.
+		merged_mgf.append(ms2_spectrum)
 		current_count += 1
 		write_progress_bar(current_count, ms2_count)
 
@@ -141,6 +172,12 @@ def write_progress_bar(current_count, total_count):
 	bar = '=' * complete_length + '-' * (width - complete_length)
 
 	sys.stdout.write('Merging: [%s] %s%s \r' % (bar, percent_complete, '%'))
+
+	# Previously overwrote past line because of the \r at the end,
+	# we need another line printed after completion to fix that.
+	if current_count == total_count:
+		sys.stdout.write("\r\nTask Completed\r\n")
+
 	sys.stdout.flush()
 
 def listdir_fullpath(directory):
