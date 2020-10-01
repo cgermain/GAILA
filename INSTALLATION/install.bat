@@ -34,7 +34,7 @@ IF %ERRORLEVEL% NEQ 0 (
 	echo The Python package manager Pip is not installed.  Please download and try the GAILA installation again.
 )
 
-echo Creating an GAILA virtual environment.
+echo Creating a GAILA virtual environment.
 python -m venv ..\GAILA_VENV
 IF %ERRORLEVEL% NEQ 0 (
 	echo error creating venv. installation failed.
