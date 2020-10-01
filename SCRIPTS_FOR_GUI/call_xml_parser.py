@@ -2,6 +2,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 import os
 from os.path import join
+from os.path import basename
 import shutil
 from .combine_xml_mgf import combine_parsed_xml_mgf 
 from .combine_xml_mgf import combine_plain_parsed_xml_mgf
@@ -35,6 +36,8 @@ def parse_xtandem_new(full_path_to_xml, error_threshold, reporter_type, genefile
 
 	os.mkdir(xml_dir_name)
 
+	utility.print_timestamp("XML Parse - Start - " + basename(full_path_to_xml))
+
 	perl_call_array=['perl', join(this_dir, 'parse_xtandem_sam.pl'), full_path_to_xml, \
 		xml_dir_name, str(error_threshold), str(label_mass), full_path_to_genefile, \
 		mass_val_literal, mod_val_literal, reporter_mods_literal, mgf_list]
@@ -44,6 +47,7 @@ def parse_xtandem_new(full_path_to_xml, error_threshold, reporter_type, genefile
 	if a:
 		return "ERROR PARSING XML IN PERL SCRIPT"
 	else:
+		utility.print_timestamp("XML Parse - Complete - " + basename(full_path_to_xml))
 		#Perl script exectued
 		return 0
 
@@ -70,11 +74,20 @@ def parse_xtandem_fast(full_path_to_xml, error_threshold, genefile, unacceptable
 		xml_dir_name, str(error_threshold), full_path_to_genefile, \
 		mass_val_literal, mod_val_literal, plain_parsing, mgf_list]
 
+	if plain_parsing == "0":
+		utility.print_timestamp("XML Fast Parse - Start - " + basename(full_path_to_xml))
+	else:
+		utility.print_timestamp("XML Plain Parse - Start - " + basename(full_path_to_xml))
+
 	a = subprocess.call(perl_call_array)
 
 	if a:
 		return "ERROR FAST PARSING XML IN PERL SCRIPT"
 	else:
+		if plain_parsing == "0":
+			utility.print_timestamp("XML Fast Parse - Complete - " + basename(full_path_to_xml))
+		else:
+			utility.print_timestamp("XML Plain Parse - Complete - " + basename(full_path_to_xml))
 		#Perl script exectued
 		return 0
 

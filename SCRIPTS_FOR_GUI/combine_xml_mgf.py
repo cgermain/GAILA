@@ -6,6 +6,7 @@ import numpy as np
 import sys, os, shutil
 from . import utility
 from os.path import join
+from os.path import basename
 from datetime import datetime
 import traceback
 #from collections import defaultdict
@@ -299,7 +300,7 @@ def combine_plain_parsed_xml_mgf(selected_mgfdir, xmldir, timestamp):
 		parent_xml_filename = os.path.basename(os.path.normpath(xmldir))
 		for filename in os.listdir(xmldir):
 			if filename.endswith('.reporter'):
-				print("Processing: " + filename)
+				utility.print_timestamp("Merge Plain Parse XML & MGF - Start - " + filename)
 				xml_filename = join(xmldir, filename)
 				mgf_txt_filename = join(selected_mgfdir, filename)
 				mgf = pd.read_table(mgf_txt_filename, index_col=['filename','scan','charge'])
@@ -318,6 +319,7 @@ def combine_plain_parsed_xml_mgf(selected_mgfdir, xmldir, timestamp):
 				data = pd.read_table(csv_filename)
 				this_filename = join(xmldir, filename + '_nocal_table_corrected.txt')
 				data.to_csv(this_filename,sep='\t',index=False)
+				utility.print_timestamp("Merge Plain Parse XML & MGF - Complete - " + filename)
 
 		first=1
 		outfile_name = join(selected_mgfdir, parent_xml_filename.replace("_fast_parse", "_plain_parse") + '_' + timestamp + '.txt')
@@ -330,9 +332,7 @@ def combine_plain_parsed_xml_mgf(selected_mgfdir, xmldir, timestamp):
 								first = 0
 								outfile.write(line)
 		add_c_labels_to_duplicate_marker_column(outfile_name)
-
-		print("Finished!")
-
+		utility.print_timestamp("Merge Plain Parse XML & MGF  - Complete")
 		return
 	except Exception as err:
 		print(traceback.format_exc())
@@ -340,12 +340,14 @@ def combine_plain_parsed_xml_mgf(selected_mgfdir, xmldir, timestamp):
 
 def finish_fast_parse(xmldir, timestamp):
 	try:
+
 		this_dir = os.path.dirname(os.path.realpath(__file__))	
 
 		xmldir = join(xmldir,"")
 		basedir, gpmname = os.path.split(xmldir)
 		actualbasedir, blah = os.path.split(basedir)
 		parent_xml_filename = os.path.basename(os.path.normpath(xmldir))
+		utility.print_timestamp("Fast Parse XML - Process XML - Start - " + parent_xml_filename)
 		parsed_xml_txt = os.path.join(basedir+"_fast_parse",parent_xml_filename+".xml.txt")
 		current_file = os.path.join(actualbasedir,parent_xml_filename+".xml.txt")
 		os.rename(current_file, parsed_xml_txt)
@@ -368,7 +370,7 @@ def finish_fast_parse(xmldir, timestamp):
 		os.rename(temporary_file, outfile_name)
 		add_c_labels_to_duplicate_marker_column(outfile_name)
 		
-		print("Finished!")
+		utility.print_timestamp("Fast Parse XML - Process XML - Complete - " + parent_xml_filename)
 
 		return
 	except Exception as err:
@@ -438,7 +440,8 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 		# Problem is that it's an empty folder!
 		for filename in os.listdir(xmldir):
 			if filename.endswith('.reporter'):
-				print("Processing: " + filename)
+				#print("Processing: " + filename)
+				utility.print_timestamp("Merge XML & MGF  - Start - " + filename)
 				xml_filename = join(xmldir, filename)
 				mgf_txt_filename = join(selected_mgfdir, filename)
 				mgf = pd.read_table(mgf_txt_filename, index_col=['filename','scan','charge'])
@@ -484,6 +487,7 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 				if keep_na == "1":
 					data.fillna("--", inplace=True)
 				data.to_csv(this_filename,sep='\t',index=False)
+				utility.print_timestamp("Merge XML & MGF  - Complete - " + filename)
 				# only_na.to_csv(na_filename,sep='\t',index=False)
 
 		first=1
@@ -497,9 +501,7 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 								first = 0
 								outfile.write(line)
 		add_c_labels_to_duplicate_marker_column(outfile_name)
-
-		print("Finished!")
-
+		utility.print_timestamp("Merge XML & MGF  - Complete")
 		return
 	except Exception as err:
 		print(traceback.format_exc())

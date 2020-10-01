@@ -4,6 +4,8 @@ import os
 import shutil
 import string
 import itertools
+import datetime
+import time
 
 def all_fields_nonblank(form, fields):
 	try:
@@ -259,6 +261,12 @@ def get_matrixreal_string_from_dataframe(df):
 
 def long_alphabet():
 	return [chars for chars in itertools.chain(string.ascii_uppercase, itertools.product(string.ascii_uppercase, repeat=2), itertools.product(string.ascii_uppercase, repeat=3))]
+
+def print_timestamp(text):
+	timestamp = time.time()
+	hms = datetime.datetime.fromtimestamp(timestamp).strftime('%H:%M:%S')
+	print(hms + ' - ' + text)
+	return
 
 def tests():
 	assert validate_float('-0.5')

@@ -51,7 +51,6 @@ unless ($length_of_unacceptable_mass == $length_of_unacceptable_mod)
 if ($error==0)
 {
 	my $short_filename = basename($xmlfile);
-	print "Processing: $short_filename\n";
 	my $line="";
 	my %genes=();
 	my %gene_ids=();
@@ -505,5 +504,4 @@ if($line=~/<GAML:attribute type="charge">([0-9]+)<\/GAML:attribute>/)
 	}
 	close(IN);
 	close(OUT);
-	print "Processing Complete: $short_filename\n";
 }

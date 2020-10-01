@@ -468,6 +468,7 @@ def writeSummary():
 			concatenated_df.to_csv(join(mgf_directory, "rep_sel_"+timestamp+".reporter"), index=False)
 
 	makeFolderNames.rename_folders(request.form)
+	utility.print_timestamp("GAILA processing - FINISHED" )
 	return "Summary complete."
 
 @app.route("/reporterIonType", methods=['POST'])

@@ -48,7 +48,6 @@ my $previous_summary_exists = 0;
 my $inverse_matrix = Math::MatrixReal->new_from_string($inverse_string);
 
 my $short_filename = basename($read_file_path);
-print "Reading: $short_filename\n";
 
 my @reporters=();
 if ($type=~/^iTRAQ8$/)
