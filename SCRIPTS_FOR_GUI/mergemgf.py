@@ -3,6 +3,8 @@ from pyteomics import mgf
 from datetime import datetime
 import os
 import sys
+from . import utility
+from os.path import basename
 
 #MZ_CUTOFF = 140
 TIME_FORMAT = "%Y-%m-%d_%H-%M-%S"
@@ -58,7 +60,7 @@ def merge_ms2_ms3(ms2_ms3_directory, mz_cutoff_string, ms2_suffix, ms3_suffix, o
 	except:
 		return "Error during merge.", 0
 
-	print("Merging complete")
+	utility.print_timestamp("GAILA - Merge MS2/MS3 - FINISHED")
 	return "Merging complete", 1
 
 
@@ -81,18 +83,20 @@ def merge_mgf_files(ms2_file, ms3_file, mz_cutoff):
 	merged_mgf = []
 	ms2_spectrum_list = []
 	ms3_spectrum_list = []
-
-	print("Reading MS2 file: " + ms2_file)
+	utility.print_timestamp("Merge MS2/MS3 - Reading MS2 - Start - " + basename(ms2_file))
 	with mgf.read(ms2_file) as ms2_reader:
 		for ms2_temp in ms2_reader:
 			ms2_spectrum_list.append(ms2_temp)
 			ms2_count += 1
+	utility.print_timestamp("Merge MS2/MS3 - Reading MS2 - Complete - " + basename(ms2_file))
 
-	print("Reading MS3 file: " + ms3_file)
+
+	utility.print_timestamp("Merge MS2/MS3 - Reading MS3 - Start - " + basename(ms3_file))
 	with mgf.read(ms3_file) as ms3_reader:
 		for ms3_temp in ms3_reader:
 			ms3_spectrum_list.append(ms3_temp)
 			ms3_count+=1
+	utility.print_timestamp("Merge MS2/MS3 - Reading MS3 - Complete - " + basename(ms3_file))
 
 	# Make hashing stuff
 	from collections import defaultdict
@@ -176,7 +180,7 @@ def write_progress_bar(current_count, total_count):
 	# Previously overwrote past line because of the \r at the end,
 	# we need another line printed after completion to fix that.
 	if current_count == total_count:
-		sys.stdout.write("\r\nTask Completed\r\n")
+		sys.stdout.write("\r\n\r\n")
 
 	sys.stdout.flush()
 
@@ -215,13 +219,14 @@ def save_mgf_output(merge_result, ms2_file, output_dir, timestamp):
 		os.makedirs(output_directory)
 
 	merged_mgf_filename = generate_output_merged_mgf_name(ms2_file, output_dir, timestamp)
-	print("\nWriting merged MGF: " + merged_mgf_filename)
+	utility.print_timestamp("Merge MS2/MS3 - Writing merged MGF - Start - " + basename(merged_mgf_filename))
 	mgf.write(merge_result["merged_mgf"], output=merged_mgf_filename, use_numpy=True, write_charges=False, fragment_format='%.4f %.4f')
-	
+	utility.print_timestamp("Merge MS2/MS3 - Writing merged MGF - Complete - " + basename(merged_mgf_filename))
+
 def print_merge_stats(merge_result):
-	print("MS2 Count  : " + str(merge_result["ms2_count"]))
-	print("MS3 Count  : " + str(merge_result["ms3_count"]))
-	print("Merged Count: " + str(merge_result["merged_count"]))
+	utility.print_timestamp("Merge MS2/MS3 - Final MS2 Count  - " + str(merge_result["ms2_count"]))
+	utility.print_timestamp("Merge MS2/MS3 - Final MS3 Count  - " + str(merge_result["ms3_count"]))
+	utility.print_timestamp("Merge MS2/MS3 - Total Merged Count: " + str(merge_result["merged_count"]))
 
 def generate_output_directory_name(ms2_file, output_dir, timestamp):
 	output_directory = os.path.join(output_dir, "merged_MS2_MS3_" + timestamp)
