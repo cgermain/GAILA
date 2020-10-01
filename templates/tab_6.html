@@ -79,7 +79,6 @@
 
     console.log("clicked");
     $(this).attr('disabled', true);
-    // $(this).prop('value', "stevenson");
     $(this).text("Processing...")
     
     var that = $(this);
@@ -89,6 +88,22 @@
     
     var serializedForm = serializeForm(inputs, getTimestamp());
     console.log(serializedForm);
+
+    var ms2Suffix = $('div[id="tab_6"]').find('#ms2Suffix').val();
+    if (/^.*[\\\/.].*/.test(ms2Suffix)) {
+       alert("Invalid Input.  No slashes or periods can be used in the MS2 Suffix.");
+       $(this).attr('disabled', false);
+       $(this).text('Click to submit');
+       return;
+    }
+
+    var ms3Suffix = $('div[id="tab_6"]').find('#ms3Suffix').val();
+    if (/^.*[\\\/.].*/.test(ms3Suffix)) {
+       alert("Invalid Input.  No slashes or periods can be used in the MS3 Suffix.");
+       $(this).attr('disabled', false);
+       $(this).text('Click to submit');
+       return;
+    }
 
     var rightSide = $(this).parent().siblings("#rightSide").first()
     rightSide.append("<div><br>Starting ms2/ms3 file merge.  Status available in terminal window.</div>")

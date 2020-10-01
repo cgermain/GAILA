@@ -809,15 +809,18 @@
     // console.log(formSection);
     var inputs = formSection.find('input');
     var lot_val = $('div[id="tab_3"]').find('#lot_details').val();
+    if (/^.*[\\\/.].*/.test(lot_val)) {
+          alert("Invalid Input.  No slashes or periods can be used in Lot Details.");
+          that.text('Create Inverse File');
+          $(this).attr('disabled', false);
+          return;
+    }
     var serializedFormSection = serializeForm(inputs);
     console.log(serializedFormSection);
     var transformed = {};
     var broken = false;
     _.each(_.keys(serializedFormSection), function(key){
       if (key=="timestamp"){
-        return;
-      }
-      if (key=="lot_details"){
         return;
       }
       if (broken){
