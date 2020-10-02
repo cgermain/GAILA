@@ -80,7 +80,7 @@ def count_proteins(plain_parse_file, output_dir, timestamp):
 				# 	sys.stdout.write(".")
 
 		utility.print_timestamp("Protein Count - Writing protein counts - Complete - " + basename(out_filename))
-		utility.print_timestamp("GAILA - Protein Count - FINISHED")
+		utility.print_timestamp("GAILA - Protein Count - FINISHED\n")
 		return out_filename, 1
 	except IOError as e:
 		return "Error opening output file.", 0

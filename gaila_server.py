@@ -33,7 +33,7 @@ log.setLevel(logging.ERROR)
 
 print("Welcome to GAILA")
 print("Currently running at http://127.0.0.1:5000/")
-print("Press Ctrl+C to quit")
+print("Press Ctrl+C to quit\n")
 
 def nocache(f):
 	def new_func(*args, **kwargs):
@@ -468,7 +468,7 @@ def writeSummary():
 			concatenated_df.to_csv(join(mgf_directory, "rep_sel_"+timestamp+".reporter"), index=False)
 
 	makeFolderNames.rename_folders(request.form)
-	utility.print_timestamp("GAILA processing - FINISHED" )
+	utility.print_timestamp("GAILA processing - FINISHED\n" )
 	return "Summary complete."
 
 @app.route("/reporterIonType", methods=['POST'])
