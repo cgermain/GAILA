@@ -145,7 +145,7 @@ def tab_2_helper_function():
 	xml_read_path = request.form['xmlReadPath']
 	log_error_threshold = request.form['logErrorThreshold']
 	reporter_type = request.form['reporterIonType']
-	geneFile = request.form['geneFile']
+	geneFile = request.form.getlist('geneFile[]')
 	should_use_unacceptable = request.form['assignUnacceptableModifications']
 	unacceptable_mods = request.form.getlist('unacceptableMods[]')
 	normalize_intensities = request.form.getlist('normalizeIntensities')

@@ -144,7 +144,7 @@ def validate_tab_2(form):
 		xml_read_path = form['xmlReadPath']
 		log_error_threshold = form['logErrorThreshold']
 		reporter_type = form['reporterIonType']
-		geneFile = form['geneFile']
+		geneFile = form.getlist('geneFile[]')
 		mgf_operation_to_perform = form['mgfOperationToPerform']
 		should_use_unacceptable = form['assignUnacceptableModifications']
 		unacceptable_mods = form.getlist('unacceptableMods[]')
@@ -171,10 +171,10 @@ def validate_tab_2(form):
 			print("Invalid reporter type")
 			return False, "Invalid reporter type"
 
-		# this_dir = os.path.dirname(os.path.realpath(__file__))
-		if not validate_gene_file(geneFile):
-			print("invalid gene file")
-			return False, "Invalid gene file"
+		for gene in geneFile:
+			if not validate_gene_file(gene):
+				print("invalid gene file")
+				return False, "Invalid gene file"
 
 		if not mgf_operation_to_perform or (mgf_operation_to_perform != "0" and mgf_operation_to_perform != "1"):
 			print("mgf_operation_to_perform is bad")
