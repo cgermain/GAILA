@@ -381,6 +381,12 @@ def writeSummary():
 						out_file.write("FlaggedMods - None selected\n")
 					else:
 						out_file.write(get_detailed_summary(option, list_of_mods))
+			elif option.startswith("geneFile[]"):
+				list_of_genefiles = request.form.getlist('geneFile[]')
+				if len(list_of_genefiles) == 0:
+					continue
+				else:
+					out_file.write(get_detailed_summary(option, list_of_genefiles))
 			elif option.startswith("mgfOperationToPerform") and "fast_parse" in request.form:
 				continue
 			elif option.startswith("mgfOperationToPerform") and "plain_parse" in request.form:
@@ -567,6 +573,8 @@ def get_detailed_summary(option, value):
 			return option + " - Normalize each report ion to its own total intensity\n"
 		else:
 			return option + " - Do not normalize report ions\n"
+	elif option == "geneFile[]":
+		return "Gene Files - " + ", ".join(value)+"\n"
 	elif option == "unacceptableMods[]":
 		mods = [utility.get_modification_dict()[mod] for mod in value]
 		return "FlaggedMods - " + ", ".join(mods)+"\n"
