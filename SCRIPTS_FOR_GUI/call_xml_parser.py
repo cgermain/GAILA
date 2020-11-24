@@ -51,9 +51,9 @@ def parse_xtandem_new(full_path_to_xml, error_threshold, reporter_type, genefile
 		#Perl script exectued
 		return 0
 
-def parse_xtandem_fast(full_path_to_xml, error_threshold, genefile, unacceptable_mods, plain_parsing, mgf_list):
+def parse_xtandem_fast(full_path_to_xml, error_threshold, genefile_array, unacceptable_mods, plain_parsing, mgf_list):
 	this_dir = os.path.dirname(os.path.realpath(__file__))
-	full_path_to_genefile = join(this_dir, 'gene_files', genefile)
+	full_path_to_genefile = ",".join([join(this_dir, 'gene_files', genefile) for genefile in genefile_array])
 
 	# going on the assumption it's been validated
 	mass_val_literal, mod_val_literal, reporter_mods_literal = utility.get_strings_from_unacceptable_mod_form(unacceptable_mods)

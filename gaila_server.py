@@ -93,7 +93,7 @@ def tab_4_helper_function():
 def plain_parse_xtandem_combine_with_mgf():
 	xml_read_path = request.form['xmlReadPath']
 	log_error_threshold = request.form['logErrorThreshold']
-	geneFile = request.form['geneFile']
+	geneFile = request.form.getlist('geneFile[]')
 	should_use_unacceptable = request.form['assignUnacceptableModifications']
 	unacceptable_mods = request.form.getlist('unacceptableMods[]')
 	timestamp = request.form['timestamp']
@@ -118,7 +118,7 @@ def plain_parse_xtandem_combine_with_mgf():
 def fast_parse():
 	xml_read_path = request.form['xmlReadPath']
 	log_error_threshold = request.form['logErrorThreshold']
-	geneFile = request.form['geneFile']
+	geneFile = request.form.getlist('geneFile[]')
 	should_use_unacceptable = request.form['assignUnacceptableModifications']
 	unacceptable_mods = request.form.getlist('unacceptableMods[]')
 	timestamp = request.form['timestamp']

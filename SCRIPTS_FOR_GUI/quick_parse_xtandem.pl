@@ -9,21 +9,22 @@ my $xmlfile=0;
 my $xmldir=0;
 my $threshold=0;
 my $proton_mass=1.007276;
-my $genefile=0;
 
+my $genefile_string="";
 my $unacceptable_mass_array_string="";
 my $unacceptable_mod_array_string="";
 my @unacceptable_mass_array=();
 my @unacceptable_mod_array=();
 my $plain_parsing="";
 
+my @genefile_array=();
 my @mgf_list_array=();
 my $mgf_list_string="";
 
 if (defined $ARGV[0]) { $xmlfile=$ARGV[0];} else { exit 1; }
 if (defined $ARGV[1]) { $xmldir=$ARGV[1];} else { exit 2; }
 if (defined $ARGV[2]) { $threshold=$ARGV[2];} else { exit 3; }
-if (defined $ARGV[3]) { $genefile=$ARGV[3];} else { exit 5; }
+if (defined $ARGV[3]) { $genefile_string=$ARGV[3];} else { exit 5; }
 if (defined $ARGV[4]) { $unacceptable_mass_array_string=$ARGV[4];} else { exit 6; }
 if (defined $ARGV[5]) { $unacceptable_mod_array_string=$ARGV[5];} else { exit 7; }
 if (defined $ARGV[6]) { $plain_parsing=$ARGV[6];} else { exit 8; }
@@ -33,6 +34,8 @@ if (defined $ARGV[7]) { $mgf_list_string=$ARGV[7];} else { exit 9; }
 @unacceptable_mod_array=split /,/,$unacceptable_mod_array_string;
 
 @mgf_list_array=split /,/,$mgf_list_string;
+
+@genefile_array=split /,/,$genefile_string;
 
 my $length_of_unacceptable_mass=scalar @unacceptable_mass_array;
 my $length_of_unacceptable_mod=scalar @unacceptable_mod_array;
@@ -50,26 +53,31 @@ if ($error==0)
 	my %genes=();
 	my %gene_ids=();
 	my %protein_descriptions=();
-	if (open (IN,qq!$genefile!))
+
+	my $genefile="";
+	foreach $genefile (@genefile_array)
 	{
-		my $no_newline="";
-		while($line=<IN>)
+		if (open (IN,qq!$genefile!))
 		{
-			chomp($line);
-			if ($line=~/^([^\t]+)\t([^\t]*)\t([^\t]*)\t([^\t]*)\t([^\t]*)$/)
+			my $no_newline="";
+			while($line=<IN>)
 			{
-			$genes{$1}=$4;
-			$gene_ids{$1}=$3;
-			$no_newline=$5;
-			$no_newline=~s/(\n|\r)//; #because chomp doesn't delete it on mac.
-			$protein_descriptions{$1}=$no_newline;
+				chomp($line);
+				if ($line=~/^([^\t]+)\t([^\t]*)\t([^\t]*)\t([^\t]*)\t([^\t]*)$/)
+				{
+				$genes{$1}=$4;
+				$gene_ids{$1}=$3;
+				$no_newline=$5;
+				$no_newline=~s/(\n|\r)//; #because chomp doesn't delete it on mac.
+				$protein_descriptions{$1}=$no_newline;
+				}
 			}
+			close(IN);
 		}
-		close(IN);
-	}
-	else
-	{
-		exit 10;
+		else
+		{
+			exit 10;
+		}
 	}
 	open (IN,qq!$xmlfile!) || die "Could not open $xmlfile\n";
 	open (OUT,qq!>$xmlfile.txt!) || die "Could not open $xmlfile\n";

@@ -231,7 +231,7 @@ def validate_tab_4(form):
 	try:
 		xml_read_path = form['xmlReadPath']
 		log_error_threshold = form['logErrorThreshold']
-		geneFile = form['geneFile']
+		geneFile = form.getlist('geneFile[]')
 		should_use_unacceptable = form['assignUnacceptableModifications']
 		unacceptable_mods = form.getlist('unacceptableMods[]')
 		output_dir_path = form['outDirPath']
@@ -248,10 +248,10 @@ def validate_tab_4(form):
 		if not validate_error_input(log_error_threshold):
 			print("threshold must be positive, and either a decimal or in scientific notation")
 			return False, "threshold must be a decimal"
-		if not validate_gene_file(geneFile):
-			print("invalid gene file")
-			return False, "Invalid gene file"
-		
+		for gene in geneFile:
+			if not validate_gene_file(gene):
+				print("invalid gene file")
+				return False, "Invalid gene file"
 		mgf_read_dir_path = form['mgfReadDirPath']
 		if not os.path.isdir(mgf_read_dir_path):
 			print("invalid mgf read directory")
