@@ -93,19 +93,22 @@
       </span>
     </div>
     <div class="input-group" style="margin: 1%">
-      <div class="input-group" style="margin: 1%">
-        <span class="input-group-addon" id="basic-addon1">GENE FILE</span>
-        <select class='form-control' id="geneFile" multiple="multiple">
+      <span class="input-group-addon" id="basic-addon1">GENE FILE</span>
+       <select class='form-control' id="geneFile" multiple="multiple">
         {% if gene_files %}
           {% for f in gene_files %}
-            <option value={{f}}>{{f.rpartition('.')[0]}}</option>
+            {% if loop.index == 1 %}
+              <option value={{f}} selected>{{f.rpartition('.')[0]}}</option>
+            {% else %}
+              <option value={{f}}>{{f.rpartition('.')[0]}}</option>
+            {% endif %}
           {% endfor %}
         {% endif %}
       </select>
       <span class="input-group-btn">
         <button class="btn btn-info" onclick="alert('This file is used to match spectra to specific runs.')">?</button>
       </span>
-     </div>
+
     </div>
 
     <div class="input-group" style="margin: 1%">
