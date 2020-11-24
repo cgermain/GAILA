@@ -86,7 +86,7 @@ if ($error==0)
 	}
 	open (IN,qq!$xmlfile!) || die "Could not open $xmlfile\n";
 	open (OUT,qq!>$xmlfile.txt!) || die "Could not open $xmlfile\n";
-	print OUT qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tmh\tlabeling\ttryptic\tmissed\tunacceptable modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tbroad_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
+	print OUT qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tmh\tlabeling\ttryptic\tmissed\tunacceptable modifications\tprotein log(e)\tprotein\tdescription\tgene\tgeneID\tbroadID\tother proteinIDs\tunique peptide\tother geneNames\tother geneIDs\tmultiple genes\n!;
 	my $xmlfile_=$xmldir;
 
 	my %filenames=();
@@ -318,7 +318,7 @@ if($line=~/<GAML:attribute type="charge">([0-9]+)<\/GAML:attribute>/)
 		  if ($filenames{$filename}!~/\w/)
 		  {
 		    $filenames{$filename}=1;
-		    print OUT_ qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tmh\tlabeling\ttryptic\tmissed\tflagged modifications\tprotein log(e)\tprotein\tdescription\tgene\tgene_id\tbroad_id\tother proteins\tother descriptions\tother genes\tother gene ids\tdifferent genes\n!;
+		    print OUT_ qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tmh\tlabeling\ttryptic\tmissed\tflagged modifications\tprotein log(e)\tprotein\tdescription\tgene\tgeneID\tbroadID\tother proteinIDs\tunique peptide\tother geneNames\tother geneIDs\tmultiple genes\n!;
 		  }
 	  }
       
@@ -337,6 +337,7 @@ if($line=~/<GAML:attribute type="charge">([0-9]+)<\/GAML:attribute>/)
           }
         }
         my $protein_other="";
+        my $unique_peptide="";
         my $other_genes="";
         my $other_gene_ids="";
         my $other_protein_descriptions="";
@@ -457,7 +458,13 @@ if($line=~/<GAML:attribute type="charge">([0-9]+)<\/GAML:attribute>/)
         }
         $labeling/=1.0*$complete_labeling;
         if ($modifications!~/\w/) { $modifications="N"; }
-        if ($protein_other!~/\w/) { $protein_other="N"; }
+        if ($protein_other!~/\w/) { $protein_other="None"; }
+        if ($protein_other eq "None"){
+        	$unique_peptide = "Y";
+        }
+        else{
+        	$unique_peptide = "N";
+        }
         if ($other_genes!~/\w/) { $other_genes="None"; }
         if ($other_gene_ids!~/\w/) { $other_gene_ids="None"; }
         if ($other_protein_descriptions!~/\w/) { $other_protein_descriptions="None"; }
@@ -483,9 +490,10 @@ if($line=~/<GAML:attribute type="charge">([0-9]+)<\/GAML:attribute>/)
 			$broad_id = $gene . " (gene name)";
 		}
 
-        print OUT qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$start\t$expect\t$mh_val\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$broad_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
+
+        print OUT qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$start\t$expect\t$mh_val\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$broad_id\t$protein_other\t$unique_peptide\t$other_genes\t$other_gene_ids\t$different_genes\n!;
         
-        print OUT_ qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$start\t$expect\t$mh_val\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$broad_id\t$protein_other\t$other_protein_descriptions\t$other_genes\t$other_gene_ids\t$different_genes\n!;
+        print OUT_ qq!$filename\t$scan\t$charge\t$pre\t$peptide\t$post\t$modifications\t$start\t$expect\t$mh_val\t$labeling\t$tryptic\t$missed\t$unacceptable\t$protein_expect\t$protein_\t$protein_description\t$gene\t$gene_id\t$broad_id\t$protein_other\t$unique_peptide\t$other_genes\t$other_gene_ids\t$different_genes\n!;
         close(OUT_);
       }
 
