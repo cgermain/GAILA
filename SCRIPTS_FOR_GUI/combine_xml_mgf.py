@@ -328,7 +328,7 @@ def combine_plain_parsed_xml_mgf(selected_mgfdir, xmldir, timestamp):
 				if filename.endswith('_nocal_table_corrected.txt'):
 					with open(join(xmldir, filename)) as infile:
 						for line in infile:
-							if (not 'other proteins' in line) or (first==1):
+							if (not 'other proteinIDs' in line) or (first==1):
 								first = 0
 								outfile.write(line)
 		add_c_labels_to_duplicate_marker_column(outfile_name)
@@ -497,7 +497,7 @@ def combine_parsed_xml_mgf(selected_mgfdir, xmldir, reporter_ion_type, normalize
 				if filename.endswith('_nocal_table_corrected.txt'):
 					with open(join(xmldir, filename)) as infile:
 						for line in infile:
-							if (not 'other proteins' in line) or (first==1):
+							if (not 'other proteinIDs' in line) or (first==1):
 								first = 0
 								outfile.write(line)
 		add_c_labels_to_duplicate_marker_column(outfile_name)
