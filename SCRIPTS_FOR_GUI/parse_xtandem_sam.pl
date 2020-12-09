@@ -416,10 +416,10 @@ if($line=~/<GAML:attribute type="charge">([0-9]+)<\/GAML:attribute>/)
           $modifications.="$mod_mass\@$mod_aa$mod_res";
           if ($mod_pm=~/\w/){ $modifications.="->$mod_pm"; }
           $modifications.=",";
-          if ($mod_pm=~/^K$/)
-          {
-            $complete_labeling++;
-          }
+
+          # no longer checking for mod_pm=K due to reeplacing it in the sequence and
+          # accounting for it below
+
           if ($mod_res==1 or $mod_aa=~/^K$/)
           {
             if (int($mod_mass)==$label_mass_int)
