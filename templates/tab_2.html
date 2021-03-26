@@ -376,15 +376,11 @@
     console.log(serializedForm);
 
     var rightSide = $(this).parent().siblings("#rightSide").first()
-    rightSide.append("<div>Executing Function Now</div>")
+    rightSide.append("<div>Starting GAILA pipeline.</div>")
+    rightSide.append("<div>Details can be viewed in command line window.</div>")
     rightSide.scrollTop(rightSide[0].scrollHeight);
     var startTime = new Date();
-    // async.waterfall([
 
-    // ])
-    // if (serializedForm.mgfOperationToPerform == '1'){
-
-    // }
     async.waterfall([
       function checkIfFinalProductExistsAlready(callback){
         $.ajax({
@@ -406,7 +402,7 @@
       },
       function maybeSelectMGF(callback){
         if (serializedForm.mgfOperationToPerform == '1'){
-          rightSide.append("<div>Need to select from MGF files, doing that now</div>");
+          rightSide.append("<div>Selecting from MGF files.<br></div>");
           rightSide.scrollTop(rightSide[0].scrollHeight);
           return givenRightsideAndDataObjSelectMGF(rightSide, serializedForm, callback);
         }
@@ -448,10 +444,10 @@
       rightSide.scrollTop(rightSide[0].scrollHeight);
       if(err){
         if (err == "error: undefined"){
-          alert("Check to see if GAILA server is running.");
+          rightSide.append("Check to see if GAILA server is running.");
         }
         else{
-          alert(err);
+          rightSide.append(err);
         }
       }
       that.attr('disabled', false);

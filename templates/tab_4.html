@@ -140,7 +140,8 @@
     console.log(serializedForm);
 
     var rightSide = $(this).parent().siblings("#rightSide").first()
-    rightSide.append("<div>Executing Function Now</div>")
+    rightSide.append("<div>Starting GAILA pipeline.</div>")
+    rightSide.append("<div>Details can be viewed in command line window.</div>")
     rightSide.scrollTop(rightSide[0].scrollHeight);
     var startTime = new Date();
 
@@ -170,7 +171,7 @@
         })
       },
       function slectMGFPlainParse(callback){
-        rightSide.append("<div>Need to grab MGF files, doing that now</div>");
+        rightSide.append("<div>Selecting from MGF files.</div>");
         rightSide.scrollTop(rightSide[0].scrollHeight);
         return givenRightsideAndDataObjSelectMGF(rightSide, serializedForm, callback);
       },

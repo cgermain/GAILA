@@ -4,6 +4,8 @@ use strict;
 use File::Basename;
 use Math::MatrixReal;
 
+$SIG{INT} = sub { die "" };
+
 # THE FIRST PARAMETER IS PATH TO FILE
 # THE SECOND IS PATH TO WHERE I SHOULD WRITE
 # THE THIRD IS mz_error
@@ -392,10 +394,12 @@ if (open (IN, "$read_file_path"))
 		my @rounded_total_intensity = map{int($_ + 0.5)} @total_intensity;
 
 		print TOTAL_INTENSITY_TABLE "\n",  join("\t", @rounded_combined_intensity);
+		open (MGF_TABLE, ">>$mgf_path");
 		print MGF_TABLE $parsed_filename, "\t", int($total_ms1 + 0.5), "\t", join("\t", @rounded_total_intensity),"\n";
+		close(MGF_TABLE);
+
 		close(OUT_TABLE);
 		close(TOTAL_INTENSITY_TABLE);
-		close(MGF_TABLE);
 	}
 	else
 	{

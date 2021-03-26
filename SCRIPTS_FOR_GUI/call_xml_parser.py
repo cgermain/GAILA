@@ -10,6 +10,7 @@ from .combine_xml_mgf import finish_fast_parse
 from . import utility
 import subprocess
 from . import makeFolderNames
+import shutil
 
 
 def parse_xtandem_new(full_path_to_xml, error_threshold, reporter_type, genefile_array, unacceptable_mods, mgf_list):
@@ -34,21 +35,30 @@ def parse_xtandem_new(full_path_to_xml, error_threshold, reporter_type, genefile
 		print("xml txt file already exists there, either you've already run this in the past or you have a residual file you don't want. Consider deleting or moving that file")
 		return "xml txt file already exists there, either you've already run this in the past or you have a residual file you don't want. Consider deleting or moving that file"
 
-	os.mkdir(xml_dir_name)
+	os.makedirs(xml_dir_name)
 
 	utility.print_timestamp("XML Parse - Start - " + basename(full_path_to_xml))
 
-	perl_call_array=['perl', join(this_dir, 'parse_xtandem_sam.pl'), full_path_to_xml, \
-		xml_dir_name, str(error_threshold), str(label_mass), full_path_to_genefile, \
-		mass_val_literal, mod_val_literal, reporter_mods_literal, mgf_list]
+	try:
+		perl_call_array=['perl', join(this_dir, 'parse_xtandem_sam.pl'), full_path_to_xml, \
+			xml_dir_name, str(error_threshold), str(label_mass), full_path_to_genefile, \
+			mass_val_literal, mod_val_literal, reporter_mods_literal, mgf_list, join(xml_dir_name,basename(full_path_to_xml)+".txt")]
 
-	a = subprocess.call(perl_call_array)
+		a = subprocess.call(perl_call_array)
 
-	if a:
-		return "ERROR PARSING XML IN PERL SCRIPT"
-	else:
-		utility.print_timestamp("XML Parse - Complete - " + basename(full_path_to_xml))
-		#Perl script exectued
+		if a:
+			shutil.rmtree(xml_dir_name)
+			return "ERROR PARSING XML IN PERL SCRIPT"
+		else:
+			utility.print_timestamp("XML Parse - Complete - " + basename(full_path_to_xml))
+			#Perl script exectued
+			return 0
+	except:
+		if os.path.isdir(xml_dir_name):
+			shutil.rmtree(xml_dir_name)
+		xml_txt_filename = full_path_to_xml + '.txt'
+		if os.path.isfile(xml_txt_filename):
+			os.remove(xml_txt_filename)
 		return 0
 
 def parse_xtandem_fast(full_path_to_xml, error_threshold, genefile_array, unacceptable_mods, plain_parsing, mgf_list):
@@ -57,7 +67,6 @@ def parse_xtandem_fast(full_path_to_xml, error_threshold, genefile_array, unacce
 
 	# going on the assumption it's been validated
 	mass_val_literal, mod_val_literal, reporter_mods_literal = utility.get_strings_from_unacceptable_mod_form(unacceptable_mods)
-
 	xml_dir_name = utility.xml_dirname_from_filename_fast_parse(full_path_to_xml)
 	if os.path.isdir(xml_dir_name):
 		print("xml directory already exists here, if you don't need it anymore try deleting it and running again")
@@ -68,11 +77,12 @@ def parse_xtandem_fast(full_path_to_xml, error_threshold, genefile_array, unacce
 		print("xml txt file already exists there, either you've already run this in the past or you have a residual file you don't want. Consider deleting or moving that file")
 		return "xml txt file already exists there, either you've already run this in the past or you have a residual file you don't want. Consider deleting or moving that file"
 
-	os.mkdir(xml_dir_name)
+	if not(os.path.isdir(xml_dir_name)):
+		os.makedirs(xml_dir_name)
 
 	perl_call_array=['perl', join(this_dir, 'quick_parse_xtandem.pl'), full_path_to_xml, \
 		xml_dir_name, str(error_threshold), full_path_to_genefile, \
-		mass_val_literal, mod_val_literal, plain_parsing, mgf_list]
+		mass_val_literal, mod_val_literal, plain_parsing, mgf_list,join(xml_dir_name,basename(full_path_to_xml)+".txt")]
 
 	if plain_parsing == "0":
 		utility.print_timestamp("XML Fast Parse - Start - " + basename(full_path_to_xml))
@@ -82,6 +92,7 @@ def parse_xtandem_fast(full_path_to_xml, error_threshold, genefile_array, unacce
 	a = subprocess.call(perl_call_array)
 
 	if a:
+		shutil.rmtree(xml_dir_name)
 		return "ERROR FAST PARSING XML IN PERL SCRIPT"
 	else:
 		if plain_parsing == "0":
@@ -103,15 +114,7 @@ def parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, reporter_t
 		print("from parse_xtandem_combine_with_mgf, error in combine_parsed_xml_mgf: " + str(resp_2))
 		return resp_2
 
-	#cleaning up XML directory
-	try:
-		shutil.rmtree(xml_dir_name)
-		xml_txt_filename = full_path_to_xml + '.txt'
-		os.remove(xml_txt_filename)
-		return 0
-	except:
-		print("trouble deleting the directory afterwards.")
-		return "Trouble deleting xml directory afterwards"
+	return 0
 
 
 def plain_parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, genefile, selected_mgfdir, unacceptable_mods, timestamp, mgf_list):
@@ -125,25 +128,6 @@ def plain_parse_xtandem_combine_with_mgf(full_path_to_xml, error_threshold, gene
 	if resp_2:
 		print("from plain_parse_xtandem_combine_with_mgf, error in combine_plain_parsed_xml_mgf: " + str(resp_2))
 		return resp_2
-
-	#Cleaning up XML directory
-	try:
-		shutil.rmtree(xml_dir_name)
-		xml_txt_filename = full_path_to_xml + '.txt'
-		os.remove(xml_txt_filename)
-	except:
-		print("trouble deleting the directory afterwards.")
-		return "Trouble deleting xml directory afterwards"
-
-	#cleaning up reporter files
-	try:
-		for item in os.listdir(selected_mgfdir):
-			full_name = os.path.join(selected_mgfdir, item)
-			if os.path.isfile(full_name) and full_name.endswith('.reporter'):
-				os.remove(full_name)
-	except:
-		print("trouble removing reporters")
-		return "trouble removing reporters"
 
 	return 0
 

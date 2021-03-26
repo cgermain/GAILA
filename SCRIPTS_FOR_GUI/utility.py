@@ -6,6 +6,7 @@ import string
 import itertools
 import datetime
 import time
+import sys
 
 def all_fields_nonblank(form, fields):
 	try:
@@ -217,7 +218,7 @@ def xml_dirname_from_filename(full_path_to_xml):
 	if not after_slash:
 		print("passed in something like aaa/.xml, that's dangerous")
 		return False
-	xml_dir_name = os.path.join(almost_xml_dir_name, '')
+	xml_dir_name = os.path.join(sys.path[0],"Temp",after_slash,'')
 	return xml_dir_name
 
 def xml_dirname_from_filename_plain_parse(full_path_to_xml):
@@ -233,7 +234,7 @@ def xml_dirname_from_filename_plain_parse(full_path_to_xml):
 	if not after_slash:
 		print("passed in something like aaa/.xml, that's dangerous")
 		return False
-	xml_dir_name = os.path.join(almost_xml_dir_name,'')
+	xml_dir_name = os.path.join(sys.path[0],"Temp",after_slash,'')
 	return xml_dir_name
 
 def xml_dirname_from_filename_fast_parse(full_path_to_xml):
@@ -249,7 +250,8 @@ def xml_dirname_from_filename_fast_parse(full_path_to_xml):
 	if not after_slash:
 		print("passed in something like aaa/.xml, that's dangerous")
 		return False
-	xml_dir_name = os.path.join(almost_xml_dir_name+"_fast_parse",'')
+	dirname = after_slash+"_fast_parse"
+	xml_dir_name = os.path.join(sys.path[0],"Temp",dirname,'')
 	return xml_dir_name
 
 def get_matrixreal_string_from_dataframe(df):

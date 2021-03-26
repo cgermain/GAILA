@@ -10,6 +10,7 @@ my $xmldir=0;
 my $threshold=0;
 my $proton_mass=1.007276;
 my $label_mass_int=0;
+my $xml_txt_file=0;
 
 my $genefile_string="";
 my $unacceptable_mass_array_string="";
@@ -33,6 +34,7 @@ if (defined $ARGV[5]) { $unacceptable_mass_array_string=$ARGV[5];} else { exit 6
 if (defined $ARGV[6]) { $unacceptable_mod_array_string=$ARGV[6];} else { exit 7; }
 if (defined $ARGV[7]) { $unacceptable_label_mod_string=$ARGV[7];} else { exit 8; }
 if (defined $ARGV[8]) { $mgf_list_string=$ARGV[8];} else { exit 9; }
+if (defined $ARGV[9]) { $xml_txt_file=$ARGV[9];} else { exit 10; }
 
 @unacceptable_mass_array=split /,/,$unacceptable_mass_array_string;
 @unacceptable_mod_array=split /,/,$unacceptable_mod_array_string;
@@ -85,7 +87,7 @@ if ($error==0)
 		}
 	}
 	open (IN,qq!$xmlfile!) || die "Could not open $xmlfile\n";
-	open (OUT,qq!>$xmlfile.txt!) || die "Could not open $xmlfile\n";
+	open (OUT,qq!>$xml_txt_file!) || die "Could not open $xmlfile\n";
 	print OUT qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tmh\tlabeling\ttryptic\tmissed\tunacceptable modifications\tprotein log(e)\tprotein\tdescription\tgene\tgeneID\tbroadID\tother proteinIDs\tunique peptide\tother geneNames\tother geneIDs\tmultiple genes\n!;
 	my $xmlfile_=$xmldir;
 
@@ -121,7 +123,8 @@ if ($error==0)
 			my $protein_expect=$1;
 			my $protein_name=$2;
 			$protein_expect{$protein_name}=$protein_expect;
-			if($protein_name!~/\:reversed$/) { $proteins.="#$protein_name#"; }	
+			$proteins.="#$protein_name#";
+			#if($protein_name!~/\:reversed$/) { $proteins.="#$protein_name#"; }	
 		}
 
 		#this line checks if the mgf was from a single file search
@@ -384,7 +387,7 @@ if($line=~/<GAML:attribute type="charge">([0-9]+)<\/GAML:attribute>/)
               }
             }
             my $temp__=$genes{$temp_};
-            $temp__=~s/([0-9\.]).*$//;
+            $temp__=~s/(?:[0-9\.]).*$//;
             if ($genes{$protein_}!~/^$temp__([0-9\.]?).*$/i)
             {
               $different_gene_fam="Y";

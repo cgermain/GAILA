@@ -347,9 +347,10 @@ def finish_fast_parse(xmldir, timestamp):
 		basedir, gpmname = os.path.split(xmldir)
 		actualbasedir, blah = os.path.split(basedir)
 		parent_xml_filename = os.path.basename(os.path.normpath(xmldir))
+		xml_location = utility.xml_dirname_from_filename_fast_parse(parent_xml_filename)
 		utility.print_timestamp("Fast Parse XML - Process XML - Start - " + parent_xml_filename)
-		parsed_xml_txt = os.path.join(basedir+"_fast_parse",parent_xml_filename+".xml.txt")
-		current_file = os.path.join(actualbasedir,parent_xml_filename+".xml.txt")
+		parsed_xml_txt = os.path.join(sys.path[0],"Temp",parent_xml_filename+".xml.txt")
+		current_file = os.path.join(xml_location,parent_xml_filename+".xml.txt")
 		os.rename(current_file, parsed_xml_txt)
 		#move to fast parse directory
 		parsed_pd = pd.read_table(parsed_xml_txt, index_col=['filename','scan','charge'])

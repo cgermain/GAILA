@@ -208,7 +208,8 @@
     var serializedForm = serializeForm(inputs, getTimestamp());
 
     var rightSide = $(this).parent().siblings("#rightSide").first()
-    rightSide.append("<div>Executing Function Now</div>")
+    rightSide.append("<div>Starting GAILA pipeline.</div>")
+    rightSide.append("<div>Details can be viewed in command line window.</div>")
     rightSide.scrollTop(rightSide[0].scrollHeight);
     var startTime = new Date();
     givenRightsideAndDataObjSelectMGF(rightSide, serializedForm, function(err){

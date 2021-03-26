@@ -25,15 +25,22 @@ from decimal import Decimal
 from SCRIPTS_FOR_GUI import mergemgf
 import sys
 import glob
+import stat
+from ast import literal_eval
+import threading
+import signal
+import atexit
+
 
 TIME_FORMAT =  "%Y-%m-%d_%H-%M-%S"
 
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 
-print("Welcome to GAILA")
-print("Currently running at http://127.0.0.1:5000/")
-print("Press Ctrl+C to quit\n")
+def signal_handler(sig, frame):
+	if os.path.isdir(join(sys.path[0], "Temp")):
+		shutil.rmtree(join(sys.path[0], "Temp"))
+	sys.exit(0)
 
 def nocache(f):
 	def new_func(*args, **kwargs):
@@ -45,11 +52,12 @@ def nocache(f):
 @app.route("/")
 @nocache
 def main():
-	#generate the default Archive folder on first run if none exists
-	if not os.path.isdir(join(sys.path[0], "Archive")):
-		os.makedirs(join(sys.path[0], "Archive"))
+	try:
+		return render_template('index_new.html')
 
-	return render_template('index_new.html')
+	except KeyboardInterrupt:
+		print("Shutdown requested...exiting")
+		sys.exit(0)
 
 @app.route("/tab", methods=['GET'])
 @nocache
@@ -62,15 +70,11 @@ def tab():
 
 @app.route("/tab_4_helper_function", methods=['POST'])
 def tab_4_helper_function():
-	valid, validation_error = validation.validate_tab_4(request.form)
-	if not valid:
-		return validation_error, 500
-
+	# valid, validation_error = validation.validate_tab_4(request.form)
+	# if not valid:
+	# 	return validation_error, 500
 	mgf_txt_write_dir_path = makeFolderNames.construct_plain_parse_reporter_folder_path(request.form)
-	mgf_file_name = request.form['mgfFileName']
 	mgf_read_dir_path = request.form['mgfReadDirPath']
-	mgf_txt_write_path = join(mgf_txt_write_dir_path, mgf_file_name.split('.mgf')[0] + '.reporter')
-	mgf_read_path = join(mgf_read_dir_path, mgf_file_name)
 
 	try:
 		os.makedirs(mgf_txt_write_dir_path)
@@ -81,7 +85,7 @@ def tab_4_helper_function():
 	if not os.path.isdir(mgf_txt_write_dir_path):
 		return "selected_mgf_txt directory could not be created", 500
 	
-	error = mgf_select_one.plain_parse(mgf_read_path, mgf_txt_write_path)
+	error = mgf_select_one.plain_parse(mgf_read_dir_path, mgf_txt_write_dir_path)
 
 	if error:
 		print("error in plain_parse")
@@ -181,17 +185,17 @@ def tab_2_helper_function():
 
 @app.route("/tab_1_helper_function", methods=['POST'])
 def tab_1_helper_function():
-	valid, validation_error = validation.validate_tab_1(request.form)
-	if not valid:
-		print("Not valid: error is " + str(validation_error))
-		return validation_error, 500
-
+	#valid, validation_error = validation.validate_tab_1(request.form)
+	# if not valid:
+	# 	print("Not valid: error is " + str(validation_error))
+	# 	return validation_error, 500
 	mgf_read_dir_path = request.form['mgfReadDirPath']
-	mgf_file_name = request.form['mgfFileName']
 	reporter_type = request.form['reporterIonType']
 	inverse_file = request.form['reporterInverseFiles']
 	min_intensity = request.form['minIntensity']
 	min_reporters = request.form['minReporters']
+	mgf_file_list = request.form['mgfFileList']
+	mgf_file_list = literal_eval(mgf_file_list)
 
 	perform_recalibration = request.form['performRecalibration']
 	should_select = request.form['mgfOperationToPerform']
@@ -204,13 +208,10 @@ def tab_1_helper_function():
 	#Check/make directories 
 	if should_select == "1":
 		mgf_write_dir_path = makeFolderNames.construct_selected_mgf_path(request.form)
-		mgf_write_path = join(mgf_write_dir_path, mgf_file_name)
 	else:
 		mgf_write_dir_path = "invalid"
-		mgf_write_path = "invalid"
+		
 	mgf_txt_write_dir_path = makeFolderNames.construct_reporter_folder_path(request.form)
-	mgf_txt_write_path = join(mgf_txt_write_dir_path, mgf_file_name.split('.mgf')[0] + '.reporter')
-	mgf_read_path = join(mgf_read_dir_path, mgf_file_name)
 
 	try:
 		os.makedirs(mgf_txt_write_dir_path)
@@ -230,26 +231,38 @@ def tab_1_helper_function():
 			return "selected_mgf directory could not be created", 500	
 
 	if perform_recalibration == '1':
-		error = mgf_select_one.select_only_one_recalibrate(mgf_read_path, \
-			mgf_write_path, mgf_txt_write_path, mz_error_initial_run,\
+		error = mgf_select_one.select_only_one_recalibrate(mgf_read_dir_path, \
+			mgf_write_dir_path, mgf_txt_write_dir_path, mz_error_initial_run,\
 			reporter_type, inverse_file, min_intensity, min_reporters, should_select, \
-			mz_error_recalibration)
+			mz_error_recalibration, mgf_file_list)
 		if error:
-			print("error in mgf_select_with_recalibrate")
+			print("Error in Selection w/ Recalibration")
+			print(error)
+			if os.path.isdir(mgf_txt_write_dir_path):
+				shutil.rmtree(mgf_txt_write_dir_path)
+			if os.path.isdir(mgf_write_dir_path):
+				shutil.rmtree(mgf_write_dir_path)
 			return error, 500
 		else:
-			return "mgf_select run with recalibration"
+			return("MGF Selection w/ Recalibration completed successfully")
 
 	else:
 		# Can do this because both were validated
-		error = mgf_select_one.select_only_one(mgf_read_path, \
-			mgf_write_path, mgf_txt_write_path, mz_error, reporter_type, \
-			inverse_file, min_intensity, min_reporters, should_select)
+		error = mgf_select_one.select_only_one(mgf_read_dir_path,\
+			mgf_write_dir_path, mgf_txt_write_dir_path, mz_error, reporter_type, \
+			inverse_file, min_intensity, min_reporters, should_select, mgf_file_list)
 		if error:
-			print("error in mgf_select_no_recalibrate")
+			print("Error in Selection")
+			print(error)
+			if os.path.isdir(mgf_txt_write_dir_path):
+				shutil.rmtree(mgf_txt_write_dir_path)
+			if os.path.isdir(mgf_write_dir_path):
+				shutil.rmtree(mgf_write_dir_path)
 			return error, 500
 		else:
-			return "mgf_select without recalibration run successfully"
+			return("MGF Selection completed successfully")
+
+	return "MGF Selection completed successfully"
 
 @app.route("/check_if_gpm_merge_already_exists", methods=["POST"])
 def check_if_gpm_merge_already_exists():
@@ -474,6 +487,8 @@ def writeSummary():
 			concatenated_df.to_csv(join(mgf_directory, "rep_sel_"+timestamp+".reporter"), index=False)
 
 	makeFolderNames.rename_folders(request.form)
+	if os.path.isdir(join(sys.path[0], "Temp")):
+		shutil.rmtree(join(sys.path[0], "Temp"))
 	utility.print_timestamp("GAILA processing - FINISHED\n" )
 	return "Summary complete."
 
@@ -512,6 +527,13 @@ def clean_up_after_tab_2():
 	if not mgf_txt_foldername:
 		#MGF txt folder missing.  Nothing to delete.
 		return
+
+	mgf_write_dir_path = makeFolderNames.construct_selected_mgf_path(request.form)
+	mgf_txt_write_dir_path = makeFolderNames.construct_reporter_folder_path(request.form)
+	if os.path.isdir(mgf_txt_write_dir_path):
+		shutil.rmtree(mgf_txt_write_dir_path)
+	if os.path.isdir(mgf_write_dir_path):
+		shutil.rmtree(mgf_write_dir_path)
 
 	for item in os.listdir(mgf_txt_foldername):
 		full_name = join(mgf_txt_foldername, item)
@@ -664,4 +686,19 @@ if __name__ == "__main__":
 	cli = sys.modules['flask.cli']
 	cli.show_server_banner = lambda *x: None
 	app.debug = False
-	app.run()
+	
+	signal.signal(signal.SIGINT, signal_handler)
+
+	#generate the default Archive folder on first run if none exists
+	if not os.path.isdir(join(sys.path[0], "Archive")):
+		os.makedirs(join(sys.path[0], "Archive"))
+
+	#if a previous temp folder exists, delete it
+	if os.path.isdir(join(sys.path[0], "Temp")):
+		shutil.rmtree(join(sys.path[0], "Temp"))
+	
+	print("Welcome to GAILA")
+	print("Currently running at http://127.0.0.1:5000/")
+	print("Press Ctrl+C to quit\n")
+	
+	app.run(threaded=True, use_reloader=False)

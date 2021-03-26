@@ -27,7 +27,7 @@ def construct_selected_mgf_path(form):
 			"_MinIntensity" + str(form['minIntensity']) + "_MassError" + str(form['mzError']) + "ppm"
 		a = a.replace('.','-')
 
-		full_path = join(form['mgfReadDirPath'], a, '')
+		full_path = join(sys.path[0], "Temp", a, '')
 		return full_path
 
 	elif form['performRecalibration'] == "1":
@@ -36,7 +36,7 @@ def construct_selected_mgf_path(form):
 			"ppm_RecalMassError" + str(form['mzErrorRecalibration']) + "ppm"
 		a = a.replace('.','-')
 
-		full_path = join(form['mgfReadDirPath'], a, '')
+		full_path = join(sys.path[0], "Temp", a, '')
 		return full_path
 
 	else:
@@ -49,8 +49,7 @@ def construct_reporter_folder_path(form):
 			"_MinIntensity" + str(form['minIntensity']) + "_MassError" + str(form['mzError']) + "ppm"
 		a = a.replace('.','-')
 
-		full_path = join(form['mgfReadDirPath'], a, '')
-
+		full_path = join(sys.path[0],"Temp",a,'')
 		return full_path
 
 	elif form['performRecalibration'] == "1":
@@ -59,8 +58,7 @@ def construct_reporter_folder_path(form):
 			"ppm_RecalMassError" + str(form['mzErrorRecalibration']) + "ppm"
 		a = a.replace('.','-')
 		
-		full_path = join(form['mgfReadDirPath'], a, '')
-
+		full_path = join(sys.path[0],"Temp", a, '')
 		return full_path
 
 	else:
@@ -69,17 +67,17 @@ def construct_reporter_folder_path(form):
 
 def construct_short_reporter_folder_path(form):
 	timestamp = form['timestamp']
-	fullpath = join(form['mgfReadDirPath'], "ReporterSelect_"+timestamp , "")
+	fullpath = join(sys.path[0],"Temp","ReporterSelect_"+timestamp , "")
 	return fullpath
 
 
 def construct_plain_parse_reporter_folder_path(form):
 	a = os.path.splitext(os.path.basename(str(form['xmlReadPath'])))[0]+'_plain_parse'
-	full_path = join(form['mgfReadDirPath'], a, '')
+	full_path = join(sys.path[0],"Temp", a, '')
 	return full_path
 
 def construct_fast_parse_folder_path(form):
-	full_path = str(form['xmlReadPath']).split(".xml")[0]+"_fast_parse"
+	full_path = join(sys.path[0],"Temp",os.path.basename(form['xmlReadPath']).split(".xml")[0]+"_fast_parse","")
 	return full_path
 
 def construct_merged_gpm_reporter_filename(form):

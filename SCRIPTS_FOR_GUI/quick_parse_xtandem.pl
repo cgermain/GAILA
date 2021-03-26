@@ -9,6 +9,7 @@ my $xmlfile=0;
 my $xmldir=0;
 my $threshold=0;
 my $proton_mass=1.007276;
+my $xml_txt_file=0;
 
 my $genefile_string="";
 my $unacceptable_mass_array_string="";
@@ -29,6 +30,7 @@ if (defined $ARGV[4]) { $unacceptable_mass_array_string=$ARGV[4];} else { exit 6
 if (defined $ARGV[5]) { $unacceptable_mod_array_string=$ARGV[5];} else { exit 7; }
 if (defined $ARGV[6]) { $plain_parsing=$ARGV[6];} else { exit 8; }
 if (defined $ARGV[7]) { $mgf_list_string=$ARGV[7];} else { exit 9; }
+if (defined $ARGV[8]) { $xml_txt_file=$ARGV[8];} else { exit 10; }
 
 @unacceptable_mass_array=split /,/,$unacceptable_mass_array_string;
 @unacceptable_mod_array=split /,/,$unacceptable_mod_array_string;
@@ -80,7 +82,7 @@ if ($error==0)
 		}
 	}
 	open (IN,qq!$xmlfile!) || die "Could not open $xmlfile\n";
-	open (OUT,qq!>$xmlfile.txt!) || die "Could not open $xmlfile\n";
+	open (OUT,qq!>$xml_txt_file!) || die "Could not open $xmlfile\n";
 	print OUT qq!filename\tscan\tcharge\tpre\tpeptide\tpost\tmodifications\tstart\tpeptide expectation\tmh\ttryptic\tmissed\tunacceptable modifications\tprotein log(e)\tprotein\tdescription\tgene\tgeneID\tbroadID\tother proteinIDs\tunique peptide\tother geneNames\tother geneIDs\tmultiple genes\n!;
 	my $xmlfile_=$xmldir;
 

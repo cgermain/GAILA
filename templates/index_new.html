@@ -166,7 +166,7 @@
 	  function givenRightsideAndDataObjSelectMGF(rightSide, serializedForm, callbackOuter){
 	  	// return callback(null);
 
-			var startTime = new Date();
+		var startTime = new Date();
 	    async.waterfall([
 	      function(callback){
 	        // console.log("inside of first waterfaller");
@@ -191,57 +191,52 @@
 	        if (!fileArray){
 	          return callback("No fileArray");
 	        }
-	        if (typeof fileArray == 'string'){
-	          console.log("FileArray needs to be parsed");
-	          fileArray = JSON.parse(fileArray);
-	        }
+	        // if (typeof fileArray == 'string'){
+	        //   console.log("FileArray needs to be parsed");
+	        //   fileArray = JSON.parse(fileArray);
+	        // }
 	        if (!fileArray.length){
 	          rightSide.append("<div>NO FILES TO WRITE!</div>")
 			  rightSide.scrollTop(rightSide[0].scrollHeight);
 	          return callback("NO FILES TO WRITE")
 	        }
-	        async.each(fileArray, function(elem, next){
-	          var data = JSON.parse(JSON.stringify(serializedForm));
-	          console.log(data);
-	          data['mgfFileName'] = elem;
 
-	          console.log("Parsing file");
-	          rightSide.append("<div>Began selecting from file " + elem + "</div>");
-			  rightSide.scrollTop(rightSide[0].scrollHeight);
+	        var data = JSON.parse(JSON.stringify(serializedForm));
+	        console.log(data);
+	        data['mgfFileList'] = fileArray;
 
-	          var tab_url = "";
-	          var plain_parsing = data["plain_parse"];
+	        var plain_parsing = data["plain_parse"];
 
-	          if (plain_parsing){
-	          	console.log("Plain parsing");
+	        if (plain_parsing){
+	         	console.log("Plain parsing");
 	          	tab_url="tab_4_helper_function";
-	          }
-	          else{
+	        }
+	        else{
 	          	console.log("Full parsing");
 	          	tab_url="tab_1_helper_function";
-	          }
+	        }
 
-	          $.ajax({
+	        $.ajax({
 	            type:"POST",
 	            url: tab_url,
 	            data : data,
 	            success : function(result){
 	              console.log(result);
-	              rightSide.append("<div>Finished Selecting from file " + elem + "</div>");
+	              rightSide.append("<div>Finished Selecting from MGF Files</div>");
 				  rightSide.scrollTop(rightSide[0].scrollHeight);
-	              return next(null)
+				  return callbackOuter();
 	            },
 	            error: function(response, textStatus, HTTPError){
 	              var responseText = (response && response.responseText) ?
-	                response.responseText : "ERROR IN EACHSERIES";
-	              return next(responseText);
+	                response.responseText : "ERROR IN POSTING MGFFILES";
+	                return callbackOuter(responseText);
 	            }
 	          });
-	        }, function(err){
-	          return callback(err);
-	        })
-	      }
-	    ],
+	        },
+	        function(err){
+	        	return callback(err);
+	        }])
+	    ,
 	    function(err, result){
 		  var difference = new Date() - startTime;
 		  rightSide.append("<h4>MILLISECONDS TAKEN: " + difference + " <h4>")
@@ -249,7 +244,7 @@
 	      if (err){
 	      	console.log(err);
       		if (typeof result == "undefined"){
-                alert("Check to make sure GAILA server is running.");
+                rightSide.append("Check to make sure GAILA server is running.");
             }
       		if (err){
         		rightSide.append('<h3 style="color:red">' + err + '</h3>')
@@ -257,7 +252,7 @@
         	}
 	      }
 	      return callbackOuter(err); //could be null
-	    })
+	    }
 	  }
 
 	  function writeSummaryToFile(rightSide, serializedForm, callbackOuter) {
@@ -273,6 +268,23 @@
 	      error: function(response, textStatus, HTTPError) {
 	        var responseText = (response && response.responseText) ?
 	          response.responseText : "ERROR IN WRITING OUT SUMMARY";
+	      }
+	    });
+	  }
+
+	  	function removeSelectedReporterFiles(rightSide, serializedForm, callbackOuter) {
+	    var summary = JSON.parse(JSON.stringify(serializedForm));
+	    $.ajax({
+	      type: "POST",
+	      url: "removeSelectedReporterFiles",
+	      data: summary,
+	      success: function(result) {
+	        console.log(result);
+	        console.log("Removed reporter files");
+	      },
+	      error: function(response, textStatus, HTTPError) {
+	        var responseText = (response && response.responseText) ?
+	          response.responseText : "ERROR REMOVING REPORTER FILES";
 	      }
 	    });
 	  }
