@@ -150,7 +150,7 @@ echo .
 
 
 echo Installing MatrixReal.
-call ppm install Math::MatrixReal
+call cpan install Math::MatrixReal
 IF %ERRORLEVEL% NEQ 0 (
 	echo error installing MatrixReal. Installation failed.
 	echo exiting . . .
@@ -168,7 +168,7 @@ call deactivate
 
 
 ECHO call GAILA_VENV\Scripts\activate > ..\start_gaila.bat
-ECHO python gaila_server.py >> ..\start_gaila.bat
+ECHO start python gaila_server.py >> ..\start_gaila.bat
 
 echo GAILA installation successful.
 echo Start the server by running start_gaila.bat

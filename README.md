@@ -9,8 +9,8 @@ https://www.python.org/downloads/release/python-370/
 Please make sure that Python is in your Windows PATH
 
 #### Make sure Perl is installed (min v5.12):
-http://www.activestate.com/activeperl/downloads
-(Click "Download ActivePerl for Windows (64-bit, x64)" if you have 64bit Windows, and "Download ActivePerl for Windows (x86)" if you have 32bit)
+https://strawberryperl.com/
+Please make sure the cpan package manager is installed
 
 #### Download Microsoft Visual C++ compiler: 
 https://www.microsoft.com/en-us/download/details.aspx?id=44266
