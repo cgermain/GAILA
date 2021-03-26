@@ -29,7 +29,7 @@ def count_proteins(plain_parse_file, output_dir, timestamp):
 			header = next(csvreader) #skip header
 			filename_index = header.index("filename")
 			protein_index = header.index("protein")
-			broad_index = header.index("broad_id")
+			broad_index = header.index("broadID")
 
 			if filename_index != -1 and protein_index != -1 and broad_index != -1:
 				utility.print_timestamp("Protein Count - Reading input file - Start")
